@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 4.5.9
+ * @version    Release: 4.6.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2455,8 +2455,14 @@ class Mind extends PDO
                     break;
                     // kan grubu ve uyumu kuralı
                     case 'blood':
-                        if(!$this->is_blood($data[$column], $extra)){
-                            $this->errors[$column][$name] = $message[$column][$name];
+                        if(!empty($extra)){
+                            if(!$this->is_blood($data[$column], $extra)){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                        } else {
+                            if(!$this->is_blood($data[$column])){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
                         }
                     break;
                     // Koordinat kuralı
