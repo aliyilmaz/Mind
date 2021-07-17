@@ -157,7 +157,7 @@ class Mind extends PDO
     public function __destruct()
     {
         if($this->error_status){
-            $this->mindLoad(dirname($_SERVER['SCRIPT_FILENAME']).'/'.$this->error_file);
+            $this->mindLoad($this->error_file);
             exit();
         }
     }
@@ -3246,13 +3246,15 @@ class Mind extends PDO
                         $mindFile = '';
                     }
 
-                    if (file_exists($mindFile . $fileExt)) {
+                    $mindFile = dirname($_SERVER['SCRIPT_FILENAME']).'/'.$mindFile . $fileExt;
+
+                    if (file_exists($mindFile)) {
 
                         /*
                          * PHPSTORM: In Settings search for 'unresolved include' which is under
                          * Editor > Inspections; PHP > General > Unresolved include and uncheck the box.
                          * */
-                        require_once($mindFile . $fileExt);
+                        require_once($mindFile);
 
                         if (class_exists($fileName)){
                             if (!empty($mindExplode['params'])){
