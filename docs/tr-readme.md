@@ -2270,35 +2270,44 @@ Kendisiyle paylaşılan `string` türde ki verinin json formatında olup olmadı
 
 ## is_age()
 
-Yaş sınırlamasına ihtiyaç duyulan yerlerde kullanılır. Kendisiyle paylaşılan doğum tarihini mevcut tarihten çıkarır, elde edilen sonuç eğer belirtilen yaş ile aynı veya o yaştan büyük ise `true` yanıtı döndürülür, değilse `false` yanıtı döndürülür.
+Yaş sınırlamasına ihtiyaç duyulan yerlerde kullanılır. Kendisiyle paylaşılan doğum tarihini mevcut tarihten çıkarır, elde edilen sonuç eğer belirtilen yaş ile aynı veya o yaştan büyük ise `true` yanıtı döndürülür, değilse `false` yanıtı döndürülür. 
+
+3 parametre alır ve ilk ikisi zorunludur. ilk parametre, Yıl-Ay-Gün söz diziminde belirtilen tarih parametresidir, ikincisi minumum veya maksimum yaş sınırı parametresidir, üçüncüsü ise sınırlamanın minumum (`min`) veya maksimum (`max`) türde olup olmadığını ifade eden parametredir. 3'ncü parametre varsayılan olarak minumum(`min`) olarak belirtilmiştir.
 
 ##### Örnek
 
-    echo '<br>';
+
     if($this->is_age('1987-03-17', 35)){
-        echo 'Age is appropriate.';
+        echo 'Yaş uygun.';
     } else {
-        echo 'Age is not appropriate.';
+        echo 'Yaş uygun değil.';
     }
-    
+
 veya
 
-    echo '<br>';
     if($this->is_age('1987-03-17', 32)){
-        echo 'Yaş uygundur.';
+        echo 'Yaş uygun.';
     } else {
-        echo 'Yaş uygun değildir.';
+        echo 'Yaş uygun değil.';
     }
 
 veya
 
-    echo '<br>';
-    if($this->is_age('1987-03-17', 35)){
-        echo 'Yaş uygundur.';
+    if($this->is_age('1987-03-17', 35, 'min')){
+        echo 'Yaş uygun.';
     } else {
-        echo 'Yaş uygun değildir.';
+        echo 'Yaş uygun değil.';
     }
-    
+
+veya
+
+    if($this->is_age('1987-03-17', 32, 'max')){
+        echo 'Yaş uygun.';
+    } else {
+        echo 'Yaş uygun değil.';
+    }
+
+
         
 ----------
     

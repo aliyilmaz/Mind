@@ -16,8 +16,15 @@ if($Mind->is_age('1987-03-17', 32)){
 } else {
     echo 'Age is not appropriate.';
 }
+
 echo '<br>';
-if($Mind->is_age('1987-03-17', 35)){
+if($Mind->is_age('1987-03-17', 35, 'min')){
+    echo 'Age is appropriate.';
+} else {
+    echo 'Age is not appropriate.';
+}
+echo '<br>';
+if($Mind->is_age('1987-03-17', 32, 'max')){
     echo 'Age is appropriate.';
 } else {
     echo 'Age is not appropriate.';
