@@ -4055,7 +4055,7 @@ veya
 
 ## addressCodeList()
 
-HTTP yanıt durumu kodlarını `array` olarak geri döndürmeye yarayan bir metotdur.
+HTTP yanıt kodlarını `array` olarak geri döndürmeye yarayan bir metotdur.
 
 ##### Örnek
 
