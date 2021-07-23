@@ -310,6 +310,9 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [encodeSize](https://github.com/aliyilmaz/Mind/blob/master/docs/tr-readme.md#encodeSize)
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/master/docs/tr-readme.md#decodeSize)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/master/docs/tr-readme.md#getipaddress)
+-   [getAddressCode](https://github.com/aliyilmaz/Mind/blob/master/docs/tr-readme.md#getAddressCode)
+-   [addressCodeList](https://github.com/aliyilmaz/Mind/blob/master/docs/tr-readme.md#addressCodeList)
+-   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/master/docs/tr-readme.md#addressGenerator)
 
 ##### Sistem
 
@@ -4011,6 +4014,65 @@ Projeyi görüntüleyen kullanıcının ip adresini elde etmeye yarar.
     echo $this->getIPAddress();
 
 
+---
+
+## getAddressCode()
+
+Alan adları ve IP Adreslerinin HTTP yanıt kodlarını elde etmek amacıyla kullanılır. Bir veya daha fazla adresin yanıt kodunun talep edilmesi mümkündür. 
+
+İki parametre alır, ilk parametrede `string` ve `array` veri türünde gönderilen adresler yer alırken, ikinci parametrede hangi HTTP yanıt kodlarına sahip adreslerin sorgularının geri döndürülmesi gerektiği `string` veya `array` veri türünde belirtilir.
+
+###### Örnek
+
+    $ip = $this->addressGenerator('174.129.25.170', '174.129.25.200');
+    $result = $this->getAddressCode($ip);
+    $this->print_pre($result);
+
+veya
+
+    $ip = $this->addressGenerator('174.129.25.170', '174.129.25.200');
+    $result = $this->getAddressCode($ip, 403);
+    $this->print_pre($result);
+
+veya
+
+    $ip = $this->addressGenerator('174.129.25.170', '174.129.25.200');
+    $result = $this->getAddressCode($ip, array(403));
+    $this->print_pre($result);
+
+veya
+
+    $ip = $this->addressGenerator('174.129.25.170', '174.129.25.200');
+    $result = $this->getAddressCode($ip, array(301,403));
+    $this->print_pre($result);
+
+veya
+
+    $result = $this->getAddressCode('https://twitter.com/', array(200, 301,403));
+    $this->print_pre($result);
+
+---
+
+## addressCodeList()
+
+HTTP yanıt durumu kodlarını `array` olarak geri döndürmeye yarayan bir metotdur.
+
+##### Örnek
+
+    $this->print_pre($this->addressCodeList());
+
+---
+
+## addressGenerator()
+
+Bu metot iki farklı adresin (şimdilik ipv4) arasındaki adresleri oluşturarak `array` türünde geri döndürmek amacıyla kullanılır.
+
+##### Örnek
+
+
+    $result = $this->addressGenerator('255.255.254.200', '255.255.254.230');
+
+    $this->print_pre($result);
 
 ----------
 
@@ -4503,7 +4565,7 @@ veya
     $this->print_pre($distance);
 
 
-----------
+---
 
 
 ## evalContainer()
@@ -4529,6 +4591,8 @@ veya
 
     $this-&gt;print_pre($array);';
     $this->evalContainer($code);
+
+---
 
 ## sms()
 

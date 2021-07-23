@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 4.6.1
+ * @version    Release: 4.6.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -1882,9 +1882,9 @@ class Mind extends PDO
 
     /**
      * is_age
-     * @param $date
-     * @param $age
-     * 
+     * @param string $date
+     * @param string|int $age
+     * @param string $type
      * @return bool
      * 
      */
@@ -3561,6 +3561,137 @@ class Mind extends PDO
         }
         return $_SERVER['REMOTE_ADDR'];
     }
+
+    /**
+     * getAddressCode
+     * 
+     * @param string|array $address
+     * @param string|array|null $status
+     * @return array
+     */
+    public function getAddressCode($address, $status=null){
+
+        $result = array();
+        $statusList = array();
+        if(!is_array($address)){
+            $address = array($address);
+        }
+
+        if(!is_null($status)){
+            if(!is_array($status)){
+                $status = array($status);
+            }
+
+            foreach ($status as $key => $code) {
+                if(!in_array($code, $this->addressCodeList())){
+                    return $result;
+                } else {
+                    $statusList[] = $code;
+                }
+            }
+        } else {
+            $statusList = $this->addressCodeList();
+        }
+        
+        $mh = curl_multi_init();
+		foreach($address as $key => $value){
+            $ch[$key] = curl_init($value);
+			curl_setopt($ch[$key], CURLOPT_TIMEOUT, 1);
+			curl_setopt($ch[$key], CURLOPT_HEADER, 0);
+			curl_setopt($ch[$key], CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch[$key], CURLOPT_TIMEOUT, 1);
+			curl_setopt($ch[$key], CURLOPT_VERBOSE, 0);
+			curl_multi_add_handle($mh, $ch[$key]);
+		}
+		do {
+            curl_multi_exec($mh, $running);
+            curl_multi_select($mh);
+          } while ($running > 0);
+
+          foreach(array_keys($ch) as $key){
+			$httpcode = curl_getinfo($ch[$key], CURLINFO_HTTP_CODE);
+            if(in_array($httpcode, $statusList)){
+                $result[$key] = array(
+                    'code' => $httpcode,
+                    'address' => $address[$key],
+                    'timestamp' => $this->timestamp
+                  );
+            }
+			curl_multi_remove_handle($mh, $ch[$key]);
+		}
+		curl_multi_close($mh);
+        
+        return $result;
+    }
+    
+    /**
+     * addressCodeList
+     * @return array
+     * 
+     */
+    public function addressCodeList(){
+        // Codes collected from http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
+        return array(0,100,101,102,200,201,202,203,204,205,206,207,208,226,300,301,302,303,304,305,306,307,308,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,422,423,424,425,426,428,429,431,444,449,450,451,494,495,496,497,499,500,501,502,503,504,505,506,507,508,509,510,511,598,599);
+    }
+
+    /**
+     * Address Generator
+     * 
+     */
+    public function addressGenerator($start, $end, $type="ipv4"){
+
+        $result = array();
+
+        if(empty($type)){
+            return $result;
+        }
+
+        switch ($type) {
+            case 'ipv4':
+
+                if(!$this->is_ipv4($start) OR !$this->is_ipv4($end)){
+                    return $result;
+                }
+
+                if($start>$end){
+                    $x = $start; $start = $end; $end = $x; unset($x);
+                }
+
+                list($aa, $bb, $cc, $dd) = explode('.', $start);
+                for ($a=$aa; $a <= 255; $a++) { 
+                    for ($b=$bb; $b <= 255; $b++) { 
+                        for ($c=$cc; $c <= 255; $c++) { 
+                            for ($d=$dd; $d <= 255; $d++) { 
+                                if ($a.'.'.$b.'.'.$c.'.'.$d == $end) {	
+                                    $result[] = $a.'.'.$b.'.'.$c.'.'.$d;			
+                                    break;
+                                }	
+                                $result[] = $a.'.'.$b.'.'.$c.'.'.$d;
+                                $dd = 0;
+                            }
+                            if ($a.'.'.$b.'.'.$c.'.'.$d == $end) {				
+                                break;
+                            }	
+                            $cc = 0;
+                        }
+                        if ($a.'.'.$b.'.'.$c.'.'.$d == $end) {				
+                            break;
+                        }	
+                        $bb = 0;
+                    }
+                    if ($a.'.'.$b.'.'.$c.'.'.$d == $end) {				
+                        break;
+                    }	
+                    $aa = 0;
+                }	
+            break;
+            
+        }
+
+        return $result;
+        
+    }
+
     
     /**
      * Detecting an operating system
@@ -4119,5 +4250,6 @@ class Mind extends PDO
             }
         }
     }
+
 }
 
