@@ -1,0 +1,21 @@
+{
+    "name": "mind/mind",
+    "description": "Mind is the PHP code framework designed for developers. It offers a variety of solutions for creating design patterns, applications and code frameworks.",
+    "type": "library",
+    "license": "GPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Ali Yılmaz",
+            "email": "aliyilmaz.work@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": ["src/Mind.php"]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "preferred-install": "dist"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
