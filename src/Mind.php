@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.5.4
+ * @version    Release: 5.5.5
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3496,6 +3496,7 @@ class Mind extends PDO
      */
     public function timeForPeople($datetime, $translations=[]) {
 
+        $datetime = is_null($datetime) ? '' : $datetime;
         $now = new DateTime();
         $ago = new DateTime($datetime);
         $diff = $now->diff($ago);
