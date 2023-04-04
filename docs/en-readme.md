@@ -1820,7 +1820,6 @@ $this->print_pre($this->amelia('permission', array('user_id'=>15), 'id'));
 ---
 
 ## matilda()
-
 Inspired by the name of Matilda, the fictional character of the 1996 movie Matilda, this method serves to search for one or more parameters with the `like` container, thereby allowing the use of the `%` operator.
 
 The data obtained;
@@ -1828,64 +1827,65 @@ The data obtained;
 Which columns will be displayed
 How many data will be displayed
 How many data will be ignored
-Which record range will be achieved
-Sorting the data (it is also possible to sort according to the column)
-Format of Data (return Array | JSON)
+What recording range will be obtained
+Sorting data (sort by column is also possible)
+Format of data (return array | json)
 
-such as they can be specified.
+may be specified as such.
 
-The first parameter is the table name and must be specified as `string`, the second parameter is used to select records and must be specified as `array`, if no selection is made and other parameters are to be sent, one of the values `null`, `[]` or `''` can be assigned to the second parameter .
+The first parameter is the table name and must be specified as `string`, the second parameter is words of type `string` or `array` and must be specified.
 
+The third parameter is used to select a record and must be specified in `array` type. If no selection will be made and other parameters are desired to be sent, one of the values `null`, `[]` or `''` can be assigned to the third parameter.
 
-The third parameter is the words specified in `string` or `array` type and must be specified, the fourth parameter is the column names specified in `string` or `array` type and is not required to be specified. If not specified, one of the values `null`, `[]` or `''` will be assigned to display all columns.
+The fourth parameter is the column names specified in `string` or `array` type and it is not required to be specified.
 
 The fifth parameter is used to specify the number of records to be ignored and is not required. The sixth parameter is used to limit the number of records and is not required, if not specified, one of the values `0`, `null`, `[]` or `''` can be set.
 
-The seventh parameter is used to sort the resulting records from newest to oldest and is not mandatory, if not specified it can be set by default one of the values `0`, `null`, `[]` or `''` , records are sorted according to the `ASC` principle from smallest to largest, only if column name is sent, it will be sorted accordingly. Another usage is `columnname:desc` where column name is sorted by sorting policy. Sorting policy can be specified as "asc" or "desc" and is not case sensitive.
+The seventh parameter is used to sort the obtained records from new to old or newest and is not mandatory, if not specified, one of the values `0`, `null`, `[]` or `''` can be assigned, by default, records are assigned with the `ASC` policy. they are sorted from smallest to largest if only `columnname` is sent, it will be sorted accordingly. Another usage is `columnname:desc`, in this usage it is sorted by column name sorting principle. The sorting policy can be specified as `asc` or `desc` and is not case sensitive.
 
-The eighth parameter contains the recordset's output format and is not mandatory. By default, data returns as `array`, if it is desired to be given as `json`, it is sufficient to send `json` value. You do not need to send a value if it will not be specified, but if you still want to specify it, one of the values `0`, `null`, `[]` or `''` can be assigned.
-
+The eighth parameter contains the output format of the recordset and is not mandatory. By default, the data is returned as `array`, if it is desired to be supplied in `json` type, it is sufficient to send `json` value. If it is not specified, there is no need to send a value, but if you still want to specify it, one of the values `0`, `null`, `[]` or `''` can be assigned.
 
 
 ```php
-$data = $this->matilda('users', null, 'ali%', null, 0);
+$data = $this->matilda('users', 'ali%', null, null, 0);
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', null, 'a%', 'username', null, 4);
+$data = $this->matilda('users', 'a%',  null, 'username', null, 4);
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', [['id'=>1]], ['%a%'], ['username','avatar'], 4);
+$data = $this->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], 4);
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', [['id'=>1],['id'=>2]], ['%a%'], ['username','avatar'], null, 2);
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 2);
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', [['id'=>1],['id'=>2]], ['%a%'], ['username','avatar'], 0, 2, 'id:desc');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'id:desc');
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', [['id'=>1],['id'=>2]], ['%a%'], ['username','avatar'], 0, 2, 'username', 'json');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'username', 'json');
 $this->print_pre($data);
 ```
+
 ---
 
 ## do_have()

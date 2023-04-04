@@ -1799,10 +1799,11 @@ Verilerin formatı (return array | json)
 
 gibi isterler belirtilebilir.
 
-İlk parametre tablo adıdır ve `string` olarak belirtilmesi zorunludur, ikinci parametre kayıt seçmek için kullanılır ve `array` türünde belirtilmelidir, seçim yapılmayacaksa ve diğer parametreler gönderilmek isteniyorsa ikinci parametreye `null`, `[]` veya `''` değerlerinden biri atanabilir.
+İlk parametre tablo adıdır ve `string` olarak belirtilmesi zorunludur, ikinci parametre `string` veya `array` türünde belirtilen kelimelerdir ve belirtilmesi zorunludur. 
 
+Üçüncü parametre kayıt seçmek için kullanılır ve `array` türünde belirtilmelidir, seçim yapılmayacaksa ve diğer parametreler gönderilmek isteniyorsa üçüncü parametreye `null`, `[]` veya `''` değerlerinden biri atanabilir.
 
-Üçüncü parametre `string` veya `array` türünde belirtilen kelimelerdir ve belirtilmesi zorunludur, dördüncü parametre `string` veya `array` türünde belirtilen görüntülenmesi istenen sütun isimleridir ve belirtilmesi zorunlu değildir, eğer belirtilmeyecek ise `null`, `[]` veya `''` değerlerinden biri atanarak tüm sütunların görüntülenmesi sağlanmış olur. 
+Dördüncü parametre `string` veya `array` türünde belirtilen görüntülenmesi istenen sütun isimleridir ve belirtilmesi zorunlu değildir, eğer belirtilmeyecek ise `null`, `[]` veya `''` değerlerinden biri atanarak tüm sütunların görüntülenmesi sağlanmış olur. 
 
 Beşinci parametre gözardı edilecek kayıt sayısını belirtmek için kullanılır ve belirtimesi zorunlu değildir eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir. Altıncı parametre, kayıt sayısını sınırlamak için kullanır ve belirtilmesi zorunlu değildir, eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir.
 
@@ -1813,42 +1814,42 @@ Sekizinci parametre kayıtlar kümesinin çıktı formatını barındırır ve z
 
 
 ```php
-$data = $this->matilda('users', null, 'ali%', null, 0);
+$data = $this->matilda('users', 'ali%', null, null, 0);
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', null, 'a%', 'username', null, 4);
+$data = $this->matilda('users', 'a%',  null, 'username', null, 4);
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', [['id'=>1]], ['%a%'], ['username','avatar'], 4);
+$data = $this->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], 4);
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', [['id'=>1],['id'=>2]], ['%a%'], ['username','avatar'], null, 2);
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 2);
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', [['id'=>1],['id'=>2]], ['%a%'], ['username','avatar'], 0, 2, 'id:desc');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'id:desc');
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', [['id'=>1],['id'=>2]], ['%a%'], ['username','avatar'], 0, 2, 'username', 'json');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'username', 'json');
 $this->print_pre($data);
 ```
 
