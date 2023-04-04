@@ -184,7 +184,7 @@ Veritabanı bağlantısının tutulduğu değişkendir. Sınıf sonunda `null` p
 
 ##### public $monitor
 
-Projede gerçekleşen veritabanı sorgularını, katman, hata, rota ve istek hareketlerini tutmaya yarar. Veritabanı sorgu hareketleri, `['db']` anahtarında, katmanlar `['layer']` anahtarında, rotalar `['route']` anahtarında, sistem hataları `['error']` anahtarında barınır. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır.
+Projede gerçekleşen veritabanı sorgularını, katman, hata, rota ve istek hareketlerini tutmaya yarar. Katmanlar `['layer']` anahtarında, rotalar `['route']` anahtarında, sistem hataları `['error']` anahtarında barınır. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır.
 
 ##### public $parent_class
 
@@ -213,7 +213,6 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 
 ##### Veritabanı
 
--   [sqlCompiler](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#sqlCompiler)
 -   [dbConnect](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#dbConnect)
 -   [selectDB](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#selectDB)
 -   [dbList](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#dbList)
@@ -362,22 +361,6 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 Metotlar içerisinde değişen istek ve durumların akıbetini belirlemek için kullanılır. Ayrıca herhangi bir kısımda hata durumu varsa hata sayfasının görüntülenmesini de sağlar.
 
 ---
-
-## sqlCompiler()
-
-Veritabanı sorgularının yapıldığı metot'dur. 4 parametre alır. 
-
-ilk parametre `sql` sorgusunu temsil eder. Diğer parametreler zorunlu değildir. Eğer sadece ilk parametre belirtilirse sorgu `query` metodunda işlenir ve yanıtı geri döndürülür.
-
-İkinci parametre sorgu çalıştırma `metod`unu, temsil eder,`query`, `prepare`, `exec` veya `null` olarak parametre alabilir. Varsayılan olarak `query` metodu tanımlanmıştır.
-
-Üçüncü parametre `PDO` 'nun statik fonksiyonlarının gönderilebildiği bir değişkeni temsil eder, örneğin `PDO::FETCH_COLUMN` gibi parametreler gönderilebilir.
-
-Dördüncü parametre ise `beginTransaction`'un aktif olup olmayacağı bilgisini `boolean` türünde barındırır. Varsayılan olarak `false` tanımlanmıştır.
-
-
----
-
 
 ## dbConnect()
 

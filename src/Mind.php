@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.5.5
+ * @version    Release: 5.5.6
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -119,52 +119,6 @@ class Mind extends PDO
     }
 
     /**
-     * Compiler
-     *
-     * @param string $sql
-     * @param string $type // query, prepare or exec
-     * @param string|null $extra // PDO::
-     * @param boolean $transaction // begintransaction
-     * @return object
-     */
-    public function sqlCompiler($sql, $type="query", $extra=null, $transaction=false){
-        
-        $this->sql = $sql;
-        $type = (isset($type)) ? $type : "query";
-        $transaction = (isset($transaction)) ? $transaction : false;
-        
-        try {
-            if($transaction){$this->beginTransaction();}
-            if($type == 'query') {
-                if(is_null($extra)) {
-                    $response = $this->query($sql);
-                } else {
-                    $response = $this->query($sql, $extra);
-                }
-            } elseif($type == 'prepare'){
-                $response = $this->prepare($sql);                
-            } else {
-                $response = $this->exec($sql);
-            }
-            if($transaction){$this->commit();}
-        } catch (PDOException $th) {
-            $response = $th->getMessage();
-            $this->monitor['errors'][] = $response;
-            if($transaction){$this->rollBack();}
-        }
-        
-        $response = isset($response) ? $response : null;
-        
-        $this->monitor['db'][md5($this->sql)] = [
-            'type'=>$type,
-            'sentence'=>$this->sql,
-            'response'=>$response
-        ];
-
-        return $response;
-    }
-
-    /**
      * @param array|null $conf
      */
     public function dbConnect($conf = array()){
@@ -212,7 +166,11 @@ class Mind extends PDO
                 $this->abort('401', 'Unauthorized user information.');
             }
             
-            if(stristr($th->errorInfo[2], 'No such file or directory') OR stristr($th->errorInfo[2], 'Connection refused')){
+            if(
+                stristr($th->errorInfo[2], 'No such file or directory') OR 
+                stristr($th->errorInfo[2], 'Connection refused') OR 
+                stristr($th->getMessage(), 'No connection could be made because the target machine actively refused it'))
+            {
                 $this->abort('406', 'The database driver does not work.');
             }
         }
@@ -223,20 +181,26 @@ class Mind extends PDO
     /**
      * Database selector.
      *
-     * @param string $dbname
-     * @return void
+     * @param string $dbName
+     * @return bool
      */
-    public function selectDB($dbname){
-        switch ($this->db['drive']) {
-            case 'mysql' OR 'sqlsrv':                    
-                $this->sqlCompiler("USE ".$dbname, 'exec');
-            break;
+    public function selectDB($dbName){
+        if($this->is_db($dbName)){
+
+            switch ($this->db['drive']) {
+                case 'mysql':                    
+                    $this->exec("USE ".$dbName);
+                break;
+            }
+        } else {
+            return false;
         }
         
         $this->setAttribute( PDO::ATTR_EMULATE_PREPARES, true );
         $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
         $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
         $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        return true;
     }
 
     /**
@@ -245,415 +209,649 @@ class Mind extends PDO
      * @return array
      */
     public function dbList(){
+
+        $dbnames = array();
+
         switch ($this->db['drive']) {
             case 'mysql':
-                return $this->sqlCompiler('SHOW DATABASES', 'query')->fetchAll(PDO::FETCH_COLUMN);
+                $sql     = 'SHOW DATABASES';
+
+                try{
+                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+
+                    foreach ( $query as $database ) {
+                        $dbnames[] = implode('', $database);
+                    }
+
+                    return $dbnames;
+
+                } catch (Exception $e){
+                    return $dbnames;
+                }
+
             break;
-            case 'sqlsrv':
-                return $this->sqlCompiler('SELECT name FROM sys.databases', 'query')->fetchAll(PDO::FETCH_COLUMN);
+            
             case 'sqlite':
                 return $this->ffsearch('./', '*.sqlite');
             break;
         }
-        return [];
+        
     }
 
     /**
      * Lists database tables.
      *
-     * @param string|null $dbname
+     * @param string $dbName
      * @return array
      */
     public function tableList($dbname=null){
-        $dbname = is_null($dbname) ? $this->db['dbname'] : $dbname;
-        switch ($this->db['drive']) {
-            case 'mysql':
-                return $this->sqlCompiler('SHOW TABLES FROM '.$dbname, 'query')->fetchAll(PDO::FETCH_COLUMN);
-            break;
-            case 'sqlsrv':
-                $this->selectDB($dbname);
-                return $this->sqlCompiler('SELECT name, type FROM sys.tables', 'query')->fetchAll(PDO::FETCH_COLUMN);
-            break;
-            case 'sqlite':
-                return $this->sqlCompiler("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';", 'query')->fetchAll(PDO::FETCH_COLUMN);
-            break;
-        }
-        return [];
-    }
 
-    /**
-     * Lists table columns.
-     *
-     * @param string $table
-     * @return array
-     */
-    public function columnList($table){
+        $query = [];
+        $tblNames = array();
 
-        switch ($this->db['drive']) {
-            case 'mysql':
-                return $this->sqlCompiler('SHOW COLUMNS FROM '.$table, 'query')->fetchAll(PDO::FETCH_COLUMN);
-            break;
-            case 'sqlsrv':
-                return $this->sqlCompiler('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '.$table, 'query')->fetchAll(PDO::FETCH_COLUMN);               
-            break;
-            case 'sqlite':
-                return $this->sqlCompiler("SELECT NAME FROM PRAGMA_TABLE_INFO('".$table."')", 'query')->fetchAll(PDO::FETCH_COLUMN);               
-            break;
-        }
-        return [];
-    }
-
-    /**
-     * Creating a database.
-     *
-     * @param array|string $dbname
-     * @return void
-     */
-    public function dbCreate($dbname){
-
-        $dbnames = (is_array($dbname)) ? $dbname : [$dbname];
-
-        foreach ( $dbnames as $dbname ) {
+        try{
 
             switch ($this->db['drive']) {
                 case 'mysql':
-                    $this->sqlCompiler("CREATE DATABASE ".$dbname." DEFAULT CHARSET=".$this->db['charset'], 'query');                    
+                    $dbParameter = (!is_null($dbname)) ? ' FROM '.$dbname : '';
+                    $sql = 'SHOW TABLES'.$dbParameter;
+                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+                    foreach ($query as $tblName){
+                        $tblNames[] = implode('', $tblName);
+                    }
                 break;
                 case 'sqlsrv':
-                     $this->sqlCompiler("CREATE DATABASE ".$dbname, 'query');
+
+                    $this->selectDB($dbname);
+                    $sql = 'SELECT name, type FROM sys.tables';
+                    $query = $this->query($sql);
+                    $tblNames = $query->fetchAll(PDO::FETCH_COLUMN);
+                break;
+                
                 case 'sqlite':
-                    if(!file_exists($dbname) AND $dbname !== $this->db['dbname']) {
-                         $this->dbConnect(['db'=>['dbname'=>$dbname]]);
+                    $statement = $this->query("SELECT name FROM sqlite_master WHERE type='table';");
+                    $query = $statement->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($query as $tblName){
+                        $tblNames[] = $tblName['name'];
                     }
                 break;
             }
-            if($dbname === $this->db['dbname']){ 
-                $this->dbConnect(['db'=>['dbname'=>$dbname]]); 
-            }
 
+        } catch (Exception $e){
+            return $tblNames;
         }
 
+        return $tblNames;
+    }
+
+     /**
+     * Lists table columns.
+     *
+     * @param string $tblName
+     * @return array
+     */
+    public function columnList($tblName){
+
+        $columns = array();
+
+        switch ($this->db['drive']) {
+            case 'mysql':
+                $sql = 'SHOW COLUMNS FROM `' . $tblName.'`';
+
+                try{
+                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+
+                    $columns = array();
+
+                    foreach ( $query as $column ) {
+
+                        $columns[] = $column['Field'];
+                    }
+
+                } catch (Exception $e){
+                    return $columns;
+                }
+            break;
+            case 'sqlite':
+                
+                $statement = $this->query('PRAGMA TABLE_INFO(`'. $tblName . '`)');
+                foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $column) {
+                    $columns[] = $column['name'];
+                }
+            break;
+        }
+
+        return $columns;
+        
+    }
+
+     /**
+     * Creating a database.
+     *
+     * @param mixed $dbname
+     * @return bool
+     */
+    public function dbCreate($dbname){
+
+        $dbnames = array();
+        $dbnames = (is_array($dbname)) ? $dbname : [$dbname];
+
+        try{
+            foreach ( $dbnames as $dbname ) {
+
+                switch ($this->db['drive']) {
+                    case 'mysql':
+                        $sql = "CREATE DATABASE";
+                        $sql .= " ".$dbname." DEFAULT CHARSET=".$this->db['charset'];
+                        if(!$this->query($sql)){ return false; }
+                    break;
+                    
+                    case 'sqlite':
+                        if(!file_exists($dbname) AND $dbname !== $this->db['dbname']){
+                            $this->dbConnect(['db'=>['dbname'=>$dbname]]);
+                        }
+                    break;
+                }
+                if($dbname === $this->db['dbname']){ 
+                    $this->dbConnect(['db'=>['dbname'=>$dbname]]); 
+                }
+
+            }
+            
+        }catch (Exception $e){
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Creating a table.
      *
-     * @param string $table
+     * @param string $tblName
      * @param array $scheme
-     * @return void
+     * @return bool
      */
-    public function tableCreate($table, $scheme){
+    public function tableCreate($tblName, $scheme){
 
-        $engine = '';
-        switch ($this->db['drive']) {
-            case 'mysql':
-                $engine = " ENGINE = INNODB";
-            break;
-            case 'sqlsrv':
-                $this->sqlCompiler('SET IDENTITY_INSERT '.$table.' ON;', 'query');
-            break;
+        if(is_array($scheme) AND !$this->is_table($tblName)){
+            // switch
+            $engine = '';
+            switch ($this->db['drive']) {
+                case 'mysql':
+                    $engine = " ENGINE = INNODB";
+                break;
+            }
+         
+            try{
+
+                $sql = "CREATE TABLE `".$tblName."` ";
+                $sql .= "(\n\t";
+                $sql .= implode(",\n\t", $this->columnSqlMaker($scheme));
+                $sql .= "\n)".$engine.";";
+
+                if(!$this->query($sql)){
+                    return false;
+                }
+                return true;
+            }catch (Exception $e){
+                return false;
+            }
         }
-     
-        $sql = "CREATE TABLE ".$table." ";
-        $sql .= "(\n\t";
-        $sql .= implode(",\n\t", $this->columnSqlMaker($scheme));
-        $sql .= "\n)".$engine.";";
 
-        $this->sqlCompiler($sql, 'query');
+        return false;
+
     }
 
-    /**
+     /**
      * Creating a column.
      *
-     * @param string $table
+     * @param string $tblName
      * @param array $scheme
-     * @return void
+     * @return bool
      */
-    public function columnCreate($table, $scheme){
+    public function columnCreate($tblName, $scheme){
 
-        $sql = "ALTER TABLE\n";
-        $sql .= "\t ".$table."\n";
-        $sql .= implode(",\n\t", $this->columnSqlMaker($scheme, 'columnCreate'));
-        
-        $this->sqlCompiler($sql);
+        if($this->is_table($tblName)){
+
+            try{
+
+                $sql = "ALTER TABLE\n";
+                $sql .= "\t`".$tblName."`\n";
+                $sql .= implode(",\n\t", $this->columnSqlMaker($scheme, 'columnCreate'));
+
+                if(!$this->query($sql)){
+                    return false;
+                } else {
+                    return true;
+                }
+
+            }catch (Exception $e){
+                return false;
+            }
+        }
+
+        return false;
     }
 
     /**
      * Delete database.
      *
-     * @param string|array $dbname
-     * @return void
+     * @param mixed $dbname
+     * @return bool
      */
     public function dbDelete($dbname){
 
-        $dbnames = (is_array($dbname)) ? $dbname : [$dbname];
+        $dbnames = array();
 
+        if(is_array($dbname)){
+            foreach ($dbname as $key => $value) {
+                $dbnames[] = $value;
+            }
+        } else {
+            $dbnames[] = $dbname;
+        }
         foreach ($dbnames as $dbname) {
+
+            if(!$this->is_db($dbname)){
+
+                return false;
+
+            }
 
             switch ($this->db['drive']) {
                 case 'mysql':
-                    $this->sqlCompiler('DROP DATABASE '.$dbname, 'query');
+                    try{
+
+                        $sql = "DROP DATABASE";
+                        $sql .= " ".$dbname;
+        
+                        $query = $this->query($sql);
+                        if(!$query){
+                            return false;
+                        }
+                    }catch (Exception $e){
+                        return false;
+                    }
                 break;
-                case 'sqlsrv':
-                    $this->sqlCompiler('ALTER DATABASE '.$dbname.' SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE '.$dbname.';');
-                break;
+                
                 case 'sqlite':
                     if(file_exists($dbname)){
-                        $this->rm_r($dbname);
-                    } 
+                        unlink($dbname);
+                    } else {
+                        return false;
+                    }
+                   
                 break;
             }
             
+
         }
-        
+        return true;
     }
 
     /**
      * Table delete.
      *
-     * @param array|string $table
-     * @return void
+     * @param mixed $tblName
+     * @return bool
      */
-    public function tableDelete($table){
-        $table = (is_array($table)) ? $table : [$table];
-        $this->sqlCompiler('DROP TABLE '.implode(',', $table).';', 'query');
+    public function tableDelete($tblName){
+
+        $tblNames = array();
+
+        if(is_array($tblName)){
+            foreach ($tblName as $key => $value) {
+                $tblNames[] = $value;
+            }
+        } else {
+            $tblNames[] = $tblName;
+        }
+        foreach ($tblNames as $tblName) {
+
+            if(!$this->is_table($tblName)){
+
+                return false;
+
+            }
+
+            try{
+
+                $sql = "DROP TABLE";
+                $sql .=" `".$tblName.'`';
+
+                $query = $this->query($sql);
+                if(!$query){
+                    return false;
+                }
+            }catch (Exception $e){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
      * Column delete.
      *
-     * @param string $table
-     * @param string|array $column
-     * @return void
+     * @param string $tblName
+     * @param mixed $column
+     * @return bool
      */
-    public function columnDelete($table, $column = null){
+    public function columnDelete($tblName, $column = null){
 
-        $column = (is_null($column)) ? [] : $column;
-        $column = (!is_array($column)) ? [$column] : $column;
+        $columnList = $this->columnList($tblName);
+
+        $columns = array();
+        $columns = (!is_null($column) AND is_array($column)) ? $column : $columns; // array
+        $columns = (!is_null($column) AND !is_array($column)) ? [$column] : $columns; // string
 
         switch ($this->db['drive']) {
             case 'mysql':
-                $this->sqlCompiler("ALTER TABLE ".$table." DROP COLUMN ".implode(', DROP COLUMN ', $column), 'query');
-            break;
-            case 'sqlsrv':
-                try{
-                    $this->beginTransaction();
-                    foreach ($column as $col) {
-                        $contraint = $this->sqlCompiler('SELECT name FROM sys.default_constraints WHERE name LIKE \'%'.$table.'__'.$this->summary($col,9).'__%\';', 'query')->fetchAll(PDO::FETCH_ASSOC);
-                        $sql = '';
-                        if(isset($contraint[0]['name'])){
-                            $name = $contraint[0]['name'];
-                            $sql .= 'ALTER TABLE '.$table.' DROP CONSTRAINT '.$name.';';
-                        } 
-                        $sql .= 'ALTER TABLE '.$table.' DROP COLUMN '.$col.';';
-                        $this->sqlCompiler($sql, 'query');
+                $sql = "ALTER TABLE `".$tblName."`";
+                foreach ($columns as $column) {
+
+                    if(!in_array($column, $columnList)){
+                        return false;
                     }
-                    $this->commit();
-                }catch (PDOException $th){
-                    $this->monitor['errors'][] = $th->getMessage();
-                    $this->rollBack();
+                    $dropColumns[] = "DROP COLUMN `".$column."`";
+                }
+
+                try{
+                    $sql .= " ".implode(', ', $dropColumns);
+                    $query = $this->query($sql);
+                    if(!$query){
+                        return false;
+                    }
+                }catch (Exception $e){
+                    return false;
                 }
             break;
-                
+            
             case 'sqlite':
+                $output = [];
                 
-                $values = $this->samantha($table, null, $column);
-                $scheme = $this->tableInterpriter($table, $values);
-                $this->tableDelete($table);
-                $this->tableCreate($table, $scheme);
-                if(!empty($values)){
-                    $this->insert($table, $values);
+                $data = $this->getData($tblName);
+                foreach ($data as $key => $row) {
+                    foreach ($columns as $key => $column) {
+                        if(in_array($column, array_keys($row)) AND in_array($column, $columnList)){
+                            unset($row[$column]);
+                        }
+                    }
+                    $output['data'][] = $row;
+                }
+
+                try{
+                    
+                    $scheme = $this->tableInterpriter($tblName, $columns);
+                    $this->tableDelete($tblName);
+                    $this->tableCreate($tblName, $scheme);
+                    if(!empty($output['data'])){
+                        $this->insert($tblName, $output['data']);
+                    }
+                    
+                }catch (Exception $e){
+                    return false;
                 }
                 
             break;
         }
         
+        return true;
     }
 
     /**
      * Clear database.
      *
-     * @param array|string $dbname
-     * @return void
+     * @param mixed $dbName
+     * @return bool
      * */
-    public function dbClear($dbname){
+    public function dbClear($dbName){
 
-        $dbname = (is_array($dbname)) ? $dbname : [$dbname];
-        foreach ( $dbname as $db ) {
-            $this->selectDB($db);
-            foreach ($this->tableList($db) as $table){
-                $this->tableClear($table);
+        $dbNames = array();
+
+        if(is_array($dbName)){
+            foreach ($dbName as $db) {
+                $dbNames[] = $db;
             }
+        } else {
+            $dbNames[] = $dbName;
         }
 
+        foreach ( $dbNames as $dbName ) {
+
+            $this->dbConnect($dbName);
+            foreach ($this->tableList($dbName) as $tblName){
+                if(!$this->tableClear($tblName)){
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
      * Clear table.
      *
-     * @param array|string $table
-     * @return void
+     * @param mixed $tblName
+     * @return bool
      */
-    public function tableClear($table){
-        
-        $tables = (is_array($table)) ? $table : [$table];
-       
-        foreach ($tables as $table) {
+    public function tableClear($tblName){
+
+        $tblNames = array();
+
+        if(is_array($tblName)){
+            foreach ($tblName as $value) {
+                $tblNames[] = $value;
+            }
+        } else {
+            $tblNames[] = $tblName;
+        }
+
+        foreach ($tblNames as $tblName) {
 
             $sql = '';
             switch ($this->db['drive']) {
                 case 'mysql':
-                    $sql = 'TRUNCATE `'.$table.'`';
-                break;
-                case 'sqlsrv':
-                    $sql = 'TRUNCATE TABLE '.$table;
+                    $sql = 'TRUNCATE `'.$tblName.'`';
                 break;
                 case 'sqlite':
-                    $sql = 'DELETE FROM `'.$table.'`';
+                    $sql = 'DELETE FROM `'.$tblName.'`';
                 break;
             }
-
-            $this->sqlCompiler($sql, 'query');
-        }
             
+            try{
+                if($this->query($sql)){
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception $e){
+                return false;
+            }
+
+        }
+        return true;
     }
 
     /**
      * Clear column.
      *
-     * @param string $table
-     * @param array|string|null $column
-     * @return void
+     * @param string $tblName
+     * @param mixed $column
+     * @return bool
      */
-    public function columnClear($table, $column=null){
+    public function columnClear($tblName, $column=null){
 
-        $column = (is_null($column)) ? [] : $column;
-        $column = (is_array($column)) ? $column : [$column];
+        if(empty($column)){
+            return false;
+        }
 
-        foreach ($column as $col) {
+        $columns = array();
 
-            $id   = $this->increments($table);
-            $data = $this->getData($table);
+        if(is_array($column)){
+            foreach ($column as $col) {
+                $columns[] = $col;
+            }
+        } else {
+            $columns[] = $column;
+        }
+
+        $columns = array_intersect($columns, $this->columnList($tblName));
+
+        foreach ($columns as $column) {
+
+            $id   = $this->increments($tblName);
+            $data = $this->getData($tblName);
 
             foreach ($data as $row) {
-                $this->update($table, [$col=>''], $row[$id]);
+                $values = array(
+                    $column => ''
+                );
+                $this->update($tblName, $values, $row[$id]);
             }
         }
+
+        return true;
 
     }
 
     /**
      * Add new record.
      *
-     * @param string $table
+     * @param string $tblName
      * @param array $values
-     * @param array|null $trigger
      * @return bool
      */
-    public function insert($table, $values, $trigger=null){
+    public function insert($tblName, $values, $trigger=null){
         
-        $values = (!isset($values[0])) ? [$values] : $values;
-        $trigger = (!isset($trigger[0]) AND !is_null($trigger)) ? [$trigger] : null;
+        if(!isset($values[0])){
+            $values = array($values);
+        } 
+        if(!isset($trigger[0]) AND !is_null($trigger)){
+            $trigger = array($trigger);
+        } 
         
         try {
             $this->beginTransaction();
             foreach ($values as $rows) {
-
-                $values = []; $columns = [];
-                $sql = 'INSERT INTO '.$table.' ';
-
+                $sql = '';
+                $columns = [];
+                $values = [];
+                $sql .= 'INSERT INTO `'.$tblName.'` ';
                 foreach (array_keys($rows) as $col) {
-                    $columns[] = $col; $values[] = '?';
+                    $columns[] = $col;
+                    $values[] = '?';
                 }
-
                 $sql .= '('.implode(', ', $columns).')';
                 $sql .= ' VALUES ('.implode(', ', $values).')';
-
-                $this->sqlCompiler($sql, 'prepare')->execute(array_values($rows));
+                $this->prepare($sql)->execute(array_values($rows));
             }
             if(!is_null($trigger)){
                 foreach ($trigger as $row) {
                     foreach ($row as $table => $data) {
-
-                        $columns = []; $values = [];
-                        $sql = 'INSERT INTO '.$table.' ';
-
+                        $sql = '';
+                        $columns = [];
+                        $values = [];
+                        $sql .= 'INSERT INTO `'.$table.'` ';
                         foreach (array_keys($data) as $col) {
-                            $columns[] = $col; $values[] = '?';
+                            $columns[] = $col;
+                            $values[] = '?';
                         }
-
                         $sql .= '('.implode(', ', $columns).')';
                         $sql .= ' VALUES ('.implode(', ', $values).')';
-
-                        $this->sqlCompiler($sql, 'prepare')->execute(array_values($data));
-                        
+                        $this->prepare($sql)->execute(array_values($data));
                     }
                 }
             }
 
             $this->commit();
-        } catch (PDOException $th) {
-            $this->monitor['errors'][] = $th->getMessage();
+
+            return true;
+
+        } catch (Exception $e) {
             $this->rollback();
-            return false;
+            echo $e->getMessage();
         }
-        return true;
+        return false;
     }
 
     /**
      * Record update.
      *
-     * @param string $table
+     * @param string $tblName
      * @param array $values
      * @param string $needle
      * @param mixed $column
      * @return bool
      */
-    public function update($table, $values, $needle, $column=null){
+    public function update($tblName, $values, $needle, $column=null){
 
-        $column = (is_null($column)) ? $this->increments($table) : $column;
+        if(empty($column)){
 
-        $prepArr = array();
-        foreach ( array_keys($values) as $col ) {
-            $prepArr[] = $col.'=?';
+            $column = $this->increments($tblName);
+
+            if(empty($column)){
+                return false;
+            }
+
         }
-        
-        $values[$column] = $needle; 
+
+        $xColumns = array_keys($values);
+
+        $columns = $this->columnList($tblName);
+
+        $prepareArray = array();
+        foreach ( $xColumns as $col ) {
+
+            if(!in_array($col, $columns)){
+                return false;
+            }
+
+            $prepareArray[] = $col.'=?';
+        }
+
+        $values[$column] = $needle;
+
         $values = array_values($values);
 
-        $sql = implode(',', $prepArr).' WHERE '.$column.'=?';
-        
+        $sql = implode(',', $prepareArray);
+        $sql .= ' WHERE '.$column.'=?';
         try{
-            $this->sqlCompiler("UPDATE".' '.$table.' SET '.$sql, 'prepare', null, true)->execute($values);
-        } catch(PDOException $th) {
-            $this->monitor['errors'][] = $th->getMessage();
-            return false;
+            $this->beginTransaction();
+            $query = $this->prepare("UPDATE".' `'.$tblName.'` SET '.$sql);
+            $query->execute($values);
+            $this->commit();
+            return true;
+        }catch (Exception $e){
+            $this->rollback();
+            echo $e->getMessage();
         }
-        return true;
+        return false;
     }
 
     /**
      * Record delete.
      *
-     * @param string $table
+     * @param string $tblName
      * @param mixed $needle
      * @param mixed $column
      * @return bool
      */
-    public function delete($table, $needle, $column=null, $trigger=null, $force=null){
+    public function delete($tblName, $needle, $column=null, $trigger=null, $force=null){
 
         $status = false;
 
         // status
         if(is_bool($column)){
             $status = $column;
-            $column = $this->increments($table);
+            $column = $this->increments($tblName);
             if(empty($column)) return false;
         }
 
         if(empty($column)){
 
-            $column = $this->increments($table);
+            $column = $this->increments($tblName);
             if(empty($column)) return false;
 
         }
@@ -661,7 +859,7 @@ class Mind extends PDO
         if(is_bool($trigger) AND is_array($column)){ 
             $status = $trigger; 
             $trigger = $column;
-            $column = $this->increments($table);
+            $column = $this->increments($tblName);
             if(empty($column)) return false;
         }
 
@@ -671,7 +869,7 @@ class Mind extends PDO
 
         if(is_null($trigger) AND is_array($column)){
             $trigger = $column;
-            $column = $this->increments($table);
+            $column = $this->increments($tblName);
             if(empty($column)) return false;
         }
 
@@ -687,35 +885,33 @@ class Mind extends PDO
         try{
             $this->beginTransaction();
 
+            if(!$status){
+                foreach ($needle as $value) {
+                    if(!$this->do_have($tblName, $value, $column)){
+                        return false;
+                    }
+                }
+            }
+
             if(is_null($trigger)){
                 foreach ($needle as $value) {
-                    try { 
-                        $this->sqlCompiler("DELETE FROM".' '.$table.' '.$sql, 'prepare')->execute(array($value));
-                    } catch(PDOException $th){
-                        $this->monitor['errors'][] = $th->getMessage();
-                    }
+                    $query = $this->prepare("DELETE FROM".' `'.$tblName.'` '.$sql);
+                    $query->execute(array($value));
                 }
             }
             
             if(!is_null($trigger)){
                 foreach ($needle as $value) {
                     $sql = 'WHERE '.$column.'=?';
-
-                    try { 
-                        $this->sqlCompiler("DELETE FROM".' '.$table.' '.$sql, 'prepare')->execute(array($value));
-                    } catch(PDOException $th){
-                        $this->monitor['errors'][] = $th->getMessage();
-                    }
+                    $query = $this->prepare("DELETE FROM".' `'.$tblName.'` '.$sql);
+                    $query->execute(array($value));
 
                     if(is_array($trigger)){
 
-                        foreach ($trigger as $tbl => $col) {
+                        foreach ($trigger as $table => $col) {
                             $sql = 'WHERE '.$col.'=?';
-                            try { 
-                                $this->sqlCompiler("DELETE FROM".' '.$tbl.' '.$sql, 'prepare')->execute(array($value));
-                            } catch(PDOException $th){
-                                $this->monitor['errors'][] = $th->getMessage();
-                            }
+                            $query = $this->prepare("DELETE FROM".' `'.$table.'` '.$sql);
+                            $query->execute(array($value));
                         }
 
                     }
@@ -724,58 +920,27 @@ class Mind extends PDO
             }
 
             $this->commit();
-        }catch (PDOException $th){
-            $this->monitor['errors'][] = $th->getMessage();
+            return true;
+        }catch (Exception $e){
             $this->rollBack();
             return false;
         }
-        return true;
     }
 
     /**
      * Record reading.
      *
-     * @param string $table
-     * @param array|null $options
+     * @param string $tblName
+     * @param array $options
      * @return array
      */
-    public function getData($table, $options=null){
+    public function getData($tblName, $options=null){
 
         $sql = '';
         $andSql = '';
         $orSql = '';
         $keywordSql = '';
-
-        $innerColumns = '';
-        if(!empty($options['join'])){            
-            
-            $joinTypes = ['INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN'];
-            if(in_array(mb_strtoupper($options['join']['name']), $joinTypes)){
-                $options['join']['name'] = mb_strtoupper($options['join']['name']);
-                $inner = [];
-                foreach($options['join']['tables'] as $table_nane => $schema){
-                    $inner[] = $options['join']['name']." ".$table_nane." ON ".$table.".".$schema['primary']."=".$table_nane.".".$schema['secondary'];
-                    
-                    if(empty($schema['fields'])){
-                        $schema['fields'] = $this->columnList($table_nane);
-                    }
-                    if(!is_array($schema['fields'])){
-                        $schema['fields'] = array($schema['fields']);
-                    }
-                    $xinnerColumns = [];
-    
-                    foreach ($schema['fields'] as $field) {
-                        $xinnerColumns[] = $table_nane.'.'.$field;
-                    }
-                    $innerColumns .= ','.implode(', ', $xinnerColumns);
-                }
-                
-                $sql .= implode("\r\t", $inner).' ';
-
-            }
-        }
-
-        $columns = $this->columnList($table);
+        $columns = $this->columnList($tblName);
 
         if(!empty($options['column'])){
 
@@ -786,7 +951,7 @@ class Mind extends PDO
             $options['column'] = array_intersect($options['column'], $columns);
             $columns = array_values($options['column']);
         } 
-        $sqlColumns = $table.'.'.implode(', '.$table.'.', $columns).$innerColumns;
+        $sqlColumns = $tblName.'.'.implode(', '.$tblName.'.', $columns);
 
         $prefix = '';
         $suffix = ' = ?';
@@ -925,23 +1090,14 @@ class Mind extends PDO
             !empty($options['search']['and']) OR
             !empty($options['search']['keyword'])
         ){
-            $sql .= 'WHERE '.implode($delimiter, $sqlBox);            
+            $sql = 'WHERE '.implode($delimiter, $sqlBox);            
         }
 
         if(!empty($options['sort'])){
-            $sort = 'ASC';
-            if(strstr($options['sort'], ':')){
-                $SortOptions = explode(':', $options['sort']);
-                if(count($SortOptions)==1){
-                    $columnName = $SortOptions[0];
-                } 
-                if(count($SortOptions)==2){
-                    list($columnName, $sort) = $SortOptions;                    
-                }
-            }
-            $columnName = (isset($columnName)) ? $columnName : $this->increments($table);
+
+            list($columnName, $sort) = explode(':', $options['sort']);
             if(in_array($sort, array('asc', 'ASC', 'desc', 'DESC'))){
-                $sql .= ' ORDER BY '.$table.'.'.$columnName.' '.strtoupper($sort);
+                $sql .= ' ORDER BY '.$columnName.' '.strtoupper($sort);
             }
 
         }
@@ -957,19 +1113,20 @@ class Mind extends PDO
             if(!empty($options['limit']['end']) AND $options['limit']['end']>0){
                 $end = $options['limit']['end'];
             } else {
-                $end     = $this->newId($table)-1;
+                $end     = $this->newId($tblName)-1;
             }
 
             $sql .= ' LIMIT '.$start.$end;
 
         }
+
         $result = array();
         
-        $this->sql = 'SELECT '.$sqlColumns.' FROM '.$table.' '.$sql;
+        $this->sql = 'SELECT '.$sqlColumns.' FROM `'.$tblName.'` '.$sql;
 
         try{
 
-            $query = $this->sqlCompiler($this->sql, 'prepare');
+            $query = $this->prepare('SELECT '.$sqlColumns.' FROM `'.$tblName.'` '.$sql);
             $query->execute($executeArray);
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -977,14 +1134,13 @@ class Mind extends PDO
                 switch ($options['format']) {
 
                     case 'json':
-                        $result = $this->json_encode($result);
+                        $result = json_encode($result);
                         break;
                 }
             }
             return $result;
 
-        }catch (PDOException $th){
-            $this->monitor['errors'][] = $th->getMessage();
+        }catch (Exception $e){
             return $result;
         }
         
@@ -993,12 +1149,12 @@ class Mind extends PDO
     /**
      * Research assistant.
      *
-     * @param string $table
-     * @param array|null $map
-     * @param array|string|null $column
+     * @param string $tblName
+     * @param array $map
+     * @param mixed $column
      * @return array
      */
-    public function samantha($table, $map, $column=null)
+    public function samantha($tblName, $map, $column=null, $status=false)
     {
         $output = array();
         $columns = array();
@@ -1008,10 +1164,15 @@ class Mind extends PDO
         // Sütun(lar) belirtilmişse
         if (!empty($column)) {
 
-            $columns = (!is_array($column)) ? array($column) : $column;
+            // bir sütun belirtilmişse
+            if(!is_array($column)){
+                $columns = array($column);
+            } else {
+                $columns = $column;
+            }
 
             // tablo sütunları elde ediliyor
-            $getColumns = $this->columnList($table);
+            $getColumns = $this->columnList($tblName);
 
             // belirtilen sütun(lar) var mı bakılıyor
             foreach($columns as $column){
@@ -1027,7 +1188,7 @@ class Mind extends PDO
             $scheme['column'] = $columns;
         }
 
-        $output = $this->getData($table, $scheme);
+        $output = $this->getData($tblName, $scheme);
 
         return $output;
     }
@@ -1036,13 +1197,13 @@ class Mind extends PDO
      * Research assistant.
      * It serves to obtain a array.
      * 
-     * @param string $table
+     * @param string $tblName
      * @param array $map
      * @param mixed $column
      * @return array
      * 
      */
-    public function theodore($table, $map, $column=null){
+    public function theodore($tblName, $map, $column=null){
 
         $output = array();
         $columns = array();
@@ -1060,7 +1221,7 @@ class Mind extends PDO
             }
 
             // tablo sütunları elde ediliyor
-            $getColumns = $this->columnList($table);
+            $getColumns = $this->columnList($tblName);
 
             // belirtilen sütun(lar) var mı bakılıyor
             foreach($columns as $column){
@@ -1076,22 +1237,28 @@ class Mind extends PDO
             $scheme['column'] = $columns;
         }
 
-        $data = $this->getData($table, $scheme);
+        $data = $this->getData($tblName, $scheme);
 
-        return (count($data)==1 AND isset($data[0])) ? $data[0] : [];
+        if(count($data)==1 AND isset($data[0])){
+            $output = $data[0];
+        } else {
+            $output = [];
+        }
+
+        return $output;
     }
 
     /**
      * Research assistant.
      * Used to obtain an element of an array
      * 
-     * @param string $table
+     * @param string $tblName
      * @param array $map
      * @param string $column
      * @return string
      * 
      */
-    public function amelia($table, $map, $column){
+    public function amelia($tblName, $map, $column){
 
         $output = '';
 
@@ -1103,7 +1270,7 @@ class Mind extends PDO
         }
 
         // tablo sütunları elde ediliyor
-        $getColumns = $this->columnList($table);
+        $getColumns = $this->columnList($tblName);
 
         // yoksa boş bir string geri döndürülüyor
         if(!in_array($column, $getColumns)){
@@ -1113,7 +1280,7 @@ class Mind extends PDO
         // izin verilen sütun belirtiliyor
         $scheme['column'] = $column;
 
-        $data = $this->getData($table, $scheme);
+        $data = $this->getData($tblName, $scheme);
 
         if(count($data)==1 AND isset($data[0])){
             $output = $data[0][$column];
@@ -1122,7 +1289,7 @@ class Mind extends PDO
         return $output;
     }
 
-    /**
+     /**
      * matlda function
      *
      * @param string $table
@@ -1135,7 +1302,7 @@ class Mind extends PDO
      * @param string|null $format
      * @return array
      */
-    public function matilda($table, $points=null, $keyword, $columns=[], $start=0, $end=0, $sort=null, $format=null){
+    public function matilda($table, $keyword, $points=null, $columns=[], $start=0, $end=0, $sort=null, $format=null){
 
         $points = (empty($points)) ? null : $points;
         $keyword = (isset($keyword)) ? $keyword : '';
@@ -1193,12 +1360,12 @@ class Mind extends PDO
     /**
      * Entity verification.
      *
-     * @param string $table
+     * @param string $tblName
      * @param mixed $value
-     * @param array|string|null $column
+     * @param mixed $column
      * @return bool
      */
-    public function do_have($table, $value, $column=null){
+    public function do_have($tblName, $value, $column=null){
 
         if(!is_array($value)){
             $options['search']['keyword'] = $value;
@@ -1207,7 +1374,7 @@ class Mind extends PDO
             $options['search']['and'] = $value;
         }
 
-        if(!empty($this->getData($table, $options))){
+        if(!empty($this->getData($tblName, $options))){
             return true;
         }
         return false;
@@ -1216,35 +1383,35 @@ class Mind extends PDO
     /**
      * Provides the number of the current record.
      * 
-     * @param string $table
+     * @param string $tblName
      * @param array $needle
      * @return int
      */
-    public function getId($table, $needle){
-        return $this->amelia($table, $needle, $this->increments($table));
+    public function getId($tblName, $needle){
+        return $this->amelia($tblName, $needle, $this->increments($tblName));
     }
     /**
      * New id parameter.
      *
-     * @param string $table
+     * @param string $tblName
      * @return int
      */
-    public function newId($table){
+    public function newId($tblName){
 
         $IDs = [];
         $length = 1;
-        $needle = $this->increments($table);
+        $needle = $this->increments($tblName);
 
         switch ($this->db['drive']) {
-            case 'mysql' OR 'sqlsrv':
-                foreach ($this->getData($table, array('column'=>$needle)) as $row) {
+            case 'mysql':
+                foreach ($this->getData($tblName, array('column'=>$needle)) as $row) {
                     if(!in_array($row[$needle], $IDs)){
                         $IDs[] = $row[$needle];
                     }
                 }
             break;
             case 'sqlite':
-                $getSqliteTable = $this->theodore('sqlite_sequence', array('name'=>$table));
+                $getSqliteTable = $this->theodore('sqlite_sequence', array('name'=>$tblName));
                 $IDs[] = $getSqliteTable['seq'];
             break;
             
@@ -1253,7 +1420,7 @@ class Mind extends PDO
         if(!empty($IDs)){
             $length = max($IDs)+1;
         } else {
-            $this->tableClear($table);
+            $this->tableClear($tblName);
         }
         
         return $length;
@@ -1263,10 +1430,10 @@ class Mind extends PDO
     /**
      * Auto increment column.
      *
-     * @param string $table
+     * @param string $tblName
      * @return string
      * */
-    public function increments($table){
+    public function increments($tblName){
 
         $columns = '';
         
@@ -1274,19 +1441,13 @@ class Mind extends PDO
             
             switch ($this->db['drive']) {
                 case 'mysql':
-                    $query = $this->sqlCompiler('SHOW COLUMNS FROM `' . $table. '`', 'query', PDO::FETCH_ASSOC);
+                    $query = $this->query('SHOW COLUMNS FROM `' . $tblName. '`', PDO::FETCH_ASSOC);
                     foreach ( $query as $column ) { 
                         if($column['Extra'] == 'auto_increment'){ $columns = $column['Field']; } 
                     }
                 break;
-                case 'sqlsrv':
-                    $query = $this->sqlCompiler('SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'' . $table . '\' AND COLUMNPROPERTY(object_id(TABLE_NAME), COLUMN_NAME, \'IsIdentity\') = 1', 'query',  PDO::FETCH_ASSOC);
-                    foreach ( $query as $column ) { 
-                        $columns = $column['COLUMN_NAME']; 
-                    }
-                break;
                 case 'sqlite':
-                    $statement = $this->sqlCompiler("PRAGMA TABLE_INFO(`".$table."`)", 'query');
+                    $statement = $this->query("PRAGMA TABLE_INFO(`".$tblName."`)");
                     $row = $statement->fetchAll(PDO::FETCH_ASSOC); 
                     foreach ($row as $column) {
                         if((int) $column['pk'] === 1){ $columns = $column['name']; }
@@ -1297,8 +1458,7 @@ class Mind extends PDO
             
             return $columns;
 
-        } catch (PDOException $th){
-            $this->monitor['errors'][] = $th->getMessage();
+        } catch (Exception $e){
             return $columns;
         }
 
@@ -1307,10 +1467,10 @@ class Mind extends PDO
     /**
      * Table structure converter for Mind
      * 
-     * @param string $table
+     * @param string $tblName
      * @return array
      */
-    public function tableInterpriter($table, $column = null){
+    public function tableInterpriter($tblName, $column = null){
 
         $result  = array();
         $columns = array();
@@ -1321,18 +1481,15 @@ class Mind extends PDO
 
             switch ($this->db['drive']) {
                 case 'mysql':
-                    $sql  =  'SHOW COLUMNS FROM `' . $table . '`';
+                    $sql  =  'SHOW COLUMNS FROM `' . $tblName . '`';
                 break;
-                case 'sqlsrv':
-                    $sql  =  'SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = \'' . $table . '\';';
-                break; 
                 case 'sqlite':
-                    $sql  =  'PRAGMA TABLE_INFO(`'. $table . '`)';
+                    $sql  =  'PRAGMA TABLE_INFO(`'. $tblName . '`)';
                 break;
             }
 
-            $query = $this->sqlCompiler($sql, 'query')->fetchAll(PDO::FETCH_ASSOC);
-        
+            $query = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+
             foreach ( $query as $row ) {
                 switch ($this->db['drive']) {
                     case 'mysql':
@@ -1340,17 +1497,6 @@ class Mind extends PDO
                             $row['Length'] = implode('', $this->get_contents('(',')', $row['Type']));
                             $row['Type']   = explode('(', $row['Type'])[0];
                         }
-                        
-                    break;
-                    case 'sqlsrv':
-                        $row['Type'] = $row['DATA_TYPE'];
-                        $row['Field'] = $row['COLUMN_NAME'];
-                        $row['Null']  = ($row['IS_NULLABLE'] == 'YES') ? 'NULL' : 'NOT NULL';
-                        $row['Length'] = ($row['CHARACTER_MAXIMUM_LENGTH'] == -1) ? 'MAX' : $row['CHARACTER_MAXIMUM_LENGTH'];
-                        $row['Default'] ='';
-                        $row['Extra'] = ($this->increments( $table) == $row['COLUMN_NAME']) ? 'auto_increment' : '';
-                        
-                        unset($row['TABLE_CATALOG'], $row['TABLE_SCHEMA'], $row['TABLE_NAME'], $row['COLUMN_NAME'], $row['ORDINAL_POSITION'], $row['COLUMN_DEFAULT'], $row['IS_NULLABLE'], $row['DATA_TYPE'], $row['CHARACTER_MAXIMUM_LENGTH'], $row['CHARACTER_OCTET_LENGTH'], $row['NUMERIC_PRECISION'], $row['NUMERIC_PRECISION_RADIX'], $row['NUMERIC_SCALE'], $row['DATETIME_PRECISION'], $row['CHARACTER_SET_CATALOG'], $row['CHARACTER_SET_SCHEMA'], $row['CHARACTER_SET_NAME'], $row['COLLATION_CATALOG'], $row['COLLATION_SCHEMA'], $row['COLLATION_NAME'], $row['DOMAIN_CATALOG'], $row['DOMAIN_SCHEMA'], $row['DOMAIN_NAME']);
                         
                     break;
                     case 'sqlite':                      
@@ -1376,6 +1522,7 @@ class Mind extends PDO
                 }
 
                 if(!in_array($row['Field'], $columns)){
+                    $row['Length'] = (isset($row['Length'])) ? $row['Length'] : '';
                     switch ($row['Type']) {
                         case 'int':
                             if($row['Extra'] == 'auto_increment'){
@@ -1385,23 +1532,12 @@ class Mind extends PDO
                                     $row = $row['Field'].':increments';
                                 }
                             } else {
-                                if(isset($row['Length'])){
-                                    $row = $row['Field'].':int@'.$row['Length'];
-                                } else {
-                                    $row = $row['Field'].':int';
-                                }
+                                $row = $row['Field'].':int@'.$row['Length'];
                             }
                             break;
                         case 'varchar':
                             $row = $row['Field'].':string@'.$row['Length'];
                             break;
-                        case 'nvarchar':
-                            if($row['Length'] != 'MAX'){
-                                $row = $row['Field'].':small@'.$row['Length'];
-                            } else {
-                                $row = $row['Field'].':small';
-                            }
-                        break;
                         case 'text':
                             $row = $row['Field'].':small';
                             break;
@@ -1412,14 +1548,7 @@ class Mind extends PDO
                             $row = $row['Field'].':large';
                             break;
                         case 'decimal':
-                            if($this->db['drive'] == 'sqlsrv' AND isset($row['NUMERIC_PRECISION']) AND isset($row['NUMERIC_SCALE'])){
-                                $row['Length'] = $row['NUMERIC_PRECISION'].','.$row['NUMERIC_SCALE'];
-                            }
-                            if(isset($row['Length'])){
-                                $row = $row['Field'].':decimal@'.$row['Length'];
-                            } else {
-                                $row = $row['Field'].':decimal';
-                            }
+                            $row = $row['Field'].':decimal@'.$row['Length'];
                             break;
                     }
                     $result[] = $row;
@@ -1429,8 +1558,7 @@ class Mind extends PDO
 
             return $result;
 
-        } catch (PDOException $th){
-            $this->monitor['errors'][] = $th->getMessage();
+        } catch (Exception $e){
             return $result;
         }
     }
@@ -1505,26 +1633,26 @@ class Mind extends PDO
 
         foreach ($paths as $path) {
             if(file_exists($path)){
-                foreach ($this->json_decode(file_get_contents($path)) as $dbname => $rows) {
-                    foreach ($rows as $table => $row) {
+                foreach (json_decode(file_get_contents($path), true) as $dbname => $rows) {
+                    foreach ($rows as $tblName => $row) {
 
                         $this->dbConnect(['db'=>['dbname'=>$dbname]]);
-                        $this->tableCreate($table, $row['schema']);
+                        $this->tableCreate($tblName, $row['schema']);
 
                         switch ($this->db['drive']) {
                             case 'mysql':
                                 if(!empty($row['config']['auto_increment']['length'])){
                                     $length = $row['config']['auto_increment']['length'];
-                                    $sql = "ALTER TABLE `".$table."` AUTO_INCREMENT = ".$length;
-                                    $this->sqlCompiler($sql, 'query');
+                                    $sql = "ALTER TABLE `".$tblName."` AUTO_INCREMENT = ".$length;
+                                    $this->query($sql);
                                 }
                             break;
                         }
                         
-                        if(!empty($row['data']) AND empty($this->getData($table))){
-                            $this->insert($table, $row['data']);
+                        if(!empty($row['data']) AND empty($this->getData($tblName))){
+                            $this->insert($tblName, $row['data']);
                         }
-                        $result[$dbname][$table] = $row;
+                        $result[$dbname][$tblName] = $row;
                     }
                     
                 }
@@ -1727,7 +1855,7 @@ class Mind extends PDO
                 $sql     = 'SHOW DATABASES';
 
                 try{
-                    $query = $this->sqlCompiler($sql, 'query', PDO::FETCH_ASSOC);
+                    $query = $this->query($sql, PDO::FETCH_ASSOC);
 
                     $dbnames = array();
 
@@ -1739,15 +1867,7 @@ class Mind extends PDO
 
                     return in_array($dbname, $dbnames) ? true : false;
 
-                } catch (PDOException $th){
-                    $this->monitor['errors'][] = $th->getMessage();
-                    return false;
-                }
-            break;
-            case 'sqlsrv':
-                if(in_array($dbname, $this->dbList())){
-                    return true;
-                } else {
+                } catch (Exception $e){
                     return false;
                 }
             break;
@@ -1763,48 +1883,46 @@ class Mind extends PDO
     /**
      * Table verification.
      *
-     * @param string $table
+     * @param string $tblName
      * @return bool
      */
-    public function is_table($table){
+    public function is_table($tblName){
 
         $sql = '';
 
         switch ($this->db['drive']) {
             case 'mysql':
-                $sql = 'DESCRIBE `'.$table.'`';
-            break;
-            case 'sqlsrv':
-                $sql = 'SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = \''.$table.'\'';
+                $sql = 'DESCRIBE `'.$tblName.'`';
             break;
             case 'sqlite':
-                $sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='".$table."';";
+                $sql = "SELECT name FROM sqlite_master WHERE type='table' AND name='".$tblName."';";
             break;
         }
         
         try{
-            $this->sqlCompiler($sql, 'query')->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $th){
-            $this->monitor['errors'][] = $th->getMessage();
+            return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $e){
             return false;
         }
-
-        return true;
 
     }
 
     /**
      * Column verification.
      *
-     * @param string $table
+     * @param string $tblName
      * @param string $column
      * @return bool
      * */
-    public function is_column($table, $column){
+    public function is_column($tblName, $column){
 
-        $columns = $this->columnList($table);
+        $columns = $this->columnList($tblName);
 
-        return in_array($column, $columns) ? true : false;
+        if(in_array($column, $columns)){
+            return true;
+        } else {
+            return false;
+        }        
     }
 
     /**
@@ -3496,7 +3614,6 @@ class Mind extends PDO
      */
     public function timeForPeople($datetime, $translations=[]) {
 
-        $datetime = is_null($datetime) ? '' : $datetime;
         $now = new DateTime();
         $ago = new DateTime($datetime);
         $diff = $now->diff($ago);

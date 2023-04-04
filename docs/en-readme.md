@@ -185,7 +185,7 @@ The variable that holds the database connection. The connection is terminated by
 
 ##### public $monitor
 
-It serves to keep database queries, layer, error, route and request movements that occur in the project. Database queries are kept in the key `['db']`, layers in the key `['layer']`, routes in the key `['route']`, and system errors in the `['error']`. The `public` property is defined to allow access from outside the class.
+It serves to keep database queries, layer, error, route and request movements that occur in the project. Layers in the key `['layer']`, routes in the key `['route']`, and system errors in the `['error']`. The `public` property is defined to allow access from outside the class.
 
 ##### public $parent_class
 
@@ -214,7 +214,6 @@ It is the variable that is kept in error messages, and the `public` feature is d
 
 ##### Database
 
--   [sqlCompiler](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#sqlCompiler)
 -   [dbConnect](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#dbConnect)
 -   [selectDB](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#selectDB)
 -   [dbList](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#dbList)
@@ -362,20 +361,6 @@ It is used to provide database connection in the light of the information specif
 ## __destruct()
 
 It is used to determine the fate of changing requests and situations within the methods.In addition, if there is an error status in any part, the error page is displayed.
-
----
-
-## sqlCompiler()
-
-It is the method where the database queries are made.It takes 4 parameters.
-
-The first parameter represents the `sql` query.Other parameters are not compulsory.If only the first parameter is specified, the query is processed in the `query` method and the response is returned.
-
-The second parameter can take the `method` method, `query`, `prepare`, `exec` or `null` can take parameters.By default, the `query` method is defined.
-
-The third parameter represents a variable in which the static functions of `PDO` can be sent, for example, parameters such as `PDO::fetch_column` can be sent.
-
-The fourth parameter contains the information that `beginTransaction` will be active in the type of `boolean`.By default, `false` is defined.
 
 ---
 
