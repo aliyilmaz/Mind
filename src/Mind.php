@@ -1293,8 +1293,8 @@ class Mind extends PDO
      * matlda function
      *
      * @param string $table
-     * @param array $points
      * @param string|array $keyword
+     * @param array $points
      * @param string|array|null $columns
      * @param integer|null $start
      * @param integer|null $end
