@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.5.8
+ * @version    Release: 5.5.9
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3434,6 +3434,7 @@ class Mind extends PDO
      */
     public function permalink($str, $options = array()){
 
+        $str = htmlspecialchars_decode($str);
         $plainText = $str;
         $defaults = array(
             'delimiter' => '-',
