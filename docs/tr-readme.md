@@ -1379,7 +1379,7 @@ $this->print_pre($this->getData('my_table', $options));
 
 Kayda ait birden çok sütunda yapılan arama sonuçlarının tümünde bulgu tespit edilmesi halinde, bunların `array` olarak geri döndürülmesini sağlar.
 
-***Bilgi:*** getData:column kısmında sütun tanımlama yapılmışsa bu sütunların içinde aranması istenen sütunlarında olması zorunludur.
+**Bilgi:** getData:column kısmında sütun tanımlama yapılmışsa bu sütunların içinde aranması istenen sütunlarında olması zorunludur.
 
 
 ##### Örnek
@@ -1456,7 +1456,7 @@ $options = array(
 $tblname = 'users';
 $this->print_pre($this->getData($tblname, $options));
 ```
-***Bilgi:*** getData:column kısmında sütun tanımlama yapılmışsa bu sütunların içinde aranması istenen sütunlarında olması zorunludur.
+**Bilgi:** getData:column kısmında sütun tanımlama yapılmışsa bu sütunların içinde aranması istenen sütunlarında olması zorunludur.
 
 
 #### search:delimiter Sütuna özel kelime dizisi ayracı
@@ -1496,7 +1496,7 @@ $this->print_pre($this->getData($tblname, $options));
 
 Aramaların, büyük küçük harf fark duyarlılığı olmadan yapılabilmesi için `string` olarak `like` veya `LIKE` parametresi belirtilmelidir. Bu yöntem tercih edildiğinde `%` gibi kapsam ifade eden işaretler gönderilebilir. `scope`  belirtilmez ise büyük küçük harf duyarlılığını gözeterek aramalar yapılır.
 
-****Bilgi:**** Bu özellik `search:and`, `search:or`, `search:delimiter`, `search:keyword` gibi tüm search alt özellikleriyle beraber kullanılabilir.
+**Bilgi:** Bu özellik `search:and`, `search:or`, `search:delimiter`, `search:keyword` gibi tüm search alt özellikleriyle beraber kullanılabilir.
 
 ##### Örnek
 ```php
@@ -1521,6 +1521,49 @@ $options = array(
 
 $this->print_pre($this->getData('users', $options));
 ```
+#### search:ignored Belirtilen şartlar dışındaki kayıtları dikkate almak
+Belirtilen şartları sağlayanlar dışındaki kayıtları elde etmeye yarar. 
+
+
+##### Örnek
+```php
+$options = [
+    'search'=>[
+      'ignored'=>[
+        'service_id'=>1,
+        'position_id'=>9
+      ]
+    ]
+  ];
+  $data = $this->getData('contents', $options);
+  $this->print_pre($data);
+```
+
+veya 
+
+```php
+$options = [
+    'search'=>[
+      'ignored'=>[
+        [
+          'service_id'=>1,
+          'position_id'=>6
+        ],
+        [
+          'service_id'=>1,
+          'position_id'=>9
+        ],
+        [
+          'service_id'=>1,
+          'position_id'=>4
+        ]
+      ]
+    ]
+  ];
+  $data = $this->getData('contents', $options);
+  $this->print_pre($data);
+```
+
 
 #### join: Tabloları eşitleme
 
@@ -1655,15 +1698,17 @@ $this->print_pre($this->getData('users', $options));
 
 ## samantha()
 
-Spike Jonze imzası taşıyan **Her** filminde bulunan `samantha` karakterinden esinlenerek oluşturulmuştur. Sütun adları ve o sütunlarda bakılması istenen veriler belirtildiğinde, bulunan tüm veriler geri döndürülür. Bu işlem sırasında tüm veri kümelerinin hangi sütunları barındırması gerektiği bilgisi, 3'ncü parametre ile belirlenebilir.
+Spike Jonze imzası taşıyan **Her** filminde bulunan `samantha` karakterinden esinlenerek oluşturulmuştur. Sütun adları, o sütunlarda bakılması istenen veriler ve belirtilen şartlar dışında kalan tüm verilerin elde edilmesi mümkündür. 
 
-#### 3 parametre alır; 
+#### 4 parametre alır; 
 
 * İlki tablo adının string biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunludur.
 
 * İkincisi çoklu şartın bir dizi içinde tanımlanabildiği kısımdır ve belirtilmesi zorunludur.
 
-* Üçüncüsü ise görüntülenmesi istenen sütunların string veya dizi biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunlu değildir.
+* Üçüncüsü görüntülenmesi istenen sütunların string veya dizi biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunlu değildir.
+
+* Dördüncüsü ise belirtilen şartlar dışında ki veriler istendiğinde kullanılması önerilen kısımdır ve belirtilmesi zorunlu değildir.
 
 
 ##### Örnek
@@ -1710,20 +1755,52 @@ veya
 
 $this->print_pre($this->samantha('permission', array('user_id'=>15)));
 ```
+
+veya
+```php
+$options = [
+    'service_id'=>1,
+    'position_id'=>4
+];
+$data = $this->samantha('contents', ['position_id'=>9], null, $options);
+$this->print_pre($data);
+```
+
+veya
+```php
+$options = [
+    [
+        'service_id'=>1,
+        'position_id'=>6
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>9
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>4
+    ]
+];
+$data = $this->samantha('contents', ['position_id'=>8], null, $options);
+$this->print_pre($data);
+```
 ---
 
 
 ## theodore()
 
-Tıpkı samantha gibi, bu metot da Her filminde hayat bulmuş Theodore Twombly karakterinden esinlenerek oluşturulmuştur. Kesin olarak bir adet olduğu bilinen bir kaydı  bir dizi olarak elde etmek amacıyla kullanılır.
+Tıpkı samantha gibi, bu metot da Her filminde hayat bulmuş Theodore Twombly karakterinden esinlenerek oluşturulmuştur. Kesin olarak bir adet olduğu bilinen bir kaydı bir dizi olarak elde etmek amacıyla kullanılır.
 
-#### 3 parametre alır; 
+#### 4 parametre alır; 
 
 * İlki tablo adının string biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunludur.
 
 * İkincisi çoklu şartın bir dizi içinde tanımlanabildiği kısımdır ve belirtilmesi zorunludur.
 
-* Üçüncüsü ise görüntülenmesi istenen sütunların string veya dizi biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunlu değildir.
+* Üçüncüsü görüntülenmesi istenen sütunların string veya dizi biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunlu değildir.
+
+* Dördüncüsü ise belirtilen şartlar dışında ki veriler istendiğinde kullanılması önerilen kısımdır ve belirtilmesi zorunlu değildir.
 
 
 ##### Örnek
@@ -1761,13 +1838,39 @@ veya
 $this->print_pre($this->theodore('permission', array('user_id'=>15)));
 ```
 
+veya
+```php
+$options = [
+    'service_id'=>1,
+    'position_id'=>4
+  ];
+$data = $this->theodore('contents', ['id'=>2], null, $options);
+$this->print_pre($data);
+```
+
+veya
+```php
+$options = [    
+    [
+        'service_id'=>1,
+        'position_id'=>9
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>4
+    ]
+];
+$data = $this->theodore('contents', ['id'=>2], null, $options);
+$this->print_pre($data);
+```
+
 ---
 
 ## amelia()
 
 samantha ve theodore metotlarında olduğu gibi amelia da Her filminden esinlenerek oluşturulmuştur. Görevi sadece bir adet olduğu bilinen bir kaydın belirtilen sütun verisini elde etmek, şartları sağlamadığında ise boş bir yanıt döndürmektedir.
 
-#### 3 parametre alır; 
+#### 4 parametre alır; 
 
 * İlki tablo adının string biçiminde tanımlanabildiği kısımdır ve belirtilmesi zorunludur.
 
@@ -1775,12 +1878,40 @@ samantha ve theodore metotlarında olduğu gibi amelia da Her filminden esinlene
 
 * Üçüncüsü ise görüntülenmesi istenen sütunun string biçimde tanımlanabildiği kısımdır ve belirtilmesi zorunludur.
 
+* Dördüncüsü ise belirtilen şartlar dışında ki veriler istendiğinde kullanılması önerilen kısımdır ve belirtilmesi zorunlu değildir.
+
 
 ##### Örnek
 ```php
 // 208
 
 $this->print_pre($this->amelia('permission', array('user_id'=>15), 'id'));
+```
+
+veya
+```php
+$options = [
+    'service_id'=>1,
+    'position_id'=>4
+  ];
+$data = $this->amelia('contents', ['id'=>2], 'title', $options);
+echo $data;
+```
+
+veya
+```php
+$options = [    
+    [
+        'service_id'=>1,
+        'position_id'=>9
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>4
+    ]
+];
+$data = $this->amelia('contents', ['id'=>2], 'title', $options);
+echo $data;
 ```
 ---
 
@@ -1793,6 +1924,7 @@ Elde edilen verilerin;
 Hangi sütunlarının görüntüleneceği
 Kaç adet verinin görüntüleneceği
 Kaç adet verinin gözardı edileceği
+Hangi koşulu sağlayanlar dışındaki verilerin dikkate alınması gerektiği
 Hangi kayıt aralığının elde edileceği
 Verilerin sıralanması (sütuna göre de sıralama mümkündür)
 Verilerin formatı (return array | json)
@@ -1805,30 +1937,34 @@ gibi isterler belirtilebilir.
 
 Dördüncü parametre `string` veya `array` türünde belirtilen görüntülenmesi istenen sütun isimleridir ve belirtilmesi zorunlu değildir, eğer belirtilmeyecek ise `null`, `[]` veya `''` değerlerinden biri atanarak tüm sütunların görüntülenmesi sağlanmış olur. 
 
-Beşinci parametre gözardı edilecek kayıt sayısını belirtmek için kullanılır ve belirtimesi zorunlu değildir eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir. Altıncı parametre, kayıt sayısını sınırlamak için kullanır ve belirtilmesi zorunlu değildir, eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir.
+Beşinci parametre hangi koşulu sağlayanlar dışındaki verilerin dikkate alınacağını belirlemek için kullanılır, eğer böyle bir filtrasyon yapılmayacaksa `null`, `[]` veya `''` değerlerinden biri belirtilmelidir.
 
-Yedinci parametre elde edilen kayıtların yeniden eskiye ya da eskiden yeniye göre sıralanması amacıyla kullanılır ve zorunlu değildir, eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir, varsayılan olarak kayıtlar `ASC` ilkesiyle küçükten büyüğe sıralanmaktadır eğer sadece `sutunadi` gönderilirse buna göre sıralanacaktır. Bir diğer kullanımı ise `sutunadi:desc` şeklindedir, bu kullanımda da sütun adına göre sıralama ilkesiyle sıralanır. Sıralama ilkesi `asc` veya `desc` olarak belirtilebilir olup büyük küçük harf duyarlılığı bulunmamaktadır.
+Altıncı parametre gözardı edilecek kayıt sayısını belirtmek için kullanılır ve belirtimesi zorunlu değildir eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir. 
 
-Sekizinci parametre kayıtlar kümesinin çıktı formatını barındırır ve zorunlu değildir. Varsayılan olarak verilerin `array` olarak geri döndürülmesi sağlanmıştır, `json` türünde temini arzu ediliyorsa `json` değerini göndermek yeterlidir. Eğer belirtilmeyecek ise ayrıca bir değer göndermeye gerek yoktur lakin yine de belirtmek isterseniz `0`, `null`, `[]` veya `''` değerlerinden birisi atanabilir.
+Yedinci parametre, kayıt sayısını sınırlamak için kullanır ve belirtilmesi zorunlu değildir, eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir.
+
+Sekizinci parametre elde edilen kayıtların yeniden eskiye ya da eskiden yeniye göre sıralanması amacıyla kullanılır ve zorunlu değildir, eğer belirtilmeyecek ise `0`, `null`, `[]` veya `''` değerlerinden biri atanabilir, varsayılan olarak kayıtlar `ASC` ilkesiyle küçükten büyüğe sıralanmaktadır eğer sadece `sutunadi` gönderilirse buna göre sıralanacaktır. Bir diğer kullanımı ise `sutunadi:desc` şeklindedir, bu kullanımda da sütun adına göre sıralama ilkesiyle sıralanır. Sıralama ilkesi `asc` veya `desc` olarak belirtilebilir olup büyük küçük harf duyarlılığı bulunmamaktadır.
+
+Dokuzuncu parametre kayıtlar kümesinin çıktı formatını barındırır ve zorunlu değildir. Varsayılan olarak verilerin `array` olarak geri döndürülmesi sağlanmıştır, `json` türünde temini arzu ediliyorsa `json` değerini göndermek yeterlidir. Eğer belirtilmeyecek ise ayrıca bir değer göndermeye gerek yoktur lakin yine de belirtmek isterseniz `0`, `null`, `[]` veya `''` değerlerinden birisi atanabilir.
 
 
 
 ```php
-$data = $this->matilda('users', 'ali%', null, null, 0);
+$data = $this->matilda('users', 'ali%', null, null, null, 0);
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', 'a%',  null, 'username', null, 4);
+$data = $this->matilda('users', 'a%', null, 'username', null, null, 4);
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], 4);
+$data = $this->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], null, 4);
 $this->print_pre($data);
 ```
 
@@ -1842,14 +1978,40 @@ $this->print_pre($data);
 veya
 
 ```php
-$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'id:desc');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 0, 2, 'id:desc');
 $this->print_pre($data);
 ```
 
 veya
 
 ```php
-$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'username', 'json');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 0, 2, null, 'json');
+$this->print_pre($data);
+```
+
+veya
+
+```php
+$options = [
+    'group_name'=>'admin'
+];
+$data = $this->matilda('users', ['%ali%'], null, null, $options);
+$this->print_pre($data);
+
+```
+
+veya
+
+```php
+$options = [    
+    [
+        'group_name'=>'write',
+    ],
+    [
+        'status'=>1
+    ]
+];
+$data = $this->matilda('users', ['%ali%'], null, null, $options);
 $this->print_pre($data);
 ```
 
@@ -1862,6 +2024,8 @@ Bir veya daha fazla verinin, tam eşleşme prensibiyle veritabanı tablosunda bu
 Bu tür bir kontrolü, aynı üye bilgileriyle tekrar kayıt olunmasını istemediğimiz durumlarda veya Select box'dan gönderilen verilerin gerçekten select box'ın edindiği kaynakla aynılığını kontrol etmemiz gereken durumlarda kullanırız. 
 
 `$tblname` tablo adını, `$str` veriyi, `$column` verinin olup olmadığına bakılan sütunu temsil etmektedir, eğer `$column` değişkeni boş bırakılırsa veri, tablo'nun tüm sütunlarında aranır. `$str` string olarak belirtilebildiği gibi, sütun adını anahtar olarak kullanan bir dizi yapısıyla da belirtilebilir.
+
+`$ignored` değişkeni, belirtilen şartlar dışında kalan kayıtları dikkate almaya yarar. Belirtilmesi zorunlu değildir.
 
 Arama sonucunda eşleşen kayıt bulunursa yanıt olarak `true` değeri döndürülür, bulunmazsa da `false` değeri döndürülür.
 
@@ -1912,6 +2076,25 @@ if($this->do_have('users', array('email'=>'aliyilmaz.work@gmail.com'))){
 }
 ```
 
+veya
+
+```php
+if($this->do_have('users', 'ceyda', null, ['status'=>1])){
+    echo 'true';
+} else {
+    echo 'false';
+}
+```
+
+veya
+
+```php
+if($this->do_have('users', 'ceyda', null, [['status'=>1],['email'=>'ceyda1@example.com']])){
+    echo 'true';
+} else {
+    echo 'false';
+}
+```
 
 ---
 
@@ -5075,7 +5258,7 @@ veya
 
 
 
-****Bilgi:**** Chrome, Firefox tarayıcılarınında test edilmiştir. Cep telefonu yoluyla paylaşılan konumların doğruluk oranı ortalama 4 ile 12 m2'dir. Eski nesil GPS modüle sahip masaüstü bilgisayar yoluyla paylaşılan konumların doğruluk oranı ise ortalama 7.000 m2'dir.
+**Bilgi:** Chrome, Firefox tarayıcılarınında test edilmiştir. Cep telefonu yoluyla paylaşılan konumların doğruluk oranı ortalama 4 ile 12 m2'dir. Eski nesil GPS modüle sahip masaüstü bilgisayar yoluyla paylaşılan konumların doğruluk oranı ise ortalama 7.000 m2'dir.
 
 ---
 

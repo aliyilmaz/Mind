@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.5.9
+ * @version    Release: 5.6.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -1085,6 +1085,29 @@ class Mind extends PDO
             }
         }
 
+        $ignoredBox = array();
+        
+        if(isset($options['search']['ignored'])){
+            if(isset($options['search']['ignored'][0])){
+                foreach ($options['search']['ignored'] as $rows) {
+                    $ign = [];
+                    foreach ($rows as $key => $row) {
+                        $ign[] =  $key.'=?';
+                        $executeArray[] = $row;
+                    }  
+                    $ignoredBox[] = '('.implode(' AND ', $ign).')';
+                    
+                }
+            } else {
+                $ign = [];
+                foreach ($options['search']['ignored'] as $key => $row) {
+                    $ign[] =  $key.'=?';
+                    $executeArray[] = $row;
+                }
+                $ignoredBox[] = implode(' AND ', $ign);
+            }
+        }
+
         if(
             !empty($options['search']['or']) OR
             !empty($options['search']['and']) OR
@@ -1092,6 +1115,10 @@ class Mind extends PDO
         ){
             $sql = 'WHERE '.implode($delimiter, $sqlBox);            
         }
+        
+        $SP = (!empty($sql)) ? ' AND' : ' WHERE';
+        
+        $sql .= (!empty($ignoredBox)) ? $SP.' NOT ('.implode(' OR ', $ignoredBox).')' : '';
 
         if(!empty($options['sort'])){
 
@@ -1126,7 +1153,7 @@ class Mind extends PDO
 
         try{
 
-            $query = $this->prepare('SELECT '.$sqlColumns.' FROM `'.$tblName.'` '.$sql);
+            $query = $this->prepare($this->sql);
             $query->execute($executeArray);
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1152,14 +1179,19 @@ class Mind extends PDO
      * @param string $tblName
      * @param array $map
      * @param mixed $column
+     * @param mixed $ignored
      * @return array
      */
-    public function samantha($tblName, $map, $column=null, $status=false)
+    public function samantha($tblName, $map, $column=null, $ignored=null)
     {
         $output = array();
         $columns = array();
 
         $scheme['search']['and'] = $map;
+
+        if(!is_null($ignored)) {
+            $scheme['search']['ignored'] = $ignored;
+        }
 
         // Sütun(lar) belirtilmişse
         if (!empty($column)) {
@@ -1200,44 +1232,13 @@ class Mind extends PDO
      * @param string $tblName
      * @param array $map
      * @param mixed $column
+     * @param mixed $ignored
      * @return array
      * 
      */
-    public function theodore($tblName, $map, $column=null){
-
-        $output = array();
-        $columns = array();
-
-        $scheme['search']['and'] = $map;
-
-        // Sütun(lar) belirtilmişse
-        if (!empty($column)) {
-
-            // bir sütun belirtilmişse
-            if(!is_array($column)){
-                $columns = array($column);
-            } else {
-                $columns = $column;
-            }
-
-            // tablo sütunları elde ediliyor
-            $getColumns = $this->columnList($tblName);
-
-            // belirtilen sütun(lar) var mı bakılıyor
-            foreach($columns as $column){
-
-                // yoksa boş bir array geri döndürülüyor
-                if(!in_array($column, $getColumns)){
-                    return [];
-                }
-
-            }
-
-            // izin verilen sütun(lar) belirtiliyor
-            $scheme['column'] = $columns;
-        }
-
-        $data = $this->getData($tblName, $scheme);
+    public function theodore($tblName, $map, $column=null, $ignored=null){
+       
+        $data = $this->samantha($tblName, $map, $column, $ignored);
 
         if(count($data)==1 AND isset($data[0])){
             $output = $data[0];
@@ -1255,32 +1256,15 @@ class Mind extends PDO
      * @param string $tblName
      * @param array $map
      * @param string $column
+     * @param mixed $ignored
      * @return string
      * 
      */
-    public function amelia($tblName, $map, $column){
+    public function amelia($tblName, $map, $column, $ignored=null){
 
         $output = '';
 
-        $scheme['search']['and'] = $map;
-
-        // Sütun string olarak gönderilmemişse
-        if (!is_string($column)) {
-            return $output;
-        }
-
-        // tablo sütunları elde ediliyor
-        $getColumns = $this->columnList($tblName);
-
-        // yoksa boş bir string geri döndürülüyor
-        if(!in_array($column, $getColumns)){
-            return $output;
-        }
-
-        // izin verilen sütun belirtiliyor
-        $scheme['column'] = $column;
-
-        $data = $this->getData($tblName, $scheme);
+        $data = $this->samantha($tblName, $map, $column, $ignored);
 
         if(count($data)==1 AND isset($data[0])){
             $output = $data[0][$column];
@@ -1290,7 +1274,7 @@ class Mind extends PDO
     }
 
      /**
-     * matlda function
+     * matilda function
      *
      * @param string $table
      * @param string|array $keyword
@@ -1300,9 +1284,10 @@ class Mind extends PDO
      * @param integer|null $end
      * @param integer|null $sort
      * @param string|null $format
+     * @param mixed $ignored
      * @return array
      */
-    public function matilda($table, $keyword, $points=null, $columns=[], $start=0, $end=0, $sort=null, $format=null){
+    public function matilda($table, $keyword, $points=null, $columns=[], $ignored=null, $start=0, $end=0, $sort=null, $format=null){
 
         $points = (empty($points)) ? null : $points;
         $keyword = (isset($keyword)) ? $keyword : '';
@@ -1348,6 +1333,10 @@ class Mind extends PDO
             unset($options['search']['and']); 
             unset($options['search']['delimiter']); 
         }
+
+        if(!empty($ignored)){
+            $options['search']['ignored'] = $ignored;
+        }
         
         if(is_null($start)) { unset($options['limit']['start']); }
         if(is_null($end)) { unset($options['limit']['end']); }
@@ -1363,9 +1352,10 @@ class Mind extends PDO
      * @param string $tblName
      * @param mixed $value
      * @param mixed $column
+     * @param mixed $ignored
      * @return bool
      */
-    public function do_have($tblName, $value, $column=null){
+    public function do_have($tblName, $value, $column=null, $ignored=null){
 
         if(!is_array($value)){
             $options['search']['keyword'] = $value;
@@ -1373,8 +1363,14 @@ class Mind extends PDO
         } else {
             $options['search']['and'] = $value;
         }
+        
+        if(!empty($ignored)){
+            $options['search']['ignored'] = $ignored;
+        }
 
-        if(!empty($this->getData($tblName, $options))){
+        $data = $this->getData($tblName, $options);
+        
+        if(!empty($data)){
             return true;
         }
         return false;

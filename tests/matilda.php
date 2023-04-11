@@ -12,26 +12,43 @@ $Mind = new Mind([
     ]
 ]);
 
-$data = $Mind->matilda('users', 'ali%', null, null, 0);
+// $data = $Mind->matilda('users', 'ali%', null, null, null, 0);
 // $Mind->print_pre($data);
 
-// table null|[]|[[]] keyword columns start and
-// $data = $Mind->matilda('users', 'a%', null, 'username', null, 4);
+
+// $data = $Mind->matilda('users', 'a%', null, 'username', null, null, 4);
 // $Mind->print_pre($data);
 
-// table null|[]|[[]] ''|[]|null ''|[]|null integer|null integer|null
-// $data = $Mind->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], 4);
+
+// $data = $Mind->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], null, 4);
 // $Mind->print_pre($data);
 
-// table null|[]|[[]] keyword columns start and
+
 // $data = $Mind->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 2);
 // $Mind->print_pre($data);
 
-// table null|[]|[[]] ''|[]|null ''|[]|null integer|null integer|null null|''
-// $data = $Mind->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'id:desc');
+
+// $data = $Mind->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 0, 2, 'id:desc');
 // $Mind->print_pre($data);
 
-// table null|[]|[[]] ''|[]|null ''|[]|null integer|null integer|null null|'' null|''
-// $data = $Mind->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'username', 'json');
 
+// $data = $Mind->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 0, 2, null, 'json');
+// $Mind->print_pre($data);
+
+
+// $options = [
+//     'group_name'=>'admin'
+// ];
+// $data = $Mind->matilda('users', ['%ali%'], null, null, $options);
+// $Mind->print_pre($data);
+
+$options = [    
+    [
+        'group_name'=>'write',
+    ],
+    [
+        'status'=>1
+    ]
+];
+$data = $Mind->matilda('users', ['%ali%'], null, null, $options);
 $Mind->print_pre($data);

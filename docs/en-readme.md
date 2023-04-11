@@ -1551,6 +1551,49 @@ $options = array(
 $this->print_pre($this->getData('users', $options));
 ```
 
+#### search:ignored To take into account the records other than the specified conditions
+It is used to obtain records other than those who meet the specified requirements.
+
+
+##### Örnek
+```php
+$options = [
+    'search'=>[
+      'ignored'=>[
+        'service_id'=>1,
+        'position_id'=>9
+      ]
+    ]
+  ];
+  $data = $this->getData('contents', $options);
+  $this->print_pre($data);
+```
+
+**or** 
+
+```php
+$options = [
+    'search'=>[
+      'ignored'=>[
+        [
+          'service_id'=>1,
+          'position_id'=>6
+        ],
+        [
+          'service_id'=>1,
+          'position_id'=>9
+        ],
+        [
+          'service_id'=>1,
+          'position_id'=>4
+        ]
+      ]
+    ]
+  ];
+  $data = $this->getData('contents', $options);
+  $this->print_pre($data);
+```
+
 #### join: Syncing tables
 
 It provides results by matching columns in different tables with each other. It supports `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL OUTER JOIN` matching types and is not case sensitive. The usage example is presented below for your information. `name` represents the matching type, `tables` represents the tables to be mapped, `primary` represents the column equivalent in the reference table, `secondary` represents the column equivalent in the table in question, and `fields` represents the column names to be displayed. If `fields` is left blank, all columns will be displayed.
@@ -1686,15 +1729,17 @@ $this->print_pre($this->getData('users', $options));
 
 ## samantha()
 
-It was inspired by the character `samantha` in the movie **Her** by Spike Jonze. When the column names and the data to be viewed in those columns are specified, all found data is returned. During this process, the information of which columns all data sets should contain can be determined with the 3rd parameter.
+Spike Jonze was inspired by the character `samantha` found in the film **Her**. It is possible to obtain all the data except the column names, the data required to be viewed in those columns and the conditions specified.
 
-#### It takes 3 parameters; 
+#### It takes 4 parameters; 
 
 * The first is the part where the table name can be defined in the form of string and must be specified.
 
 * The second is the part where multiple conditions can be defined within a number and must be specified.
 
-* The third is the part in which the columns that are desired to be displayed can be defined in the form of string or sequence and are not required.
+* The third is the part in which the columns that are desired to be displayed can be defined in the form of a string or array and are not required.
+
+* The fourth is the recommended portion of the data other than the specified conditions and it is not compulsory.
 
 
 ##### Example
@@ -1743,6 +1788,36 @@ $this->print_pre($this->samantha('permission', array('user_id'=>15), array('id',
 
 $this->print_pre($this->samantha('permission', array('user_id'=>15)));
 ```
+
+**or**
+```php
+$options = [
+    'service_id'=>1,
+    'position_id'=>4
+];
+$data = $this->samantha('contents', ['position_id'=>9], null, $options);
+$this->print_pre($data);
+```
+
+**or**
+```php
+$options = [
+    [
+        'service_id'=>1,
+        'position_id'=>6
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>9
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>4
+    ]
+];
+$data = $this->samantha('contents', ['position_id'=>8], null, $options);
+$this->print_pre($data);
+```
 ---
 
 
@@ -1750,13 +1825,15 @@ $this->print_pre($this->samantha('permission', array('user_id'=>15)));
 
 Just like Samantha, this method was created in inspiration from the character of Theodore Twombly, which came to life in every film.It is used to obtain a registration known to be a certain one as a series.
 
-#### It takes 3 parameters; 
+#### It takes 4 parameters; 
 
 * The first is the part where the table name can be defined in the form of string and must be specified.
 
 * The second is the part where multiple conditions can be defined within a number and must be specified.
 
-* The third is the part in which the columns that are desired to be displayed can be defined in the form of string or sequence and are not required.
+* The third is the part in which the columns that are desired to be displayed can be defined in the form of a string or array and are not required.
+
+* The fourth is the recommended portion of the data other than the specified conditions and it is not compulsory.
 
 
 ##### Example
@@ -1796,19 +1873,47 @@ $this->print_pre($this->theodore('permission', array('user_id'=>15), array('id',
 $this->print_pre($this->theodore('permission', array('user_id'=>15)));
 ```
 
+**or**
+```php
+$options = [
+    'service_id'=>1,
+    'position_id'=>4
+  ];
+$data = $this->theodore('contents', ['id'=>2], null, $options);
+$this->print_pre($data);
+```
+
+**or**
+```php
+$options = [    
+    [
+        'service_id'=>1,
+        'position_id'=>9
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>4
+    ]
+];
+$data = $this->theodore('contents', ['id'=>2], null, $options);
+$this->print_pre($data);
+```
+
 ---
 
 ## amelia()
 
 As in Samantha and Theodore methods, Amelia was inspired by every film.The task returns an empty response if it does not meet the conditions of a record that is known to be only one record.
 
-#### It takes 3 parameters; 
+#### It takes 4 parameters; 
 
 * The first is the part where the table name can be defined in the form of string and must be specified.
 
 * The second is the part where multiple conditions can be defined within a number and must be specified.
 
 * The third is the part where the column to be displayed can be defined in a string form and must be specified.
+
+* The fourth is the recommended portion of the data other than the specified conditions and it is not compulsory.
 
 
 ##### Example
@@ -1817,51 +1922,85 @@ As in Samantha and Theodore methods, Amelia was inspired by every film.The task 
 
 $this->print_pre($this->amelia('permission', array('user_id'=>15), 'id'));
 ```
+
+
+**or**
+```php
+$options = [
+    'service_id'=>1,
+    'position_id'=>4
+  ];
+$data = $this->amelia('contents', ['id'=>2], 'title', $options);
+echo $data;
+```
+
+**or**
+```php
+$options = [    
+    [
+        'service_id'=>1,
+        'position_id'=>9
+    ],
+    [
+        'service_id'=>1,
+        'position_id'=>4
+    ]
+];
+$data = $this->amelia('contents', ['id'=>2], 'title', $options);
+echo $data;
+```
+
 ---
 
 ## matilda()
 Inspired by the name of Matilda, the fictional character of the 1996 movie Matilda, this method serves to search for one or more parameters with the `like` container, thereby allowing the use of the `%` operator.
 
-The data obtained;
+Data obtained;
 
 Which columns will be displayed
 How many data will be displayed
 How many data will be ignored
-What recording range will be obtained
-Sorting data (sort by column is also possible)
-Format of data (return array | json)
+Which condition should be taken into consideration.
+Which record range will be achieved
+Sorting the data (it is also possible to sort according to the column)
+Format of Data (Return Array | JSON)
 
-may be specified as such.
+such as they can be specified.
 
 The first parameter is the table name and must be specified as `string`, the second parameter is words of type `string` or `array` and must be specified.
 
-The third parameter is used to select a record and must be specified in `array` type. If no selection will be made and other parameters are desired to be sent, one of the values `null`, `[]` or `''` can be assigned to the third parameter.
+The third parameter is used to select a record and must be specified in `array` type. If selection is not made and other parameters are desired to be sent, one of the values `null`, `[]` or `''` can be assigned to the third parameter.
 
-The fourth parameter is the column names specified in `string` or `array` type and it is not required to be specified.
+The fourth parameter is the column names that are specified as `string` or `array` type and are not required to be specified, If it is not specified, one of the values `null`, `[]` or `''` will be assigned to display all columns.
 
-The fifth parameter is used to specify the number of records to be ignored and is not required. The sixth parameter is used to limit the number of records and is not required, if not specified, one of the values `0`, `null`, `[]` or `''` can be set.
+The fifth parameter is used to determine which condition to consider data other than those that satisfy, if no such filtration will be made, one of the values `null`, `[]` or `''` must be specified.
 
-The seventh parameter is used to sort the obtained records from new to old or newest and is not mandatory, if not specified, one of the values `0`, `null`, `[]` or `''` can be assigned, by default, records are assigned with the `ASC` policy. they are sorted from smallest to largest if only `columnname` is sent, it will be sorted accordingly. Another usage is `columnname:desc`, in this usage it is sorted by column name sorting principle. The sorting policy can be specified as `asc` or `desc` and is not case sensitive.
+The sixth parameter is used to specify the number of records to be ignored and is not required, if not specified, one of the values `0`, `null`, `[]` or `''` can be assigned.
 
-The eighth parameter contains the output format of the recordset and is not mandatory. By default, the data is returned as `array`, if it is desired to be supplied in `json` type, it is sufficient to send `json` value. If it is not specified, there is no need to send a value, but if you still want to specify it, one of the values `0`, `null`, `[]` or `''` can be assigned.
+The seventh parameter is used to limit the number of records and is not required to be specified, if not specified, one of the values `0`, `null`, `[]` or `''` can be assigned.
+
+The eighth parameter is used to sort the obtained records from new to old or old to new, and is not mandatory, if omitted, one of the values `0`, `null`, `[]` or `''` can be assigned, by default records are sorted by `ASC` policy from smallest to largest if only `columnname` is sent they will be sorted accordingly. Another usage is `columnname:desc`, in this usage it is sorted by column name sorting principle. The sorting policy can be specified as `asc` or `desc` and is not case sensitive.
+
+The ninth parameter contains the output format of the recordset and is not mandatory. By default, data is returned as `array`, If `json` type is desired, it is sufficient to send `json` value. If it is not specified, there is no need to send a value, but if you still want to specify it, one of the values `0`, `null`, `[]` or `''` can be assigned.
+
 
 
 ```php
-$data = $this->matilda('users', 'ali%', null, null, 0);
+$data = $this->matilda('users', 'ali%', null, null, null, 0);
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', 'a%',  null, 'username', null, 4);
+$data = $this->matilda('users', 'a%', null, 'username', null, null, 4);
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], 4);
+$data = $this->matilda('users', ['%a%'], [['id'=>1]], ['username','avatar'], null, 4);
 $this->print_pre($data);
 ```
 
@@ -1875,14 +2014,40 @@ $this->print_pre($data);
 **or**
 
 ```php
-$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'id:desc');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 0, 2, 'id:desc');
 $this->print_pre($data);
 ```
 
 **or**
 
 ```php
-$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], 0, 2, 'username', 'json');
+$data = $this->matilda('users', ['%a%'], [['id'=>1],['id'=>2]], ['username','avatar'], null, 0, 2, null, 'json');
+$this->print_pre($data);
+```
+
+**or**
+
+```php
+$options = [
+    'group_name'=>'admin'
+];
+$data = $this->matilda('users', ['%ali%'], null, null, $options);
+$this->print_pre($data);
+
+```
+
+**or**
+
+```php
+$options = [    
+    [
+        'group_name'=>'write',
+    ],
+    [
+        'status'=>1
+    ]
+];
+$data = $this->matilda('users', ['%ali%'], null, null, $options);
 $this->print_pre($data);
 ```
 
@@ -1895,6 +2060,8 @@ It is used to check whether one or more data exists in the database table with t
 We use such a control in cases where we do not want to register with the same member information, or when we really need to check the data sent from the Select Box with the source of the Select Box.
 
 `$tblname` represents the table name, `$str` represents the data, `$column` represents the column to see if there is data, if the variable `$column` is left blank, the data is searched in all columns of the table. `$str` can be specified as a string or as an array structure using the column name as the key.
+
+The `$ignored` variable serves to take into account the records other than the specified conditions.It is not necessary to specify.
 
 If a matching record is found in the search result, `true` is returned, otherwise `false` is returned.
 
@@ -1948,6 +2115,25 @@ if($this->do_have('users', array('email'=>'aliyilmaz.work@gmail.com'))){
 }
 ```
 
+**or**
+
+```php
+if($this->do_have('users', 'ceyda', null, ['status'=>1])){
+    echo 'true';
+} else {
+    echo 'false';
+}
+```
+
+**or**
+
+```php
+if($this->do_have('users', 'ceyda', null, [['status'=>1],['email'=>'ceyda1@example.com']])){
+    echo 'true';
+} else {
+    echo 'false';
+}
+```
 
 ---
 
