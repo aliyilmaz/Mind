@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.0
+ * @version    Release: 5.6.1
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3727,25 +3727,14 @@ class Mind extends PDO
      * @param string $url
      * @return int
      */
-    public function remoteFileSize($url){
-        $ch = curl_init($url);
-
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        curl_setopt($ch, CURLOPT_HEADER, TRUE);
-        curl_setopt($ch, CURLOPT_NOBODY, TRUE);
-
-        curl_exec($ch);
-
-        $response_code = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-
-        curl_close($ch);
-
-        if(!in_array($response_code, array('200'))){
-            return -1;
-        }
-        return $size;
-    }
+    function remoteFileSize( $url ) {
+        $filesize = -1;
+        if($this->is_http($url) OR $this->is_https($url)){
+            $headers = get_headers($url, 1);
+            $filesize = $headers['Content-Length'];
+        } 
+        return $filesize;
+      }
 
     /**
      * Layer installer
