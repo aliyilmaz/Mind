@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.2
+ * @version    Release: 5.6.3
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3209,11 +3209,7 @@ class Mind
                     if($this->post[$name] == $_SESSION['csrf']['token']){
                         unset($this->post[$name]);
                     } else {
-                        if($this->parent_class == 'PDO'){
-                            $this->abort('401', 'A valid token could not be found.');
-                        } else {
-                            unset($this->post[$name]);
-                        }
+                        $this->abort('401', 'A valid token could not be found.');
                     }
                 } else {
                     $this->abort('400', 'Token not found.');
@@ -3223,14 +3219,11 @@ class Mind
 
             if(!isset($_SESSION['csrf']) OR $_SERVER['REQUEST_METHOD'] === 'POST'){
 
-                if($this->parent_class == 'PDO'){
-                    $_SESSION['csrf'] = array(
-                        'name'  =>  $name,
-                        'token' =>  $this->generateToken($limit)                    
-                    );
-                    $_SESSION['csrf']['input'] = "<input type=\"hidden\" name=\"".$_SESSION['csrf']['name']."\" value=\"".$_SESSION['csrf']['token']."\">";
-
-                }
+                $_SESSION['csrf'] = array(
+                    'name'  =>  $name,
+                    'token' =>  $this->generateToken($limit)                    
+                );
+                $_SESSION['csrf']['input'] = "<input type=\"hidden\" name=\"".$_SESSION['csrf']['name']."\" value=\"".$_SESSION['csrf']['token']."\">";
             }
 
         } else {
