@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.1
+ * @version    Release: 5.6.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -14,7 +14,7 @@
 /**
  * Class Mind
  */
-class Mind extends PDO
+class Mind
 {
     public $session_path    =   null; // ./session/ or null(system path)
 
@@ -109,6 +109,7 @@ class Mind extends PDO
 
         /* Determining the previous page address */
         $this->page_back = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : $this->page_current;
+
     }
 
     public function __destruct()
@@ -134,13 +135,13 @@ class Mind extends PDO
 
             switch ($this->db['drive']) {
                 case 'mysql': 
-                    $this->conn = parent::__construct($this->db['drive'].':host='.$this->db['host'].';charset='.$this->db['charset'].';', $this->db['username'], $this->db['password']);
+                    $this->conn = new PDO($this->db['drive'].':host='.$this->db['host'].';charset='.$this->db['charset'].';', $this->db['username'], $this->db['password']);
                 break;
                 case 'sqlsrv':
-                    $this->conn = parent::__construct($this->db['drive'].':Server='.$this->db['host'].';', $this->db['username'], $this->db['password']);
+                    $this->conn = new PDO($this->db['drive'].':Server='.$this->db['host'].';', $this->db['username'], $this->db['password']);
                 break;
                 case 'sqlite':
-                    $this->conn = parent::__construct($this->db['drive'].':'.$this->db['dbname']);
+                    $this->conn = new PDO($this->db['drive'].':'.$this->db['dbname']);
                 break;
                 default:
                 $this->abort('503', 'Invalid database driver.');
@@ -160,6 +161,9 @@ class Mind extends PDO
 
             if(stristr($th->errorInfo[2], 'php_network_getaddresses: getaddrinfo')){
                 $this->abort('502', 'Invalid database connection address.');
+            }
+            if(stristr($th->errorInfo[2], 'Too many connections')){
+                $this->abort('401', 'We have restricted your access due to intensity.');
             }
 
             if(stristr($th->errorInfo[2], 'Access denied for user')){
@@ -189,17 +193,17 @@ class Mind extends PDO
 
             switch ($this->db['drive']) {
                 case 'mysql':                    
-                    $this->exec("USE ".$dbName);
+                    $this->conn->exec("USE ".$dbName);
                 break;
             }
         } else {
             return false;
         }
         
-        $this->setAttribute( PDO::ATTR_EMULATE_PREPARES, true );
-        $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
-        $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
-        $this->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
+        $this->conn->setAttribute( PDO::ATTR_EMULATE_PREPARES, true );
+        $this->conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT );
+        $this->conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING );
+        $this->conn->setAttribute( PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION );
         return true;
     }
 
@@ -217,7 +221,7 @@ class Mind extends PDO
                 $sql     = 'SHOW DATABASES';
 
                 try{
-                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+                    $query = $this->conn->query($sql, PDO::FETCH_ASSOC);
 
                     foreach ( $query as $database ) {
                         $dbnames[] = implode('', $database);
@@ -255,7 +259,7 @@ class Mind extends PDO
                 case 'mysql':
                     $dbParameter = (!is_null($dbname)) ? ' FROM '.$dbname : '';
                     $sql = 'SHOW TABLES'.$dbParameter;
-                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+                    $query = $this->conn->query($sql, PDO::FETCH_ASSOC);
                     foreach ($query as $tblName){
                         $tblNames[] = implode('', $tblName);
                     }
@@ -264,12 +268,12 @@ class Mind extends PDO
 
                     $this->selectDB($dbname);
                     $sql = 'SELECT name, type FROM sys.tables';
-                    $query = $this->query($sql);
+                    $query = $this->conn->query($sql);
                     $tblNames = $query->fetchAll(PDO::FETCH_COLUMN);
                 break;
                 
                 case 'sqlite':
-                    $statement = $this->query("SELECT name FROM sqlite_master WHERE type='table';");
+                    $statement = $this->conn->query("SELECT name FROM sqlite_master WHERE type='table';");
                     $query = $statement->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($query as $tblName){
                         $tblNames[] = $tblName['name'];
@@ -299,7 +303,7 @@ class Mind extends PDO
                 $sql = 'SHOW COLUMNS FROM `' . $tblName.'`';
 
                 try{
-                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+                    $query = $this->conn->query($sql, PDO::FETCH_ASSOC);
 
                     $columns = array();
 
@@ -314,7 +318,7 @@ class Mind extends PDO
             break;
             case 'sqlite':
                 
-                $statement = $this->query('PRAGMA TABLE_INFO(`'. $tblName . '`)');
+                $statement = $this->conn->query('PRAGMA TABLE_INFO(`'. $tblName . '`)');
                 foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $key => $column) {
                     $columns[] = $column['name'];
                 }
@@ -343,7 +347,7 @@ class Mind extends PDO
                     case 'mysql':
                         $sql = "CREATE DATABASE";
                         $sql .= " ".$dbname." DEFAULT CHARSET=".$this->db['charset'];
-                        if(!$this->query($sql)){ return false; }
+                        if(!$this->conn->query($sql)){ return false; }
                     break;
                     
                     case 'sqlite':
@@ -390,7 +394,7 @@ class Mind extends PDO
                 $sql .= implode(",\n\t", $this->columnSqlMaker($scheme));
                 $sql .= "\n)".$engine.";";
 
-                if(!$this->query($sql)){
+                if(!$this->conn->query($sql)){
                     return false;
                 }
                 return true;
@@ -420,7 +424,7 @@ class Mind extends PDO
                 $sql .= "\t`".$tblName."`\n";
                 $sql .= implode(",\n\t", $this->columnSqlMaker($scheme, 'columnCreate'));
 
-                if(!$this->query($sql)){
+                if(!$this->conn->query($sql)){
                     return false;
                 } else {
                     return true;
@@ -466,7 +470,7 @@ class Mind extends PDO
                         $sql = "DROP DATABASE";
                         $sql .= " ".$dbname;
         
-                        $query = $this->query($sql);
+                        $query = $this->conn->query($sql);
                         if(!$query){
                             return false;
                         }
@@ -520,7 +524,7 @@ class Mind extends PDO
                 $sql = "DROP TABLE";
                 $sql .=" `".$tblName.'`';
 
-                $query = $this->query($sql);
+                $query = $this->conn->query($sql);
                 if(!$query){
                     return false;
                 }
@@ -559,7 +563,7 @@ class Mind extends PDO
 
                 try{
                     $sql .= " ".implode(', ', $dropColumns);
-                    $query = $this->query($sql);
+                    $query = $this->conn->query($sql);
                     if(!$query){
                         return false;
                     }
@@ -661,7 +665,7 @@ class Mind extends PDO
             }
             
             try{
-                if($this->query($sql)){
+                if($this->conn->query($sql)){
                     return true;
                 } else {
                     return false;
@@ -733,7 +737,7 @@ class Mind extends PDO
         } 
         
         try {
-            $this->beginTransaction();
+            $this->conn->beginTransaction();
             foreach ($values as $rows) {
                 $sql = '';
                 $columns = [];
@@ -745,7 +749,7 @@ class Mind extends PDO
                 }
                 $sql .= '('.implode(', ', $columns).')';
                 $sql .= ' VALUES ('.implode(', ', $values).')';
-                $this->prepare($sql)->execute(array_values($rows));
+                $this->conn->prepare($sql)->execute(array_values($rows));
             }
             if(!is_null($trigger)){
                 foreach ($trigger as $row) {
@@ -760,17 +764,17 @@ class Mind extends PDO
                         }
                         $sql .= '('.implode(', ', $columns).')';
                         $sql .= ' VALUES ('.implode(', ', $values).')';
-                        $this->prepare($sql)->execute(array_values($data));
+                        $this->conn->prepare($sql)->execute(array_values($data));
                     }
                 }
             }
 
-            $this->commit();
+            $this->conn->commit();
 
             return true;
 
         } catch (Exception $e) {
-            $this->rollback();
+            $this->conn->rollback();
             echo $e->getMessage();
         }
         return false;
@@ -818,13 +822,13 @@ class Mind extends PDO
         $sql = implode(',', $prepareArray);
         $sql .= ' WHERE '.$column.'=?';
         try{
-            $this->beginTransaction();
-            $query = $this->prepare("UPDATE".' `'.$tblName.'` SET '.$sql);
+            $this->conn->beginTransaction();
+            $query = $this->conn->prepare("UPDATE".' `'.$tblName.'` SET '.$sql);
             $query->execute($values);
-            $this->commit();
+            $this->conn->commit();
             return true;
         }catch (Exception $e){
-            $this->rollback();
+            $this->conn->rollback();
             echo $e->getMessage();
         }
         return false;
@@ -883,7 +887,7 @@ class Mind extends PDO
 
         $sql = 'WHERE '.$column.'=?';
         try{
-            $this->beginTransaction();
+            $this->conn->beginTransaction();
 
             if(!$status){
                 foreach ($needle as $value) {
@@ -895,7 +899,7 @@ class Mind extends PDO
 
             if(is_null($trigger)){
                 foreach ($needle as $value) {
-                    $query = $this->prepare("DELETE FROM".' `'.$tblName.'` '.$sql);
+                    $query = $this->conn->prepare("DELETE FROM".' `'.$tblName.'` '.$sql);
                     $query->execute(array($value));
                 }
             }
@@ -903,14 +907,14 @@ class Mind extends PDO
             if(!is_null($trigger)){
                 foreach ($needle as $value) {
                     $sql = 'WHERE '.$column.'=?';
-                    $query = $this->prepare("DELETE FROM".' `'.$tblName.'` '.$sql);
+                    $query = $this->conn->prepare("DELETE FROM".' `'.$tblName.'` '.$sql);
                     $query->execute(array($value));
 
                     if(is_array($trigger)){
 
                         foreach ($trigger as $table => $col) {
                             $sql = 'WHERE '.$col.'=?';
-                            $query = $this->prepare("DELETE FROM".' `'.$table.'` '.$sql);
+                            $query = $this->conn->prepare("DELETE FROM".' `'.$table.'` '.$sql);
                             $query->execute(array($value));
                         }
 
@@ -919,10 +923,10 @@ class Mind extends PDO
                 
             }
 
-            $this->commit();
+            $this->conn->commit();
             return true;
         }catch (Exception $e){
-            $this->rollBack();
+            $this->conn->rollBack();
             return false;
         }
     }
@@ -1153,7 +1157,7 @@ class Mind extends PDO
 
         try{
 
-            $query = $this->prepare($this->sql);
+            $query = $this->conn->prepare($this->sql);
             $query->execute($executeArray);
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -1437,13 +1441,13 @@ class Mind extends PDO
             
             switch ($this->db['drive']) {
                 case 'mysql':
-                    $query = $this->query('SHOW COLUMNS FROM `' . $tblName. '`', PDO::FETCH_ASSOC);
+                    $query = $this->conn->query('SHOW COLUMNS FROM `' . $tblName. '`', PDO::FETCH_ASSOC);
                     foreach ( $query as $column ) { 
                         if($column['Extra'] == 'auto_increment'){ $columns = $column['Field']; } 
                     }
                 break;
                 case 'sqlite':
-                    $statement = $this->query("PRAGMA TABLE_INFO(`".$tblName."`)");
+                    $statement = $this->conn->query("PRAGMA TABLE_INFO(`".$tblName."`)");
                     $row = $statement->fetchAll(PDO::FETCH_ASSOC); 
                     foreach ($row as $column) {
                         if((int) $column['pk'] === 1){ $columns = $column['name']; }
@@ -1484,7 +1488,7 @@ class Mind extends PDO
                 break;
             }
 
-            $query = $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            $query = $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ( $query as $row ) {
                 switch ($this->db['drive']) {
@@ -1640,7 +1644,7 @@ class Mind extends PDO
                                 if(!empty($row['config']['auto_increment']['length'])){
                                     $length = $row['config']['auto_increment']['length'];
                                     $sql = "ALTER TABLE `".$tblName."` AUTO_INCREMENT = ".$length;
-                                    $this->query($sql);
+                                    $this->conn->query($sql);
                                 }
                             break;
                         }
@@ -1851,7 +1855,7 @@ class Mind extends PDO
                 $sql     = 'SHOW DATABASES';
 
                 try{
-                    $query = $this->query($sql, PDO::FETCH_ASSOC);
+                    $query = $this->conn->query($sql, PDO::FETCH_ASSOC);
 
                     $dbnames = array();
 
@@ -1896,7 +1900,7 @@ class Mind extends PDO
         }
         
         try{
-            return $this->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+            return $this->conn->query($sql)->fetchAll(PDO::FETCH_ASSOC);
         } catch (Exception $e){
             return false;
         }
