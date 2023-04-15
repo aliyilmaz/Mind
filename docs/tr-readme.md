@@ -325,7 +325,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [route](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#route)
 -   [write](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#write)
 -   [upload](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#upload)
--   [download](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#download)
+-   [duplicate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#duplicate)
 -   [get_contents](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#get_contents)
 -   [distanceMeter](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#distanceMeter)
 -   [evalContainer](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#evalContainer)
@@ -5941,45 +5941,31 @@ if(!empty($this->post['multifile'])){
     
 ---
 
-## download()
+## duplicate()
 
-Yerel ve Uzak sunucuda barınan dosyaları indirmeye yarar. Dosya yolları `string` veya `array` olarak belirtilebilir. İki parametre alır, ilk parametre `string` veya `array` türünde belirtilen dosya yollarını, ikinci parametre ise `array` olarak tanımlanan `path` yolunu temsil eder. 
-
-  **Bilgi:** Geliştirmeye açık olduğu için ikinci parametre `array` türündedir ve belirtilme zorunluluğu yoktur. Eğer ikinci parametre belirtilmezse varsayılan olarak inecek dosyaların kökdizini `download` olur. 
+Yerel veya Uzak sunucuda barınan dosyalara ait yolları, belirtilen dizin konumlarına kopyalamaya yarar. Dosya yolları ve dizin konumları `string` veya `array` olarak belirtilmelidir. İki parametrenin de  belirtilmesi gerekmektedir.
 
 ##### Örnek
 
 ```php
-$this->print_pre($this->download('./LICENSE.md'));
+$this->print_pre($this->duplicate('../contributing.md', 'download'));
 ```
     
 
 veya 
 
 ```php
-$this->print_pre($this->download('https://github.com/fluidicon.png'));
+$this->print_pre($this->duplicate('https://github.com/fluidicon.png', 'download'));
 ```
         
-
 veya
 
 ```php
 $links = array(
-    'https://github.com/fluidicon.png',
-    './LICENSE.md'
-);
-
-$this->print_pre($this->download($links));
-```
-    
-veya
-
-```php
-$links = array(
-    'https://github.com/fluidicon.png',
-    './LICENSE.md'
-);
-$this->print_pre($this->download($links, array('path' => 'app/dosyalar')));
+    'https://github.com/aliyilmaz/Mind/archive/master.zip',
+    '.htaccess'
+);    
+$this->print_pre($this->duplicate($links, ['download1','download2']));
 ```
     
 ---

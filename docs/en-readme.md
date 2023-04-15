@@ -326,7 +326,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [route](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#route)
 -   [write](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#write)
 -   [upload](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#upload)
--   [download](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#download)
+-   [duplicate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#duplicate)
 -   [get_contents](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#get_contents)
 -   [distanceMeter](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#distanceMeter)
 -   [evalContainer](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#evalContainer)
@@ -5978,45 +5978,30 @@ if(!empty($this->post['multifile'])){
     
 ---
 
-## download()
+## duplicate()
 
-It is used to download files hosted on local and remote servers. File paths can be specified as `string` or `array`. It takes two parameters, the first parameter represents the file paths specified as type `string` or `array` and the second parameter represents the path `path` defined as `array`.
-
-**Info:** Since it is open for development, the second parameter is of type `array` and does not have to be specified. If the second parameter is not specified, the root directory of the files to be downloaded will be `download` by default.
+It is used to copy the roads of the files that are located on the local or remote server to the specified directory positions. File paths and directory positions should be specified as `string` or `array`. Both parameters should be specified.
 
 ##### Example
 
 ```php
-$this->print_pre($this->download('./LICENSE.md'));
+$this->print_pre($this->duplicate('../contributing.md', 'download'));
 ```
-    
 
-or  
+**or** 
 
 ```php
-$this->print_pre($this->download('https://github.com/fluidicon.png'));
+$this->print_pre($this->duplicate('https://github.com/fluidicon.png', 'download'));
 ```
         
-
-or 
-
-```php
-$links = array(
-    'https://github.com/fluidicon.png',
-    './LICENSE.md'
-);
-
-$this->print_pre($this->download($links));
-```
-    
-or 
+**or**
 
 ```php
 $links = array(
-    'https://github.com/fluidicon.png',
-    './LICENSE.md'
-);
-$this->print_pre($this->download($links, array('path' => 'app/dosyalar')));
+    'https://github.com/aliyilmaz/Mind/archive/master.zip',
+    '.htaccess'
+);    
+$this->print_pre($this->duplicate($links, ['download1','download2']));
 ```
     
 ---
