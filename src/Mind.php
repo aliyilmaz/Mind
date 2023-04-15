@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.3
+ * @version    Release: 5.6.4
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4681,90 +4681,44 @@ class Mind
         return $result;
     }
 
-    /**
-     * File downloader.
+     /**
+     * It helps to copy files or files
      *
-     * @param mixed $links
-     * @param array $opt
+     * @param mixed $sources
+     * @param mixed $destinations
      * @return array
      */
-    public function download($links, $opt = array())
-    {
+    public function duplicate($sources, $destinations){
+        $result = [];
 
-        $result = array();
-        $nLinks = array();
-
-        if(empty($links)){
-            return $result;
-        }
-
-        if(!is_array($links)){
-            $links = array($links);
-        }
-
-        foreach($links as $link) {
-
-            if($this->is_url($link)){
-                if($this->remoteFileSize($link)>1){
-                    $nLinks[] = $link;
-                }
+        $destinations = (isset($destinations)) ? (!is_array($destinations) ? [$destinations] : $destinations) : null;
+        if(!is_null($destinations)) {
+            foreach ($destinations as $destination) {                
+                if(!is_dir($destination)){ mkdir($destination, 0777, true); }
             }
+        }
 
-            if(!$this->is_url($link)){
-                if(!strstr($link, '://')){
+        $sources = (isset($sources)) ? (!is_array($sources) ? [$sources] : $sources) : null;
+        if(!is_null($sources)){
+           foreach ($sources as $source) {
+                $new_file_name      = $this->info($source, 'filename');
+                $new_file_extension = $this->info($source, 'extension');
+                $new_file           = $this->permalink($new_file_name).'.'.$new_file_extension;
 
-                    if(file_exists($link)){
-                        $nLinks[] = $link;
+                if(!is_null($destinations)){
+                    foreach ($destinations as $destination) {
+                        $new_file_path      =  $destination.'/'.$new_file;
+                        
+                        if(copy($source, $new_file_path)){
+                            $result[] = $new_file_path;
+                        }
                     }
-
                 }
-            }
-
-        }
-
-        if(count($nLinks) != count($links)){
-            return $result;
-        }
-
-        $path = '';
-        if(!empty($opt['path'])){
-            $path .= $opt['path'];
-
-            if(!is_dir($path)){
-                mkdir($path, 0777, true);
-            }
-        } else {
-            $path .= './download';
-        }
-
-        foreach ($nLinks as $nLink) {
-
-            $destination = $path;
-
-            $other_path = $this->permalink($this->info($nLink, 'filename')).'.'.$this->info($nLink, 'extension');
-
-            if(!is_dir($destination)){
-                mkdir($destination, 0777, true);
-            }
-
-            if(file_exists($destination.'/'.$other_path)){
-
-                $remote_file = $this->remoteFileSize($nLink);
-                $local_file = filesize($destination.'/'.$other_path);
-
-                if($remote_file != $local_file){
-                    unlink($destination.'/'.$other_path);
-                    copy($nLink, $destination.'/'.$other_path);
-
-                }
-            } else {
-                copy($nLink, $destination.'/'.$other_path);
-            }
-
-            $result[] = $destination.'/'.$other_path;
+           } 
         }
 
         return $result;
+    
     }
 
     /**
