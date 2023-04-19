@@ -281,6 +281,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [is_isbn](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_isbn)
 -   [is_slug](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_slug)
 -   [timecodeCompare](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timecodeCompare)
+-   [is_port](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port)
+-   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port_open)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#validate)
 
 ##### Helper
@@ -3568,6 +3570,58 @@ if($this->timecodeCompare($duration, $timecode)){
 
 ---
 
+
+## is_port()
+
+It is used to check if the specified parameter is a valid port. It takes a parameter and returns a `true` or `false` response.
+
+```php
+if($this->is_port('443')){
+    echo 'This is a valid port point.';
+} else {
+    echo 'This is not a valid port.';
+}
+```
+
+**or**
+
+```php
+if($this->is_port('65536')){
+    echo 'This is a valid port point.';
+} else {
+    echo 'This is not a valid port.';
+}
+```
+
+---
+
+## is_port_open()
+
+It serves to check whether the specified address is accessible. It takes two parameters, the first parameter is mandatory and represents the address, the second parameter is not mandatory and represents the port. If the port is not specified, it is checked whether the specified address is accessible, and the response is returned as `true` or `false`. The address can be used with protocol prefixes such as `ssl://`, `imap://`, `http://` and `https://`.
+
+```php
+if($this->is_port_open('172.217.17.142')){
+    echo 'There is a link';
+} else {
+    echo 'No connection';
+}
+```
+
+**or** 
+
+```php
+
+if($this->is_port_open('172.217.17.142', 21)){
+    echo 'There is a link';
+} else {
+    echo 'No connection';
+}
+
+```
+
+
+---
+
 ## validate()
 
 It is used to check the compliance of different types of data with the specified rules at once. If there is data that violates the rules and an error message is specified, error messages are defined in the array variable `$this->errors`, if no error message is specified, the string keys of the data are defined in the array variable `$this->errors` and the response `false` is returned. If there is no rule violation, a `true` response is returned.
@@ -3612,13 +3666,15 @@ $data = array(
     'product_price'     =>  '10.00',
     'book_isbn'         =>  'ISBN:0-306-40615-2',
     'type'              =>  'countable',
-    'post_slug'         =>  'hello-world' // or hello-world
+    'post_slug'         =>  'hello-world', // or hello-world
+    'server_port'       =>  '65535',
+    'client_port'       =>  '172.217.17.142'
 
 
 
 );
 
-// Kural
+// Rule
 $rule = array(
     'username'          =>  'available:users',
     // 'username'          =>  'knownunique:users:username:aliyilmaz'
@@ -3653,7 +3709,9 @@ $rule = array(
     'book_isbn'         =>  'isbn',
     'type'              =>  'in:countable', // single
     // 'type'              =>  'in:ponderable,countable,measurable' // multi
-    'post_slug'         =>  'slug'
+    'post_slug'         =>  'slug',
+    'server_port'       =>  'port',
+    'client_port'       =>  'port_open' // Default 80 It can also take into account the specified ports. port_open:443
 );
 
 
@@ -3756,6 +3814,12 @@ $message = array(
     ),
     'post_slug'=>array(
         'slug'=>'A valid Slug must be specified'
+    ),
+    'server_port'=>array(
+        'port'=>'The current port number must be specified.'
+    ),
+    'client_port'=>array(
+        'port_open'=>'Information of an accessible connection must be indicated.'
     )
 
 );
@@ -4128,14 +4192,6 @@ It is used to express that the data must be a valid ISBN number. It can be used 
 isbn
 ```
 
-##### slug
-
-It is used to express that the data must be a valid slug. It can be used by typing `slug` as it does not need an extra parameter.
-
-```php
-slug
-```
-
 ##### in
 It is used to express that the specified data should be in a list. If multiple list items are to be specified, they must be separated by commas.
 
@@ -4147,6 +4203,39 @@ in:countable
 ```php
 in:ponderable,countable,measurable
 ```
+
+##### slug
+
+It is used to express that the data must be a valid slug. It can be used by typing `slug` as it does not need an extra parameter.
+
+```php
+slug
+```
+
+
+##### port
+
+It is used to express that the data must be a valid port. It can be used by typing `port` as it does not need an extra parameter.
+
+```php
+port
+```
+
+##### port_open
+
+It is used to express that the address and port must be valid connection information. If no extra parameter is specified, it checks whether the specified address is accessible or not via the `80` port, if the access of the specified port is to be controlled, it should be specified as a parameter.
+
+```php
+port_open
+```
+
+**or**
+
+```php
+port_open:443
+```
+
+
 
 ---
 

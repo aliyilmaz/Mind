@@ -12,7 +12,7 @@ $Mind = new Mind();
  | min-age, max-age, date, unique, knownunique, available, 
  | unchanged, bool, iban, ipv4, ipv6, blood, coordinate, 
  | distance, languages, morse, binary, timecode, currencies,
- | decimal, isbn, in
+ | decimal, isbn, in, slug, port, port_open
  | 
  */
 
@@ -48,7 +48,9 @@ $data = array(
     'product_price'     =>  '10.00',
     'book_isbn'         =>  'ISBN:0-306-40615-2',
     'type'              =>  'countable',
-    'post_slug'         =>  'hello-world' // or Hello-world
+    'post_slug'         =>  'hello-world', // or Hello-world
+    'server_port'       =>  '65535',
+    'client_port'       =>  '172.217.17.142'
 
  );
 
@@ -87,7 +89,9 @@ $rule = array(
     'book_isbn'         =>  'isbn',
     'type'              =>  'in:countable', // single
     // 'type'              =>  'in:ponderable,countable,measurable' // multi
-    'post_slug'         =>  'slug'
+    'post_slug'         =>  'slug',
+    'server_port'       =>  'port',
+    'client_port'       =>  'port_open' // Default 80 or It also takes into account the special port. is_port_open:443
 );
 
 // Message
@@ -188,7 +192,13 @@ $message = array(
         'in'=>'A valid type must be specified.'
     ),
     'post_slug'=>array(
-        'slug'=>'A valid slug must be specified'
+        'slug'=>'A valid slug must be specified.'
+    ),
+    'server_port'=>array(
+        'port'=>'The current port number must be specified'
+    ),
+    'client_port'=>array(
+        'port_open'=>'The information of an accessible connection should be specified..'
     )
 
 );

@@ -280,6 +280,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [is_isbn](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_isbn)
 -   [is_slug](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_slug)
 -   [timecodeCompare](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timecodeCompare)
+-   [is_port](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port)
+-   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port_open)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#validate)
 
 ##### Yardımcı
@@ -3281,7 +3283,7 @@ Bu fonksiyon, projeye ait SSL Sertifikasının varlığını sorgulamak amacıyl
 
 
 ```php
-if($this->is_ssl($str)){
+if($this->is_ssl()){
     echo 'SSL bağlantısı var.';
 } else {
     echo 'SSL bağlantısı yok.';
@@ -3532,6 +3534,56 @@ if($this->timecodeCompare($duration, $timecode)){
 
 ---
 
+## is_port()
+
+Belirtilen parametrenin geçerli bir port olup olmadığını kontrol etmek için kullanılır. Bir parametre alır ve geriye `true` veya `false` yanıtı döndürür.
+
+```php
+if($this->is_port('443')){
+    echo 'Bu geçerli bir bağlantı noktasıdır.';
+} else {
+    echo 'Bu geçerli bir bağlantı noktası değil.';
+}
+```
+
+veya
+
+```php
+if($this->is_port('65536')){
+    echo 'Bu geçerli bir bağlantı noktasıdır.';
+} else {
+    echo 'Bu geçerli bir bağlantı noktası değil.';
+}
+```
+
+---
+
+## is_port_open()
+
+Belirtilen adresin erişime açık olup olmadığını kontrol etmeye yarar. İki parametre alır, ilk parametre zorunludur ve adresi temsil eder, ikinci parametre zorunlu değildir ve portu temsil eder. Eğer port belirtilmezse belirtilen adresin erişime açık olup olmadı kontrol edilir, yanıt `true` veya `false` olarak geri döndürülür. Adres, `ssl://`, `imap://`, `http://` ve `https://` gibi protokol ön ekleriyle beraber kullanılabilir.
+
+```php
+if($this->is_port_open('172.217.17.142')){
+    echo 'Bir bağlantı var';
+} else {
+    echo 'Erişilebilir bir bağlantının bilgileri belirtilmelidir.';
+}
+```
+
+veya 
+
+```php
+
+if($this->is_port_open('172.217.17.142', 21)){
+    echo 'Bir bağlantı var';
+} else {
+    echo 'Erişilebilir bir bağlantının bilgileri belirtilmelidir.';
+}
+
+```
+
+---
+
 ## validate()
 
 Farklı türdeki verilerin belirtilen kurallara uygunluğunu tek seferde kontrol etmek amacıyla kullanılır. Kuralları ihlal eden veriler varsa ve hata mesajı belirtilmişse `$this->errors` dizi değişkenine hata mesajları tanımlanır, hata mesajı belirtilmemişse verilerin dizi anahtarları `$this->errors` dizi değişkenine tanımlanır ve `false` yanıtı döndürülür. Herhangi bir kural ihlali yok ise `true` yanıtı döndürülür. 
@@ -3576,7 +3628,9 @@ $data = array(
     'product_price'     =>  '10.00',
     'book_isbn'         =>  'ISBN:0-306-40615-2',
     'type'              =>  'countable',
-    'post_slug'         =>  'merhaba-dunya' // veya Merhaba-dunya
+    'post_slug'         =>  'merhaba-dunya', // veya Merhaba-dunya,
+    'server_port'       =>  '65535',
+    'client_port'       =>  '172.217.17.142'
 
 
 
@@ -3617,7 +3671,9 @@ $rule = array(
     'book_isbn'         =>  'isbn',
     'type'              =>  'in:countable', // single
     // 'type'              =>  'in:ponderable,countable,measurable' // multi
-    'post_slug'         =>  'slug'
+    'post_slug'         =>  'slug',
+    'server_port'       =>  'port',
+    'client_port'       =>  'port_open' // Varsayılan 80 Ayrıca belirtilen bağlantı noktasını da dikkate alabilir. port_open:443
 );
 
 
@@ -3719,7 +3775,13 @@ $message = array(
         'in'=>'Geçerli bir tip belirtilmelidir.'
     ),
     'post_slug'=>array(
-        'slug'=>'Geçerli bir slug belirtilmelidir'
+        'slug'=>'Geçerli bir slug belirtilmelidir.'
+    ),
+    'server_port'=>array(
+        'port'=>'Geçerli bağlantı noktası numarası belirtilmelidir.'
+    ),
+    'client_port'=>array(
+        'port_open'=>'Erişilebilir bir bağlantının bilgileri belirtilmelidir.'
     )
 
 );
@@ -4091,14 +4153,6 @@ Verinin geçerli bir ISBN numarası olması gerektiğini ifade etmek için kulla
 isbn
 ```
 
-##### slug
-
-Verinin geçerli bir slug olması gerektiğini ifade etmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `slug` yazarak kullanılabilir.
-
-```php
-slug
-```
-
 ##### in
 Belirtilen verinin bir listede bulunması gerektiğini ifade etmek için kullanılır. Birden çok liste elemanı belirtilmek istenirse virgül ile ayrılmış olmalıdır.
 
@@ -4111,7 +4165,39 @@ veya
 in:ponderable,countable,measurable
 ```
 
+##### slug
+
+Verinin geçerli bir slug olması gerektiğini ifade etmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `slug` yazarak kullanılabilir.
+
+```php
+slug
+```
+
+##### port
+
+Verinin geçerli bir port olması gerektiğini ifade etmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `port` yazarak kullanılabilir.
+
+```php
+port
+```
+
+##### port_open
+
+Adresin ve portun geçerli bir bağlantı bilgisi olması gerektiğini ifade etmek için kullanılır. Ekstra bir parametre belirtilmezse belirtilen adresin erişime açık olup olmadığını `80` portu üzerinden kontrol eder, eğer belirtilen portun erişimi kontrol edilmek isteniyorsa parametre olarak belirtilmelidir.
+
+```php
+port_open
+```
+
+veya
+
+```php
+port_open:443
+```
+
+
 ---
+
 
 
 ## policyMaker()

@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.4
+ * @version    Release: 5.6.5
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2533,6 +2533,44 @@ class Mind
     }
 
     /**
+     * Port number control
+     * @param string|int $port
+     * @return bool
+     */
+    public function is_port($port) {
+        return is_numeric($port) && $port >= 1 && $port <= 65535;
+    }
+
+    /**
+     * Controls the specified ip address and port
+     * @param string $ip
+     * @param mixed $port
+     * @return bool
+     */
+    function is_port_open($ip, $port = null) {
+        $ch = curl_init();
+        $port = (!is_null($port) ? $port : 80);
+
+        if(!$this->is_port($port)) {
+            return false;
+        }
+
+        curl_setopt($ch, CURLOPT_URL, $ip);
+        curl_setopt($ch, CURLOPT_PORT, $port);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 5);    
+        $result = curl_exec($ch);
+        $error = curl_error($ch);
+
+        curl_close($ch);
+        if (!empty($error)) {
+            return false;
+        }
+        return true;
+    }
+    
+    /**
      * Validation
      * 
      * @param array $rule
@@ -2948,6 +2986,17 @@ class Mind
                                 $this->errors[$column][$name] = $message[$column][$name];
                             }
                             break;
+                        case 'port':
+                            if(!$this->is_port($data[$column])){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                            break;
+                        case 'port_open':
+                            $extra = ($extra == '') ? null : $extra;
+                            if(!$this->is_port_open($data[$column], $extra)){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                        break;
                     // Geçersiz kural engellendi.
                     default:
                         $this->errors[$column][$name] = 'Invalid rule has been blocked.';
