@@ -301,6 +301,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [languages](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#languages-1)
 -   [currencies](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#currencies)
 -   [morsealphabet](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#morsealphabet)
+-   [getDateLib](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getDateLib)
 -   [session_check](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#session_check)
 -   [remoteFileSize](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#remoteFileSize)
 -   [addLayer](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addLayer)
@@ -350,6 +351,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [saveAs](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#saveAs)
 -   [mime_content_type](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#mime_content_type)
 -   [popup](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#popup)
+-   [managerSentence](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#managerSentence)
+-   [format_date](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#format_date)
 
 ---
 
@@ -5140,6 +5143,250 @@ $this->print_pre($this->morsealphabet($morseDictionary));
 
 ---
 
+## getDateLib()
+
+(`english`, `french`, `german`, `turkish`, `azerbaijani`, `kazakh`, `russian`, `chinese`, `arabic`, `greek`, `japanese`, `armenian`, ` ukrainian`, `czech`, `polish`, `latvian`, `romanian`, `italian`, `spanish`, `portuguese`) contains a time library that supports a total of 20 languages.
+
+The history shared with him;
+
+- Can determine which language is written.
+```php
+$date_string = '28 Nisan 2023';
+echo $this->getDateLib($date_string, 'locale'); // tr_TR
+```
+
+- It can return the shelf of the specified region code (`ro_RO`) located in the time library. (When the first parameter is the date, the second parameter is the language code.)
+```php
+// Array
+// (
+//     [month_names] => ianuarie|februarie|martie|aprilie|mai|iunie|iulie|august|septembrie|octombrie|noiembrie|decembrie
+//     [abbreviated_month_names] => ian|feb|mar|apr|mai|iun|iul|aug|sep|oct|nov|dec
+//     [days_of_week] => luni|marți|miercuri|joi|vineri|sâmbătă|duminică
+//     [date_words] => azi|ieri|maine
+//     [date_format] => d.m.Y
+//     [locale] => ro_RO
+// )
+$this->print_pre($this->getDateLib(null, 'ro_RO'));
+```
+
+- Can return the specified shelf item (`month_names`, `abbreviated_month_names`, `days_of_week`, `date_words`, `date_format`, `locale`). (When first parameter is `null`, second parameter is language code.)
+```php
+// ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık
+$date_string = '28 Nisan 2023';
+$this->print_pre($this->getDateLib($date_string, 'month_names'));
+```
+
+- It can return the inventory of the time library. (When it is run without parameters.)
+```php
+// Array
+// (
+//     [english] => Array
+//         (
+//             [month_names] => january|february|march|april|may|june|july|august|september|october|november|december
+//             [abbreviated_month_names] => jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec
+//             [days_of_week] => monday|tuesday|wednesday|thursday|friday|saturday|sunday
+//             [date_words] => today|yesterday|tomorrow
+//             [date_format] => m/d/Y
+//             [locale] => en_US
+//         )
+
+//     [french] => Array
+//         (
+//             [month_names] => janvier|février|mars|avril|mai|juin|juillet|août|septembre|octobre|novembre|décembre
+//             [abbreviated_month_names] => janv|févr|mars|avr|mai|juin|juil|août|sept|oct|nov|déc
+//             [days_of_week] => lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche
+//             [date_words] => aujourd'hui|hier|demain
+//             [date_format] => d/m/Y
+//             [locale] => fr_FR
+//         )
+
+//     [german] => Array
+//         (
+//             [month_names] => januar|februar|märz|april|mai|juni|juli|august|september|oktober|november|dezember
+//             [abbreviated_month_names] => jan|feb|mär|apr|mai|jun|jul|aug|sep|okt|nov|dez
+//             [days_of_week] => montag|dienstag|mittwoch|donnerstag|freitag|samstag|sonntag
+//             [date_words] => heute|gestern|morgen
+//             [date_format] => d.m.Y
+//             [locale] => de_DE
+//         )
+
+//     [turkish] => Array
+//         (
+//             [month_names] => ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık
+//             [abbreviated_month_names] => oca|şub|mar|nis|may|haz|tem|ağu|eyl|eki|kas|ara
+//             [days_of_week] => pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar
+//             [date_words] => bugün|dün|yarın
+//             [date_format] => d.m.Y
+//             [locale] => tr_TR
+//         )
+
+//     [azerbaijani] => Array
+//         (
+//             [month_names] => yanvar|fevral|mart|aprel|may|iyun|iyul|avqust|sentyabr|oktyabr|noyabr|dekabr
+//             [abbreviated_month_names] => yan|fev|mar|apr|may|iyn|iyl|avq|sen|okt|noy|dek
+//             [days_of_week] => bazar ertəsi|çərşənbə axşamı|çərşənbə|cümə axşamı|cümə|şənbə|bazar
+//             [date_words] => bu gün|dünən|sabah
+//             [date_format] => m/d/Y
+//             [locale] => az_AZ
+//         )
+
+//     [kazakh] => Array
+//         (
+//             [month_names] => қаңтар|ақпан|наурыз|сәуір|мамыр|маусым|шілде|тамыз|қыркүйек|қазан|қараша|желтоқсан
+//             [abbreviated_month_names] => қаң|ақп|нау|сәу|мам|мау|шіл|там|қыр|қаз|қар|желт
+//             [days_of_week] => дүйсенбі|сейсенбі|сәрсенбі|бейсенбі|жұма|сенбі|жексенбі
+//             [date_words] => бүгін|кеңес|ертең|таңертең
+//             [date_format] => d.m.Y
+//             [locale] => kk_KZ
+//         )
+
+//     [russian] => Array
+//         (
+//             [month_names] => январь|февраль|март|апрель|май|июнь|июль|август|сентябрь|октябрь|ноябрь|декабрь
+//             [abbreviated_month_names] => янв|фев|мар|апр|май|июн|июл|авг|сен|окт|ноя|дек
+//             [days_of_week] => понедельник|вторник|среда|четверг|пятница|суббота|воскресенье
+//             [date_words] => сегодня|вчера|завтра
+//             [date_format] => d.m.Y
+//             [locale] => ru_RU
+//         )
+
+//     [chinese] => Array
+//         (
+//             [month_names] => 一月|二月|三月|四月|五月|六月|七月|八月|九月|十月|十一月|十二月
+//             [abbreviated_month_names] => 1月|2月|3月|4月|5月|6月|7月|8月|9月|10月|11月|12月
+//             [days_of_week] => 星期一|星期二|星期三|星期四|星期五|星期六|星期日
+//             [date_words] => 今天|昨天|明天
+//             [date_format] => Y年m月d日
+//             [locale] => zh_CN
+//         )
+
+//     [arabic] => Array
+//         (
+//             [month_names] => كانون الثاني|شباط|آذار|نيسان|أيار|حزيران|تموز|آب|أيلول|تشرين الأول|تشرين الثاني|كانون الأول
+//             [abbreviated_month_names] => كانون2|شباط|آذار|نيسان|أيار|حزيران|تموز|آب|أيلول|تشرين1|تشرين2|كانون1
+//             [days_of_week] => الإثنين|الثلاثاء|الأربعاء|الخميس|الجمعة|السبت|الأحد
+//             [date_words] => اليوم|أمس|غداً
+//             [date_format] => d/m/Y
+//             [locale] => ar_SA
+//         )
+
+//     [greek] => Array
+//         (
+//             [month_names] => Ιανουάριος|Φεβρουάριος|Μάρτιος|Απρίλιος|Μάιος|Ιούνιος|Ιούλιος|Αύγουστος|Σεπτέμβριος|Οκτώβριος|Νοέμβριος|Δεκέμβριος
+//             [abbreviated_month_names] => Ιαν|Φεβ|Μάρ|Απρ|Μαΐ|Ιουν|Ιουλ|Αυγ|Σεπ|Οκτ|Νοε|Δεκ
+//             [days_of_week] => Δευτέρα|Τρίτη|Τετάρτη|Πέμπτη|Παρασκευή|Σάββατο|Κυριακή
+//             [date_words] => σήμερα|χθες|αύριο
+//             [date_format] => d/m/Y
+//             [locale] => el_GR
+//         )
+
+//     [japanese] => Array
+//         (
+//             [month_names] => 睦月|如月|弥生|卯月|皐月|水無月|文月|葉月|長月|神無月|霜月|師走
+//             [abbreviated_month_names] => 睦月|如月|弥生|卯月|皐月|水無月|文月|葉月|長月|神無月|霜月|師走
+//             [days_of_week] => 月曜日|火曜日|水曜日|木曜日|金曜日|土曜日|日曜日
+//             [date_words] => 今日|昨日|明日
+//             [date_format] => Y/m/d
+//             [locale] => ja_JP
+//         )
+
+//     [armenian] => Array
+//         (
+//             [month_names] => հունվար|փետրվար|մարտ|ապրիլ|մայիս|հունիս|հուլիս|օգոստոս|սեպտեմբեր|հոկտեմբեր|նոյեմբեր|դեկտեմբեր
+//             [abbreviated_month_names] => հուն|փետ|մար|ապր|մայ|հուն|հուլ|օգս|սեպ|հոկ|նոյ|դեկ
+//             [days_of_week] => երկուշաբթի|երեքշաբթի|չորեքշաբթի|հինգշաբթի|ուրբաթ|շաբաթ|կիրակի
+//             [date_words] => այսօր|երեկ|վերականգ|վերականգույց|վերադաս
+//             [date_format] => d/m/Y
+//             [locale] => hy_AM
+//         )
+
+//     [ukrainian] => Array
+//         (
+//             [month_names] => січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень
+//             [abbreviated_month_names] => січ|лют|бер|кві|тра|чер|лип|сер|вер|жов|лис|гру
+//             [days_of_week] => понеділок|вівторок|середа|четвер|п’ятниця|субота|неділя
+//             [date_words] => сьогодні|вчора|завтра
+//             [date_format] => d.m.Y
+//             [locale] => uk_UA
+//         )
+
+//     [czech] => Array
+//         (
+//             [month_names] => leden|únor|březen|duben|květen|červen|červenec|srpen|září|říjen|listopad|prosinec
+//             [abbreviated_month_names] => led|úno|bře|dub|kvě|čer|čec|srp|zář|říj|lis|pro
+//             [days_of_week] => pondělí|úterý|středa|čtvrtek|pátek|sobota|neděle
+//             [date_words] => dnes|včera|zítra
+//             [date_format] => d.m.Y
+//             [locale] => cs_CZ
+//         )
+
+//     [polish] => Array
+//         (
+//             [month_names] => styczeń|luty|marzec|kwiecień|maj|czerwiec|lipiec|sierpień|wrzesień|październik|listopad|grudzień
+//             [abbreviated_month_names] => sty|lut|mar|kwi|maj|cze|lip|sie|wrz|paź|lis|gru
+//             [days_of_week] => poniedziałek|wtorek|środa|czwartek|piątek|sobota|niedziela
+//             [date_words] => dzisiaj|wczoraj|jutro
+//             [date_format] => d.m.Y
+//             [locale] => pl_PL
+//         )
+
+//     [latvian] => Array
+//         (
+//             [month_names] => janvāris|februāris|marts|aprīlis|maijs|jūnijs|jūlijs|augusts|septembris|oktobris|novembris|decembris
+//             [abbreviated_month_names] => jan|feb|mar|apr|mai|jūn|jūl|aug|sep|okt|nov|dec
+//             [days_of_week] => pirmdiena|otrdiena|trešdiena|ceturtdiena|piektdiena|sestdiena|svētdiena
+//             [date_words] => šodien|vakar|rīt
+//             [date_format] => d.m.Y
+//             [locale] => lv_LV
+//         )
+
+//     [romanian] => Array
+//         (
+//             [month_names] => ianuarie|februarie|martie|aprilie|mai|iunie|iulie|august|septembrie|octombrie|noiembrie|decembrie
+//             [abbreviated_month_names] => ian|feb|mar|apr|mai|iun|iul|aug|sep|oct|nov|dec
+//             [days_of_week] => luni|marți|miercuri|joi|vineri|sâmbătă|duminică
+//             [date_words] => azi|ieri|maine
+//             [date_format] => d.m.Y
+//             [locale] => ro_RO
+//         )
+
+//     [italian] => Array
+//         (
+//             [month_names] => gennaio|febbraio|marzo|aprile|maggio|giugno|luglio|agosto|settembre|ottobre|novembre|dicembre
+//             [abbreviated_month_names] => gen|feb|mar|apr|mag|giu|lug|ago|set|ott|nov|dic
+//             [days_of_week] => lunedì|martedì|mercoledì|giovedì|venerdì|sabato|domenica
+//             [date_words] => oggi|ieri|domani
+//             [date_format] => d/m/Y
+//             [locale] => it_IT
+//         )
+
+//     [spanish] => Array
+//         (
+//             [month_names] => enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre
+//             [abbreviated_month_names] => ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic
+//             [days_of_week] => lunes|martes|miércoles|jueves|viernes|sábado|domingo
+//             [date_words] => hoy|ayer|mañana
+//             [date_format] => d/m/Y
+//             [locale] => es_ES
+//         )
+
+//     [portuguese] => Array
+//         (
+//             [month_names] => janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro
+//             [abbreviated_month_names] => jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez
+//             [days_of_week] => segunda-feira|terça-feira|quarta-feira|quinta-feira|sexta-feira|sábado|domingo
+//             [date_words] => hoje|ontem|amanhã
+//             [date_format] => d/m/Y
+//             [locale] => pt_PT
+//         )
+
+// )
+$this->print_pre($this->getDateLib());
+```
+
+
+---
+
 ## session_check()
 
 It is used to provide personalized implementation of the `session_start()` command, it is used to activate the sessions in the light of the settings in the Session Settings section. It is activated by running the `__construct()` method in the **Mind.php** file.
@@ -7030,3 +7277,107 @@ $Mind->popup($str, [
     ]
 ]);
 ```
+
+---
+
+## managerSentence()
+
+It serves to break the specified number of sentences from the text shared with him by using the `.?!` signs as separators, and then to combine them by putting a space between them. Takes two `string` type parameters that must be specified.
+
+###### Example
+
+code:
+```php
+$str = 'A mysterious virus affects the whole city. Those affected by the virus become monsters one by one.';
+echo $this->managerSentence($str, 1);
+```
+
+output:
+```php
+A mysterious virus affects the whole city.
+```
+
+or  
+
+code:
+```php
+$str = 'A mysterious virus affects the whole city. Those affected by the virus become monsters one by one.';
+echo $this->managerSentence($str, 2);
+```
+
+output:
+```php
+A mysterious virus affects the whole city. Those affected by the virus become monsters one by one.
+```
+
+---
+
+
+
+## format_date()
+It serves to convert and return the date shared with it according to the specified language code and specified date format. It takes three parameters, the first parameter is the date and is required. The second parameter is the language code and is not required, if not specified, `en_US` is used by default. The third parameter is the date format and is not required, if not specified, it references the current format of the date by default.
+
+###### Example
+
+
+```php
+$date_string = '28 April 2023';
+echo $this->format_date($date_string); // 28 April 2023
+```
+
+**or**
+
+```php
+$date_string = '28 April 2023';
+echo $this->format_date($date_string, 'tr_TR'); // 28 Nisan 2023
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, 'en_US'); // 28 April 2023
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, null, 'Y F d'); // 2023 April 28
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, 'en_US', 'Y F d'); // 2023 April 28
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, 'pl_PL', 'Y F d'); // 2023 Kwiecień 28
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, 'uk_UA', 'Y F d'); // 2023 Квітень 28
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, 'ro_RO', 'Y F d'); // 2023 Aprilie 28
+```
+
+**or**
+
+```php
+$date_string = '28 Nisan 2023';
+echo $this->format_date($date_string, 'pt_PT', 'Y F d'); // 2023 Abril 28
+```
+
