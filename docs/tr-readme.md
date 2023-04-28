@@ -5108,6 +5108,21 @@ $this->print_pre($this->morsealphabet($morseDictionary));
 
 Kendisiyle paylaşılan tarihin; 
 
+- Sadece tarihe bakarak, dilin zaman kütüphanesindeki rafını getirebilir.
+```php
+// Array
+// (
+//     [month_names] => ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık
+//     [abbreviated_month_names] => oca|şub|mar|nis|may|haz|tem|ağu|eyl|eki|kas|ara
+//     [days_of_week] => pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar
+//     [date_words] => bugün|dün|yarın
+//     [date_format] => d.m.Y
+//     [locale] => tr_TR
+// )
+$date_string = '28 Nisan 2023';
+$this->print_pre($this->getDateLib($date_string));
+```
+
 - Hangi dil ile yazıldığını tespit edebilir.
 ```php
 $date_string = '28 Nisan 2023';
@@ -7282,6 +7297,28 @@ Kendisiyle paylaşılan tarihi, belirtilen dil koduna ve belirtilen tarih format
 
 ###### Örnek
 
+```php
+$date_string = '2023-04-28 00:00:00';
+echo $this->format_date($date_string); // 2023-04-28 00:00:00
+```
+
+veya
+
+```php
+$date_string = '2023-04-28 00:00:00';
+echo $this->format_date($date_string, 'en_US', 'd F Y'); // 28 April 2023
+```
+
+veya
+
+```php
+
+$date_string = '2023-04-28 00:00:00';
+echo $this->format_date($date_string, 'tr_TR', 'd F Y'); // 28 Nisan 2023
+
+```
+
+veya
 
 ```php
 $date_string = '28 April 2023';

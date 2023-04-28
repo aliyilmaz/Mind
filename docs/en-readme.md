@@ -5149,6 +5149,22 @@ $this->print_pre($this->morsealphabet($morseDictionary));
 
 The history shared with him;
 
+
+- By looking at history, it can bring the shelf of the language in the time library.
+```php
+// Array
+// (
+//     [month_names] => ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık
+//     [abbreviated_month_names] => oca|şub|mar|nis|may|haz|tem|ağu|eyl|eki|kas|ara
+//     [days_of_week] => pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar
+//     [date_words] => bugün|dün|yarın
+//     [date_format] => d.m.Y
+//     [locale] => tr_TR
+// )
+$date_string = '28 Nisan 2023';
+$this->print_pre($this->getDateLib($date_string));
+```
+
 - Can determine which language is written.
 ```php
 $date_string = '28 Nisan 2023';
@@ -5176,7 +5192,7 @@ $date_string = '28 Nisan 2023';
 $this->print_pre($this->getDateLib($date_string, 'month_names'));
 ```
 
-- It can return the inventory of the time library. (When it is run without parameters.)
+- It can return the inventory of the time library. (When run without parameters.)
 ```php
 // Array
 // (
@@ -7319,6 +7335,28 @@ It serves to convert and return the date shared with it according to the specifi
 
 ###### Example
 
+```php
+$date_string = '2023-04-28 00:00:00';
+echo $this->format_date($date_string); // 2023-04-28 00:00:00
+```
+
+**or**
+
+```php
+$date_string = '2023-04-28 00:00:00';
+echo $this->format_date($date_string, 'en_US', 'd F Y'); // 28 April 2023
+```
+
+**or**
+
+```php
+
+$date_string = '2023-04-28 00:00:00';
+echo $this->format_date($date_string, 'tr_TR', 'd F Y'); // 28 Nisan 2023
+
+```
+
+**or**
 
 ```php
 $date_string = '28 April 2023';

@@ -3920,24 +3920,28 @@ class Mind
         // Loop through each language and check if the input string matches the defined patterns
         foreach ($language_definitions as $language => $definitions) {
             $pattern = "/(" . $definitions['month_names'] . "|" . $definitions['abbreviated_month_names'] . "|" . $definitions['days_of_week'] . "|" . $definitions['date_words'] . ")/i";
+            
             if($definitions['locale'] == $key){
                 return $definitions;
             } else {
                 if(!is_null($date_string)){
-
-                    if (preg_match($pattern, $date_string)) {
-                        if(isset($definitions[$key])) { 
-                            return $definitions[$key]; 
-                        } 
-                        return $definitions;
+                    foreach (explode('|', $definitions['month_names']) as $nkey => $month){
+                        if(stristr($date_string, $month)){
+                            $date_string = str_ireplace($month, explode('|', $language_definitions['english']['month_names'])[$nkey], $date_string);
+                            if(isset($definitions[$key])) { 
+                                return $definitions[$key]; 
+                            } 
+                            return $definitions; 
+                        }
                     }
+
                 }
                 
             }
         }
 
         // If none of the languages matched, return null
-        return null;
+        return $language_definitions['english'];
     }
      
     /**
@@ -5791,7 +5795,7 @@ class Mind
     }
 
     /**
-     * It helps to separate sentences
+     * It henlps to separate sentences
      * @param string $text
      * @param string|int $numSentences
      * @return string
@@ -5817,6 +5821,7 @@ class Mind
         $dateInformations = $this->getDateLib($date_string);
         $newDateInformations = $this->getDateLib(null, 'en_US');
         if(!is_null($locale)){
+            
             $oldMonths = explode('|', $dateInformations['month_names']);
             $newMonths = explode('|', $newDateInformations['month_names']);
             foreach ($oldMonths as $key => $oldMonth) {
@@ -5834,6 +5839,10 @@ class Mind
                 if(stristr($date_string, $oldMonth)){
                     $date_string = str_ireplace($oldMonth, $newMonths[$key], $date_string);
                     $date_string = date($format, strtotime($date_string));
+                } else {
+                    if (preg_match('/^[0-9 \-:\/]+$/', $date_string) && strtotime($date_string)) {
+                        $date_string = date($format, strtotime($date_string));
+                    }
                 }
             }
         }
