@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.6
+ * @version    Release: 5.6.7
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -5583,7 +5583,13 @@ class Mind
 
         $file_path = str_replace('..', '', $file_path);
         
-        $data       = file_get_contents($file_path);
+        if($this->remoteFileSize($file_path) === false){
+            $data       = $this->get_contents('', '', $file_path);
+            $data       = ($data != $file_path) ? $data : file_get_contents($file_path);
+        } else {
+            $data       = $file_path;
+        }
+
         $mime_type  = ($this->is_json($data)) ? 'application/json' : $this->mime_content_type($file_path);
         $new_filename   = (is_null($filename)) ? basename($file_path) : $filename;
 
