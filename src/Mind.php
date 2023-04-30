@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.7
+ * @version    Release: 5.6.8
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2569,6 +2569,22 @@ class Mind
         }
         return true;
     }
+
+    /**
+     * Question the accessibility of the remote file
+     * @param string $file
+     * @return boo
+     */
+    public function fileExists($file){
+        
+        $ch = curl_init($file);
+        curl_setopt($ch, CURLOPT_NOBODY, true);
+        curl_exec($ch);
+        $responseCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return ($responseCode == 200) ? true : false;
+    }
     
     /**
      * Validation
@@ -2996,7 +3012,12 @@ class Mind
                             if(!$this->is_port_open($data[$column], $extra)){
                                 $this->errors[$column][$name] = $message[$column][$name];
                             }
-                        break;
+                            break;
+                        case 'fileExists':
+                            if(!$this->fileExists($data[$column])){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                            break;
                     // Geçersiz kural engellendi.
                     default:
                         $this->errors[$column][$name] = 'Invalid rule has been blocked.';

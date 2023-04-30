@@ -283,6 +283,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [timecodeCompare](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timecodeCompare)
 -   [is_port](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port)
 -   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port_open)
+-   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#fileExists)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#validate)
 
 ##### Helper
@@ -3622,6 +3623,22 @@ if($this->is_port_open('172.217.17.142', 21)){
 
 ```
 
+---
+
+## fileExists()
+
+It is used to query the accessibility of the specified `string` file path. If the file is accessible, the response is `true`, otherwise `false` is returned.
+
+##### Example
+
+```php
+if($this->fileExists('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png')){
+    echo 'There is a file';
+} else {
+    echo 'No file';
+}
+```
+
 
 ---
 
@@ -3671,7 +3688,8 @@ $data = array(
     'type'              =>  'countable',
     'post_slug'         =>  'hello-world', // or hello-world
     'server_port'       =>  '65535',
-    'client_port'       =>  '172.217.17.142'
+    'client_port'       =>  '172.217.17.142',
+    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
 
 
 
@@ -3714,7 +3732,8 @@ $rule = array(
     // 'type'              =>  'in:ponderable,countable,measurable' // multi
     'post_slug'         =>  'slug',
     'server_port'       =>  'port',
-    'client_port'       =>  'port_open' // Default 80 It can also take into account the specified ports. port_open:443
+    'client_port'       =>  'port_open', // Default 80 It can also take into account the specified ports. port_open:443
+    'logo_file'         =>  'fileExists'
 );
 
 
@@ -3823,6 +3842,9 @@ $message = array(
     ),
     'client_port'=>array(
         'port_open'=>'Information of an accessible connection must be indicated.'
+    ),
+    'logo_file'=>array(
+        'fileExists'=>'A accessible file path must be specified.'
     )
 
 );
@@ -4238,6 +4260,14 @@ port_open
 port_open:443
 ```
 
+---
+
+##### fileExists
+It is used to indicate that the specified file path should be accessible.It can be used by typing `fileExists` because it does not require an extra parameter.
+
+```php
+fileExists
+```
 
 
 ---

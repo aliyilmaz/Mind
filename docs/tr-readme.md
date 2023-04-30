@@ -282,6 +282,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [timecodeCompare](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timecodeCompare)
 -   [is_port](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port)
 -   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port_open)
+-   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#fileExists)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#validate)
 
 ##### Yardımcı
@@ -3587,6 +3588,22 @@ if($this->is_port_open('172.217.17.142', 21)){
 
 ---
 
+## fileExists()
+
+Belirtilen `string` türündeki dosya yolunun erişilebilirliğini sorgulamak amacıyla kullanılır. Eğer dosya erişilebilir durumdaysa `true` değilse `false` yanıtı döndürülür.
+
+##### Örnek
+
+```php
+if($this->fileExists('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png')){
+    echo 'Dosya var';
+} else {
+    echo 'Dosya yok';
+}
+```
+
+---
+
 ## validate()
 
 Farklı türdeki verilerin belirtilen kurallara uygunluğunu tek seferde kontrol etmek amacıyla kullanılır. Kuralları ihlal eden veriler varsa ve hata mesajı belirtilmişse `$this->errors` dizi değişkenine hata mesajları tanımlanır, hata mesajı belirtilmemişse verilerin dizi anahtarları `$this->errors` dizi değişkenine tanımlanır ve `false` yanıtı döndürülür. Herhangi bir kural ihlali yok ise `true` yanıtı döndürülür. 
@@ -3633,7 +3650,8 @@ $data = array(
     'type'              =>  'countable',
     'post_slug'         =>  'merhaba-dunya', // veya Merhaba-dunya,
     'server_port'       =>  '65535',
-    'client_port'       =>  '172.217.17.142'
+    'client_port'       =>  '172.217.17.142',
+    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
 
 
 
@@ -3676,7 +3694,8 @@ $rule = array(
     // 'type'              =>  'in:ponderable,countable,measurable' // multi
     'post_slug'         =>  'slug',
     'server_port'       =>  'port',
-    'client_port'       =>  'port_open' // Varsayılan 80 Ayrıca belirtilen bağlantı noktasını da dikkate alabilir. port_open:443
+    'client_port'       =>  'port_open', // Varsayılan 80 Ayrıca belirtilen bağlantı noktasını da dikkate alabilir. port_open:443
+    'logo_file'         =>  'fileExists'
 );
 
 
@@ -3785,6 +3804,9 @@ $message = array(
     ),
     'client_port'=>array(
         'port_open'=>'Erişilebilir bir bağlantının bilgileri belirtilmelidir.'
+    ),
+    'logo_file'=>array(
+        'fileExists'=>'Erişilebilir bir dosya yolu belirtilmelidir.'
     )
 
 );
@@ -4198,6 +4220,14 @@ veya
 port_open:443
 ```
 
+---
+
+##### fileExists
+Belirtilen dosya yolunun erişilebilir durumda olması gerektiğini belirtmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `fileExists` yazarak kullanılabilir
+
+```php
+fileExists
+```
 
 ---
 
