@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.8
+ * @version    Release: 5.6.9
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2620,14 +2620,28 @@ class Mind
                     if(count($ruleData) == 2){
                         list($name, $extra) = $ruleData;
                     }
-                    if(count($ruleData) == 3){
+                    if(count($ruleData) == 3 AND $ruleData[0] != 'knownunique'){
                         list($name, $extra, $limit) = $ruleData;
                     }
-                    if(count($ruleData) == 4){
-                        list($name, $extra, $knownuniqueColumn, $knownuniqueValue) = $ruleData;
+                    if($ruleData[0] == 'knownunique'){
+
+                        $name = $ruleData[0];
+                        $extra = $ruleData[1];
+
+                        if(count($ruleData) == 3){
+                            $knownuniqueColumn = $column;                        
+                            $knownuniqueValue = $ruleData[2];
+                        }
+
+                        if(count($ruleData) > 3){
+                            $knownuniqueColumn = $ruleData[2]; 
+                            $knownuniqueValue = implode(':', array_slice($ruleData, ($this->is_column($ruleData[1], $ruleData[2]) ? 3 : 2)));
+                        }
+
                     }
+
                     // farklı zaman damgaları kontrolüne müsaade edildi.
-                    if(count($ruleData) > 2 AND strstr($name, ' ')){
+                    if(count($ruleData) > 2 AND strstr($name, ' ') AND $ruleData[0] != 'knownunique'){
                         $x = explode(' ', $name);
                         list($left, $right) = explode(' ', $name);
                         list($name, $date1) = explode(':', $left);
