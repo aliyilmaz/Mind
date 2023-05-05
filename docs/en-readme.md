@@ -5195,6 +5195,22 @@ $date_string = '28 Nisan 2023';
 $this->print_pre($this->getDateLib($date_string));
 ```
 
+**or**
+
+```php
+// Array
+// (
+//     [month_names] => ocak|şubat|mart|nisan|mayıs|haziran|temmuz|ağustos|eylül|ekim|kasım|aralık
+//     [abbreviated_month_names] => oca|şub|mar|nis|may|haz|tem|ağu|eyl|eki|kas|ara
+//     [days_of_week] => pazartesi|salı|çarşamba|perşembe|cuma|cumartesi|pazar
+//     [date_words] => bugün|dün|yarın
+//     [date_format] => d.m.Y
+//     [locale] => tr_TR
+// )
+$date_string = '28 Mayıs 2023';
+$this->print_pre($this->getDateLib($date_string));
+```
+
 - Can determine which language is written.
 ```php
 $date_string = '28 Nisan 2023';
