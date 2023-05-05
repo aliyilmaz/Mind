@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.6.9
+ * @version    Release: 5.7.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3951,23 +3951,32 @@ class Mind
         if(is_null($date_string) AND is_null($key)){
             return $language_definitions;
         }
+        
+        $detect_month = '';
+        if(!is_null($date_string)){
+            preg_match("/\b\p{L}+\b(?=\W+\d{4})/u", $date_string, $matches);
+            if (count($matches) > 0) {
+                $detect_month = mb_strtolower($matches[0]);
+            } 
+        }
 
         // Loop through each language and check if the input string matches the defined patterns
         foreach ($language_definitions as $language => $definitions) {
-            $pattern = "/(" . $definitions['month_names'] . "|" . $definitions['abbreviated_month_names'] . "|" . $definitions['days_of_week'] . "|" . $definitions['date_words'] . ")/i";
-            
+           
             if($definitions['locale'] == $key){
                 return $definitions;
             } else {
                 if(!is_null($date_string)){
                     foreach (explode('|', $definitions['month_names']) as $nkey => $month){
-                        if(stristr($date_string, $month)){
+                        
+                        if($detect_month == $month){
                             $date_string = str_ireplace($month, explode('|', $language_definitions['english']['month_names'])[$nkey], $date_string);
                             if(isset($definitions[$key])) { 
                                 return $definitions[$key]; 
                             } 
                             return $definitions; 
                         }
+
                     }
 
                 }

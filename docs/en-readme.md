@@ -7373,6 +7373,13 @@ echo $this->format_date($date_string); // 2023-04-28 00:00:00
 **or**
 
 ```php
+$date_string = '25 Mayıs 2023';
+echo $this->format_date($date_string); // 25 May 2023
+```
+
+**or**
+
+```php
 $date_string = '2023-04-28 00:00:00';
 echo $this->format_date($date_string, 'en_US', 'd F Y'); // 28 April 2023
 ```

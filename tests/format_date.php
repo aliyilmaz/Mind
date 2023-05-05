@@ -15,6 +15,9 @@ $Mind = new Mind([
 // $date_string = '2023-04-28 00:00:00';
 // echo $Mind->format_date($date_string, 'tr_TR', 'd F Y'); // 28 Nisan 2023
 
+// $date_string = '25 Mayıs 2023';
+// echo $Mind->format_date($date_string); // 25 May 2023
+
 // $date_string = '28 April 2023';
 // echo $Mind->format_date($date_string); // 28 April 2023
 
