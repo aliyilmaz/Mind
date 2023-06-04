@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.0
+ * @version    Release: 5.7.1
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2379,6 +2379,17 @@ class Mind
     public function is_md5($md5 = ''){
         return strlen($md5) == 32 && ctype_xdigit($md5);
     }
+    
+    /**
+     * Checks if a value is a Base64 encoded string.
+     *
+     * @param string $value
+     * @return bool
+     */
+    public function is_base64($value) {
+        $decoded = base64_decode($value, true);
+        return base64_encode($decoded) === $value;
+    }
 
     /**
 	 * Determines if SSL is used.	 
@@ -3320,7 +3331,7 @@ class Mind
             $_SERVER['REQUEST_METHOD'] === 'POST' AND isset($this->post['captcha']) AND 
             isset($_SESSION['captcha']) AND ($_SESSION['captcha'] != $this->post['captcha']))
         {
-            $this->abort('401', 'Captcha validation failed.');
+            $this->errors['captcha']['required'] = 'Captcha validation failed.';
         }
 
         $conf['firewall']['allow']['platform'] = (isset($conf['firewall']['allow']['platform']) ? $conf['firewall']['allow']['platform'] : []);
@@ -5503,7 +5514,13 @@ class Mind
     public function captcha($level=3, $length=8, $width=320, $height=60){
         $_SESSION['captcha'] = $this->generateToken($length);
 
-        $im=imagecreatetruecolor(ceil($width/2),ceil($height/2));
+        $im_width = (is_null($width)) ? 320 : $width;
+        $im_width = (strstr($width, '%', $width)) ? 320 : $width;
+
+        $im_height = (is_null($height)) ? 60 : $height;
+        $im_height = (strstr($height, '%', $height)) ? 60 : $height;
+
+        $im=imagecreatetruecolor(ceil($im_width/2),ceil($im_height/2));
         $navy=imagecolorAllocate($im,0,0,0);
         
         $white=imagecolorallocate($im,255,255,255);
@@ -5516,14 +5533,14 @@ class Mind
         $pixelColor = $pixelColorList[rand(0, count($pixelColorList)-1)];
 
         $text_width = imagefontwidth(5) * strlen($_SESSION['captcha']);
-        $center = ceil($width / 4);
+        $center = ceil($im_width / 4);
         $x = $center - ceil($text_width / 2);
 
-        imagestring($im, 5, $x, ceil($height/8), $_SESSION['captcha'], $white);
+        imagestring($im, 5, $x, ceil($im_height/8), $_SESSION['captcha'], $white);
 
         if($level != null){
             for($i=0;$i<$level*1000;$i++) {
-                imagesetpixel($im,rand()%$width,rand()%$height,$pixelColor);
+                imagesetpixel($im,rand()%$im_width,rand()%$im_height,$pixelColor);
             }
         }
 
@@ -5534,9 +5551,10 @@ class Mind
         if(!empty($im)){
             imagedestroy($im);
         }
+
         ?>
         <div class="form-group">
-            <label for="captcha"><img style="height:<?=$height;?>px; min-width:<?=$width;?>px; object-fit: cover;image-rendering:high-quality;image-rendering: auto;image-rendering: crisp-edges;image-rendering: pixelated;" src="data:image/png;base64,<?=base64_encode($image_data);?>"></label><br>
+            <label for="captcha"><img style="height:<?=$height;?>px; width:<?=$width;?>; object-fit: cover;image-rendering:high-quality;image-rendering: auto;image-rendering: crisp-edges;image-rendering: pixelated;" src="data:image/png;base64,<?=base64_encode($image_data);?>"></label><br>
             <input type="text" id="captcha" name="captcha" class="form-control">
         </div>
         <?php

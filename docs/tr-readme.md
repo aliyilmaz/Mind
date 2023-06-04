@@ -270,6 +270,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [is_coordinate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_coordinate)
 -   [is_distance](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_distance)
 -   [is_md5](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_md5)
+-   [is_base64](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_base64)
 -   [is_ssl](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_ssl)
 -   [is_htmlspecialchars](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_htmlspecialchars)
 -   [is_morse](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_morse)
@@ -3277,6 +3278,37 @@ if($this->is_md5($str)){
     echo 'Bu bir md5 değil.';
 }
 ```
+---
+
+## is_base64()
+
+Kendisiyle paylaşılan verinin base64 kodu olup olmadığını kontrol etmek amacıyla kullanılır. Söz konusu veri string olarak belirtilmelidir. Eğer veri bir base64 koddu ise `true` değilse `false` yanıtı geri döndürülür.
+
+##### Örnek
+
+```php
+$data = 'Türkiye\'de, yaklaşık 10.000 bitki türü yetişir. Bu bitki türlerinin yaklaşık 3.000\'i ise Türkiye\'ye endemiktir. Bu özelliği ile Türkiye, tüm Avrupa\'dakinden daha fazla endemik bitki türüne sahiptir.';
+
+if($this->is_base64(base64_encode($data))){
+    echo 'Bu bir Base64 kodu.';
+} else {
+    echo 'Bu bir Base64 kodu değil.';
+}
+
+```
+
+veya
+
+```php
+$data = 'Türkiye\'de, yaklaşık 10.000 bitki türü yetişir. Bu bitki türlerinin yaklaşık 3.000\'i ise Türkiye\'ye endemiktir. Bu özelliği ile Türkiye, tüm Avrupa\'dakinden daha fazla endemik bitki türüne sahiptir.';
+
+if($this->is_base64($data)){
+    echo 'Bu bir Base64 kodu.';
+} else {
+    echo 'Bu bir Base64 kodu değil.';
+}
+```
+
 ---
 
 ## is_ssl()
@@ -7014,7 +7046,7 @@ $this->abort('404', 'Sayfa bulunamadı');
 ## captcha()
 Bu metot, sayfa arayüzünü kullanarak otomatik form işlemleri yapmayı amaçlayan robotları durdurmaya yarar, ziyaretçinin insan mı, robot mu olduğunu anlamaya ihtiyaç duyulduğu durumlarda bu metot kullanılır. Çalıştırıldığı yere rastgele bir parametrenin barındığı görsel ve altında o parametrenin yazılabilmesi için bir yazı alanı ekler. 
 
-Ziyaretçi görselde bulunan parametreyi yazı alanına girip post işlemini gerçekleştirirse form gönderilir, aksi halde form gönderilmez ve ziyaretçinin potansiyel robot olduğu değerlendirilerek, captcha hata sayfasına yönlendirilir. Bu sayede robotun otomasyon algoritması sekteye uğratılmış olur.
+Ziyaretçi görselde bulunan parametreyi yazı alanına girip post işlemini gerçekleştirirse form gönderilir, aksi halde form gönderilmez ve ziyaretçinin potansiyel robot olduğu değerlendirilerek, `$this->errors` değişkenine captcha anahtarı altında required anahtarı oluşturularak captcha hatası eklenir. Bu sayede robotun otomasyon algoritmasının sekteye uğratılması mümkün kılınır.
 
 
 4 parametre alır, bunlar sırasıyla `level`, `length`, `width` ve `height` 'dir. 
@@ -7026,10 +7058,10 @@ Okumayı güçleştirme seviyesini belirtmek amacıyla kullanılır, varsayılan
 Parametre uzunluğunu belirtmek amacıyla kullanılır, bu kısımda geliştirici tarafından bir uzunluk belirtildiğinde, oluşacak parametrenin rahatlıkla görünebilmesi için genişlik ve yükseklik değerlerinin de bu tanıma göre güncellenmesi gerekmektedir. Varsayılan uzunluk değeri 8'dir.
 
 **width**
-Captcha kodu görselinin genişliğini belirtmek amacıyla kullanılır. Ölçüler piksel bazlı ve mutlak olmalıdır. Varsayılan olarak 320 tanımlanmıştır.
+Captcha kodu görselinin genişliğini belirtmek amacıyla kullanılır. Ölçüler piksel veya % üzerinden belirtilmelidir. Varsayılan olarak 320 tanımlanmıştır.
 
 **height**
-Captcha kodu görselinin yüksekliğini belirtmek amacıyla kullanılır. Ölçüler piksel bazlı ve mutlak olmalıdır. Varsayılan olarak 60 tanımlanmıştır.
+Captcha kodu görselinin yüksekliğini belirtmek amacıyla kullanılır. Ölçüler piksel veya % üzerinden belirtilmelidir. Varsayılan olarak 60 tanımlanmıştır.
 
 Tüm parametrelerin belirtilme zorunluluğu bulunmamaktadır.
 
@@ -7040,11 +7072,11 @@ Aşağıdaki örnekler, doğrulama yapmayan başka bir form ile aynı sayfada na
 ###### Örnek
 
 ```php
-$this->captcha(); 
+// $this->captcha(); 
 // $this->captcha(null); // null
 // $this->captcha(''); // null
 // $this->captcha(3, 9); length
-// $this->captcha(3, 8, 320); width
+$this->captcha(3, 8, 320); //width
 // $this->captcha(3, 8, 320, 60); height
 
 ```
@@ -7091,11 +7123,12 @@ veya
 // captcha ile
 if(isset($this->post['btn_captcha'])){
 
-    if(isset($this->post['captcha'])){
+    if(empty($this->errors['captcha'])){
         echo 'captcha form';
         $this->print_pre($this->post);
     } else {
-        $this->abort('401', 'Captcha parametresi bulunamadı.');
+        $this->abort('401', 'Captcha bulunamadı.');
+        exit;
     }
     
 }

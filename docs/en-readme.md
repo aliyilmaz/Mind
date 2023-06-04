@@ -271,6 +271,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [is_coordinate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_coordinate)
 -   [is_distance](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_distance)
 -   [is_md5](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_md5)
+-   [is_base64](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_base64)
 -   [is_ssl](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_ssl)
 -   [is_htmlspecialchars](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_htmlspecialchars)
 -   [is_morse](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_morse)
@@ -3314,6 +3315,37 @@ if($this->is_md5($str)){
     echo 'This is not an MD5.';
 }
 ```
+---
+
+## is_base64()
+
+It is used to check whether the data shared with it is a base64 code. The data in question must be specified as a string. If the data was a base64 encode, the response `true` or `false` is returned.
+
+##### Example
+
+```php
+$data = 'In Turkey, about 10,000 plant species grow. About 3,000 of these plant species are endemic to Turkey. With this feature, Turkey has more endemic plant species than all of Europe.';
+
+if($this->is_base64(base64_encode($data))){
+    echo 'This is a Baste64 code.';
+} else {
+    echo 'This is not a Base64 code.';
+}
+
+```
+
+**or**
+
+```php
+$data = 'In Turkey, about 10,000 plant species grow. About 3,000 of these plant species are endemic to Turkey. With this feature, Turkey has more endemic plant species than all of Europe.';
+
+if($this->is_base64($data)){
+    echo 'This is a Baste64 code.';
+} else {
+    echo 'This is not a Base64 code.';
+}
+```
+
 ---
 
 ## is_ssl()
@@ -7049,9 +7081,10 @@ $this->abort('404', 'The page not found');
 ```
 
 ## captcha()
-This method is used to stop robots aiming to perform automatic form operations using the page interface, and this method is used when you need to understand whether the visitor is human or robot.It adds a writing area to the visual and below the parameter in which a random parameter is located.
+This method serves to stop robots that aim to perform automatic form operations using the page interface, this method is used when there is a need to understand whether the visitor is a human or a robot. It adds an image containing a random parameter to the place where it is run and a text area below it so that that parameter can be written.
 
-If the visitor enters the text field and performs the post process, the form is sent, otherwise the form is not sent and the visitor is a potential robot and referred to the CAPTCHA error page.In this way, the automation algorithm of the robot is interrupted.
+If the visitor enters the parameter in the image in the text field and performs the post operation, the form is sent, otherwise the form is not sent and a captcha error is added to the `$this->errors` variable by creating the required key under the captcha key, assuming that the visitor is a potential robot. In this way, it is possible to interrupt the automation algorithm of the robot.
+
 
 It takes 4 parameters, they are `level`, `length`, `width` and `height` respectively.
 
@@ -7062,25 +7095,25 @@ Used to specify the reading difficulty level, by default it is 3. If it is not d
 It is used to specify the parameter length, when a length is specified by the developer in this section, the width and height values must be updated according to this definition so that the parameter to be created can be seen easily. The default length value is 8.
 
 **width**
-It is used to specify the width of the captcha code image. Dimensions must be pixel-based and absolute. 320 is defined by default.
+It is used to specify the width of the captcha code image. Dimensions should be specified in pixels or %. 320 is defined by default.
 
 **height**
-It is used to specify the height of the captcha code image. Dimensions must be pixel-based and absolute. By default 60 is defined.
+It is used to specify the height of the captcha code image. Dimensions should be specified in pixels or %. By default 60 is defined.
 
 Not all parameters need to be specified.
 
 Since the visitor can send the form by deleting the captcha input left by this method with the browser tools, a check must be performed in the light of the example below, before processing the form data.
 
-The following examples are prepared to show how it is used on the same page with another form that does not validate.
+The following examples are intended to show how it is used on the same page with another form that does not validate.
 
 ###### Example
 
 ```php
-$this->captcha(); 
+// $this->captcha(); 
 // $this->captcha(null); // null
 // $this->captcha(''); // null
 // $this->captcha(3, 9); length
-// $this->captcha(3, 8, 320); width
+$this->captcha(3, 8, 320); //width
 // $this->captcha(3, 8, 320, 60); height
 
 ```
@@ -7127,16 +7160,17 @@ $this->captcha();
 // captcha ile
 if(isset($this->post['btn_captcha'])){
 
-    if(isset($this->post['captcha'])){
+    if(empty($this->errors['captcha'])){
         echo 'captcha form';
         $this->print_pre($this->post);
     } else {
-        $this->abort('401', 'The Captcha parameter was not found.');
+        $this->abort('401', 'Captcha not found.');
+        exit;
     }
     
 }
 
-// without CAPTCHA
+// captcha olmadan
 if(isset($this->post['btn_without_captcha'])){
     if(isset($this->post['age'])){
         echo 'Form sent without captcha';

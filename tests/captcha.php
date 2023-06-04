@@ -13,7 +13,7 @@ with another form that does not validate.
 // captcha
 if(isset($Mind->post['btn_captcha'])){
 
-    if(isset($Mind->post['captcha'])){
+    if(empty($Mind->errors['captcha'])){
         echo 'captcha form';
         $Mind->print_pre($Mind->post);
     } else {
@@ -48,11 +48,11 @@ if(isset($Mind->post['btn_without_captcha'])){
     <?=$_SESSION['csrf']['input'];?>
     <?php 
 
-    $Mind->captcha(); 
+    // $Mind->captcha(); 
     // $Mind->captcha(null); // null
     // $Mind->captcha(''); // null
     // $Mind->captcha(3, 9); length
-    // $Mind->captcha(3, 8, 320); width
+    $Mind->captcha(3, 2, 320, 60); //width
     // $Mind->captcha(3, 8, 320, 60); height
     // 
     
