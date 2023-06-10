@@ -314,6 +314,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toSeconds)
 -   [toTime](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toTime)
+-   [toRFC3339](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toRFC3339)
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getlang)
@@ -3683,7 +3684,9 @@ $data = array(
     'post_slug'         =>  'merhaba-dunya', // veya Merhaba-dunya,
     'server_port'       =>  '65535',
     'client_port'       =>  '172.217.17.142',
-    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
+    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+    'password_hash'     =>  'e10adc3949ba59abbe56e057f20f883e',
+    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg=='
 
 
 
@@ -3727,7 +3730,9 @@ $rule = array(
     'post_slug'         =>  'slug',
     'server_port'       =>  'port',
     'client_port'       =>  'port_open', // Varsayılan 80 Ayrıca belirtilen bağlantı noktasını da dikkate alabilir. port_open:443
-    'logo_file'         =>  'fileExists'
+    'logo_file'         =>  'fileExists',
+    'password_md5'      =>  'md5',
+    'password_base64'   =>  'base64'
 );
 
 
@@ -3839,6 +3844,12 @@ $message = array(
     ),
     'logo_file'=>array(
         'fileExists'=>'Erişilebilir bir dosya yolu belirtilmelidir.'
+    ),
+    'password_md5'=>array(
+        'md5'=>'Bu parametre md5 söz diziminde değildir.'
+    ),
+    'password_base64'=>array(
+        'base64'=>'Bu parametre base64 söz diziminde değildir.'
     )
 
 );
@@ -4255,12 +4266,27 @@ port_open:443
 ---
 
 ##### fileExists
-Belirtilen dosya yolunun erişilebilir durumda olması gerektiğini belirtmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `fileExists` yazarak kullanılabilir
+Belirtilen dosya yolunun erişilebilir durumda olması gerektiğini belirtmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `fileExists` yazarak kullanılabilir.
 
 ```php
 fileExists
 ```
+---
 
+##### md5
+Belirtilen parametrenin md5 söz diziminde olması gerektiğini belirtmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `md5` yazarak kullanılabilir.
+
+```php
+md5
+```
+---
+
+##### base64
+Belirtilen parametrenin base64 söz diziminde olması gerektiğini belirtmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `base64` yazarak kullanılabilir.
+
+```php
+base64
+```
 ---
 
 
@@ -5848,6 +5874,25 @@ echo $this->toTime(7320);
 
 ---
 
+## toRFC3339()
+
+Kendisiyle paylaşılan `string` türündeki bir tarihi, [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standardında bir zaman damgasına dönüştürmeye yarar.
+
+##### Örnek
+
+```php
+$ndate = "10/06/2023";
+echo $this->toRFC3339($ndate);
+```
+
+veya
+
+```php
+echo $this->toRFC3339($this->timestamp);
+```
+
+
+---
 ## summary()
 
 Kendisiyle paylaşılan `string` türündeki metni belirtilen karakter sayısına kadar kısaltmaya yarar. dört parametre alır. İlk parametre metin, ikinci parametre karakter sayısı, üçüncü parametre kısaltma gerçekleştiğinde görünmesi arzu edilen `text` ya da `html` değer, dördüncü parametre ise metnin kodlardan, boşluklardan arındırılması için kullanılır. Sadece üçüncü ve dördüncü parametrelerin belirtilme zorunluluğu bulunmamaktadır. Varsayılan olarak dördüncü parametre `true` belirtilmiştir, böylelikle kısaltılan metin kodlardan ve anormal boşluklardan arındırılır.

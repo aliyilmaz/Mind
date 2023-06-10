@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.1
+ * @version    Release: 5.7.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3043,6 +3043,16 @@ class Mind
                                 $this->errors[$column][$name] = $message[$column][$name];
                             }
                             break;
+                        case 'md5':
+                            if(!$this->is_md5($data[$column])){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                            break;
+                        case 'base64':
+                            if(!$this->is_base64($data[$column])){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                            break;
                     // Geçersiz kural engellendi.
                     default:
                         $this->errors[$column][$name] = 'Invalid rule has been blocked.';
@@ -4453,6 +4463,17 @@ class Mind
             return sprintf('%02d:%02d:%02d', $hours, $mins, $secs);
         }
         return false;
+    }
+
+    /**
+     * Converts a given date to RFC 3339 format.
+     *
+     * @param string $date The date to convert.
+     * @return string The date in RFC 3339 format.
+     */
+    public function toRFC3339($date){
+        $dateObject  = new DateTime($date);
+        return $dateObject->format("Y-m-d\TH:i:sP");
     }
 
     /**

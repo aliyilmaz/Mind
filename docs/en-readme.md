@@ -315,6 +315,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toSeconds)
 -   [toTime](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toTime)
+-   [toRFC3339](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toRFC3339)
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getlang)
@@ -3721,7 +3722,9 @@ $data = array(
     'post_slug'         =>  'hello-world', // or hello-world
     'server_port'       =>  '65535',
     'client_port'       =>  '172.217.17.142',
-    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
+    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+    'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
+    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg=='
 
 
 
@@ -3765,7 +3768,9 @@ $rule = array(
     'post_slug'         =>  'slug',
     'server_port'       =>  'port',
     'client_port'       =>  'port_open', // Default 80 It can also take into account the specified ports. port_open:443
-    'logo_file'         =>  'fileExists'
+    'logo_file'         =>  'fileExists',
+    'password_md5'      =>  'md5',
+    'password_base64'   =>  'base64'
 );
 
 
@@ -3877,6 +3882,12 @@ $message = array(
     ),
     'logo_file'=>array(
         'fileExists'=>'A accessible file path must be specified.'
+    ),
+    'password_md5'=>array(
+        'md5'=>'This parameter is not in the MD5 syntax.'
+    ),
+    'password_base64'=>array(
+        'base64'=>'This parameter is not in the Base64 syntax.'
     )
 
 );
@@ -4301,9 +4312,23 @@ It is used to indicate that the specified file path should be accessible.It can 
 fileExists
 ```
 
-
 ---
 
+##### md5
+Used to specify that the specified parameter must be in the md5 syntax. It can be used by typing `md5` as it does not need an extra parameter.
+
+```php
+md5
+```
+---
+
+##### base64
+Used to specify that the specified parameter must be in base64 syntax. It can be used by typing `base64` as it does not need an extra parameter.
+
+```php
+base64
+```
+---
 
 ## policyMaker()
 
@@ -5885,6 +5910,26 @@ It serves to convert a shared second of type `integer` into a timestamp consisti
 ```php
 echo '7320 - 02:02:00<br>';
 echo $this->toTime(7320);
+```
+
+
+---
+
+## toRFC3339()
+
+It converts a date of type `string` shared with it to a timestamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard.
+
+##### Example
+
+```php
+$ndate = "10/06/2023";
+echo $this->toRFC3339($ndate);
+```
+
+**or**
+
+```php
+echo $this->toRFC3339($this->timestamp);
 ```
 
 

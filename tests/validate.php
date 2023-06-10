@@ -12,7 +12,8 @@ $Mind = new Mind();
  | min-age, max-age, date, unique, knownunique, available, 
  | unchanged, bool, iban, ipv4, ipv6, blood, coordinate, 
  | distance, languages, morse, binary, timecode, currencies,
- | decimal, isbn, in, slug, port, port_open, fileExists
+ | decimal, isbn, in, slug, port, port_open, fileExists, md5,
+ | base64
  | 
  */
 
@@ -51,7 +52,9 @@ $data = array(
     'post_slug'         =>  'hello-world', // or Hello-world
     'server_port'       =>  '65535',
     'client_port'       =>  '172.217.17.142',
-    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png'
+    'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
+    'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
+    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg=='
 
  );
 
@@ -93,7 +96,9 @@ $rule = array(
     'post_slug'         =>  'slug',
     'server_port'       =>  'port',
     'client_port'       =>  'port_open', // Default 80 or It also takes into account the special port. is_port_open:443
-    'logo_file'         =>  'fileExists'
+    'logo_file'         =>  'fileExists',
+    'password_md5'      =>  'md5',
+    'password_base64'   =>  'base64'
 );
 
 // Message
@@ -204,6 +209,12 @@ $message = array(
     ),
     'logo_file'=>array(
         'fileExists'=>'A accessible file path must be specified.'
+    ),
+    'password_md5'=>array(
+        'md5'=>'This parameter is not in the MD5 syntax.'
+    ),
+    'password_base64'=>array(
+        'base64'=>'This parameter is not in the Base64 syntax.'
     )
 
 );
