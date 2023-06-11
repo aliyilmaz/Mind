@@ -283,6 +283,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [timecodeCompare](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timecodeCompare)
 -   [is_port](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port)
 -   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port_open)
+-   [is_bot](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_bot)
 -   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#fileExists)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#validate)
 
@@ -299,6 +300,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [permalink](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#permalink)
 -   [timeForPeople](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timeForPeople)
 -   [timezones](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timezones)
+-   [bots](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#bots)
 -   [languages](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#languages-1)
 -   [currencies](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#currencies)
 -   [morsealphabet](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#morsealphabet)
@@ -3621,6 +3623,31 @@ if($this->is_port_open('172.217.17.142', 21)){
 
 ---
 
+## is_bot()
+
+Kendisiyle paylaşılan `string` type değerini (`HTTP_USER_AGENT`) inceleyerek bu değerin [bots()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#bots) yönteminde belirtilen botlardan biri olup olmadığını kontrol eder. Söz konusu değer bot'a aitse "true", değilse "false" döndürür. Bir değer belirtmek zorunlu değildir. Herhangi bir değer belirtilmez ise metodun çalıştırıldığı sayfayı görüntüleyen ziyaretçinin bot olup olmadığını kontrol eder.
+
+```php
+if($this->is_bot()){
+    echo 'Evet siz bir botsunuz.';
+} else {
+    echo 'Hayır siz bir bot değilsiniz.';
+}
+```
+
+veya
+
+```php
+$userAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
+if($this->is_bot($userAgent)){
+    echo 'Bu değer bir bot\'a ait görünüyor.';
+} else {
+    echo 'Hayır bu değer bir bot\'a ait görünmüyor.';
+}
+```
+---
+
 ## fileExists()
 
 Belirtilen `string` türündeki dosya yolunun erişilebilirliğini sorgulamak amacıyla kullanılır. Eğer dosya erişilebilir durumdaysa `true` değilse `false` yanıtı döndürülür.
@@ -3686,7 +3713,8 @@ $data = array(
     'client_port'       =>  '172.217.17.142',
     'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     'password_hash'     =>  'e10adc3949ba59abbe56e057f20f883e',
-    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg=='
+    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
+    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
 
 
@@ -3732,7 +3760,8 @@ $rule = array(
     'client_port'       =>  'port_open', // Varsayılan 80 Ayrıca belirtilen bağlantı noktasını da dikkate alabilir. port_open:443
     'logo_file'         =>  'fileExists',
     'password_md5'      =>  'md5',
-    'password_base64'   =>  'base64'
+    'password_base64'   =>  'base64',
+    'user_agent'        =>  'bot'
 );
 
 
@@ -3850,6 +3879,9 @@ $message = array(
     ),
     'password_base64'=>array(
         'base64'=>'Bu parametre base64 söz diziminde değildir.'
+    ),
+    'user_agent'=>array(
+        'bot'=>'Geçerli bir bot kimliği belirtilmelidir.'
     )
 
 );
@@ -4289,6 +4321,13 @@ base64
 ```
 ---
 
+##### bot
+Belirtilen parametrenin geçerli bir bot'a ait olması gerektiğini ifade etmek için kullanılır, bunu [is_bot()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_bot) metodundan yararlanarak kontrol eder. Ekstra bir parametreye ihtiyaç duymadığından `bot` yazarak kullanılabilir.
+
+```php
+bot
+```
+---
 
 
 ## policyMaker()
@@ -5135,6 +5174,19 @@ Bu fonksiyon, zaman damgasını isabetli kılmak amacıyla tercih edilen `date_d
 
 ```php
 $this->print_pre($this->timezones());
+```
+
+---
+
+## bots()
+
+Bu fonksiyon, Yaygın 72 bot'un ismini dizi olarak geri döndürmeye yarar. 
+**Desteklenen botlar:** Alexabot, AhrefsBot, Applebot, ArchiveBot, Baiduspider, Barkrowler, BLEXBot, Bingbot, BUbiNG, CCBot, Charlotte, Cliqzbot, Crawler, Discordbot, DotBot, DuckDuckBot, Embedly, ExB Language Crawler, Exabot, Facebot, FatBot, FlipboardProxy, Flamingo_Search, Genieo, Googlebot, ia_archiver, Infohelfer, Instagram Bot, LinkedInBot, Linguee Bot, LivelapBot, LoadImpactPageAnalyzer, MagpieRSS, Mail.RU_Bot, MetaJobBot, MetaURI, MJ12bot, MojeekBot, MSRBOT, Netvibes, OpenHoseBot, OutclicksBot, Phantom, PhantomJS, Pinterest, Pinterestbot, Python-urllib, QQBrowser, Qseero, Qwantify, Redditbot, RubedoBot, SafeBrowsing, SafeDNSBot, Screaming Frog, SemrushBot, Sogou, Soso, spbot, SurveyBot, TelegramBot, Tumblrbot, Twitterbot, UnwindFetchor, VimeoBot, VoilàBot, WBSearchBot, Weibo, WhatsApp, WordPress, YandexBot, YouTubeBot
+
+##### Örnek
+
+```php
+$this->print_pre($this->bots());
 ```
 
 ---

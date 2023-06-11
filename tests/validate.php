@@ -13,7 +13,7 @@ $Mind = new Mind();
  | unchanged, bool, iban, ipv4, ipv6, blood, coordinate, 
  | distance, languages, morse, binary, timecode, currencies,
  | decimal, isbn, in, slug, port, port_open, fileExists, md5,
- | base64
+ | base64, bot
  | 
  */
 
@@ -54,7 +54,8 @@ $data = array(
     'client_port'       =>  '172.217.17.142',
     'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
-    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg=='
+    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
+    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
  );
 
@@ -98,7 +99,8 @@ $rule = array(
     'client_port'       =>  'port_open', // Default 80 or It also takes into account the special port. is_port_open:443
     'logo_file'         =>  'fileExists',
     'password_md5'      =>  'md5',
-    'password_base64'   =>  'base64'
+    'password_base64'   =>  'base64',
+    'user_agent'        =>  'bot'
 );
 
 // Message
@@ -215,6 +217,9 @@ $message = array(
     ),
     'password_base64'=>array(
         'base64'=>'This parameter is not in the Base64 syntax.'
+    ),
+    'user_agent'=>array(
+        'bot'=>'A valid boat identity must be specified.'
     )
 
 );

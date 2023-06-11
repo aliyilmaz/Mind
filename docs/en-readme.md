@@ -284,6 +284,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [timecodeCompare](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timecodeCompare)
 -   [is_port](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port)
 -   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port_open)
+-   [is_bot](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_bot)
 -   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#fileExists)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#validate)
 
@@ -300,6 +301,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [permalink](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#permalink)
 -   [timeForPeople](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timeForPeople)
 -   [timezones](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timezones)
+-   [bots](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#bots)
 -   [languages](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#languages-1)
 -   [currencies](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#currencies)
 -   [morsealphabet](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#morsealphabet)
@@ -3658,6 +3660,32 @@ if($this->is_port_open('172.217.17.142', 21)){
 
 ---
 
+## is_bot()
+
+It examines the `string` type value (`HTTP_USER_AGENT`) shared with it to see if this value is one of the bots specified in the [bots()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#bots) method. Returns `true` if the value in question belongs to the bot, and `false` if not. It is not mandatory to specify a value. If no value is specified, it checks whether the visitor viewing the page on which the method is run is a bot.
+
+```php
+if($this->is_bot()){
+    echo 'Yes, you are a bot.';
+} else {
+    echo 'No, you\'re not a bot.';
+}
+```
+
+**or**
+
+```php
+$userAgent = "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)";
+
+if($this->is_bot($userAgent)){
+    echo 'This value seems to be a bot.';
+} else {
+    echo 'No, this value doesn\'t seem to belong to a bot.';
+}
+```
+
+---
+
 ## fileExists()
 
 It is used to query the accessibility of the specified `string` file path. If the file is accessible, the response is `true`, otherwise `false` is returned.
@@ -3724,7 +3752,8 @@ $data = array(
     'client_port'       =>  '172.217.17.142',
     'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
-    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg=='
+    'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
+    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
 
 
 
@@ -3770,7 +3799,8 @@ $rule = array(
     'client_port'       =>  'port_open', // Default 80 It can also take into account the specified ports. port_open:443
     'logo_file'         =>  'fileExists',
     'password_md5'      =>  'md5',
-    'password_base64'   =>  'base64'
+    'password_base64'   =>  'base64',
+    'user_agent'        =>  'bot'
 );
 
 
@@ -3888,6 +3918,9 @@ $message = array(
     ),
     'password_base64'=>array(
         'base64'=>'This parameter is not in the Base64 syntax.'
+    ),
+    'user_agent'=>array(
+        'bot'=>'A valid boat identity must be specified.'
     )
 
 );
@@ -4328,6 +4361,16 @@ Used to specify that the specified parameter must be in base64 syntax. It can be
 ```php
 base64
 ```
+---
+
+
+##### bot
+It is used to express that the specified parameter must belong to a valid bot, it checks it using the [is_bot()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_bot) method. It can be used by typing `bot` as it does not need an extra parameter.
+
+```php
+bot
+```
+
 ---
 
 ## policyMaker()
@@ -5174,6 +5217,20 @@ This function provides a string of zone codes that can be used in the preferred 
 
 ```php
 $this->print_pre($this->timezones());
+```
+
+---
+
+
+## bots()
+
+This function serves to return the common 72 Bot as a series.
+**Supported boots:** Alexabot, AhrefsBot, Applebot, ArchiveBot, Baiduspider, Barkrowler, BLEXBot, Bingbot, BUbiNG, CCBot, Charlotte, Cliqzbot, Crawler, Discordbot, DotBot, DuckDuckBot, Embedly, ExB Language Crawler, Exabot, Facebot, FatBot, FlipboardProxy, Flamingo_Search, Genieo, Googlebot, ia_archiver, Infohelfer, Instagram Bot, LinkedInBot, Linguee Bot, LivelapBot, LoadImpactPageAnalyzer, MagpieRSS, Mail.RU_Bot, MetaJobBot, MetaURI, MJ12bot, MojeekBot, MSRBOT, Netvibes, OpenHoseBot, OutclicksBot, Phantom, PhantomJS, Pinterest, Pinterestbot, Python-urllib, QQBrowser, Qseero, Qwantify, Redditbot, RubedoBot, SafeBrowsing, SafeDNSBot, Screaming Frog, SemrushBot, Sogou, Soso, spbot, SurveyBot, TelegramBot, Tumblrbot, Twitterbot, UnwindFetchor, VimeoBot, VoilàBot, WBSearchBot, Weibo, WhatsApp, WordPress, YandexBot, YouTubeBot
+
+##### Example
+
+```php
+$this->print_pre($this->bots());
 ```
 
 ---

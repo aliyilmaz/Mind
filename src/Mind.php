@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.2
+ * @version    Release: 5.7.3
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2582,6 +2582,25 @@ class Mind
     }
 
     /**
+     * Verifies whether the specified user agent or the $_SERVER['HTTP_USER_AGENT'] value represents a bot.
+     *
+     * @param string|null $userAgent The user agent to verify. If not provided, $_SERVER['HTTP_USER_AGENT'] will be used.
+     * @return bool Returns true if the user agent represents a bot, false otherwise.
+     */
+    public function is_bot($userAgent = null) {
+        $userAgent = (empty($userAgent)) ? $_SERVER['HTTP_USER_AGENT'] : $userAgent;
+    
+        foreach ($this->bots() as $bot) {
+            if (stripos($userAgent, $bot) !== false) {
+                return true;
+            }
+        }
+    
+        return false;
+    }
+    
+
+    /**
      * Question the accessibility of the remote file
      * @param string $file
      * @return boo
@@ -3050,6 +3069,11 @@ class Mind
                             break;
                         case 'base64':
                             if(!$this->is_base64($data[$column])){
+                                $this->errors[$column][$name] = $message[$column][$name];
+                            }
+                            break;
+                        case 'bot':
+                            if(!$this->is_bot($data[$column])){
                                 $this->errors[$column][$name] = $message[$column][$name];
                             }
                             break;
@@ -3762,6 +3786,16 @@ class Mind
      */
     public function timezones(){
         return timezone_identifiers_list();
+    }
+
+    /**
+     * Returns an array of commonly known bot names.
+     *
+     * @return array An array containing the names of popular bots, such as search engine crawlers and social media bots.
+     */
+    public function bots(){
+        return ['Alexabot','AhrefsBot','Applebot','ArchiveBot','Baiduspider','Barkrowler','BLEXBot','Bingbot','BUbiNG','CCBot','Charlotte','Cliqzbot','Crawler','Discordbot','DotBot','DuckDuckBot','Embedly','ExB Language Crawler','Exabot','Facebot','FatBot','FlipboardProxy','Flamingo_Search','Genieo','Googlebot','ia_archiver','Infohelfer','Instagram Bot','LinkedInBot','Linguee Bot','LivelapBot','LoadImpactPageAnalyzer','MagpieRSS','Mail.RU_Bot','MetaJobBot','MetaURI','MJ12bot','MojeekBot','MSRBOT','Netvibes','OpenHoseBot','OutclicksBot','Phantom','PhantomJS','Pinterest','Pinterestbot','Python-urllib','QQBrowser','Qseero','Qwantify','Redditbot','RubedoBot','SafeBrowsing','SafeDNSBot','Screaming Frog','SemrushBot','Sogou','Soso','spbot','SurveyBot','TelegramBot','Tumblrbot','Twitterbot','UnwindFetchor','VimeoBot','VoilàBot','WBSearchBot','Weibo','WhatsApp','WordPress','YandexBot','YouTubeBot'];
+        
     }
 
     /**
