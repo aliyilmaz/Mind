@@ -166,6 +166,10 @@ Görüntülenmekte olan sayfa yolu `$this->page_current` değişkeninde tutulur.
 
 Önceki sayfa yolu `$this->page_back` değişkeninde tutulur. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır.
 
+##### public $project_path
+
+Proje alan adı, http veya https ön eki ile projenin barındığı dizin adıyla birleştirilerek `$this->project_path` değişkeninde tutulur. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır.
+
 ##### public $timezone
 
 Projenin zaman dilimi bu değişkende tutulur, varsayılan olarak `Europe/Istanbul` olarak belirtilmiştir. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır.

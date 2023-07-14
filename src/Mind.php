@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.3
+ * @version    Release: 5.7.4
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -23,6 +23,7 @@ class Mind
     public  $page_uri       =   '';
     public  $page_current   =   '';
     public  $page_back      =   '';
+    public  $project_path   =   '';
     public  $timezone       =   'Europe/Istanbul';
     public  $timestamp;
     public  $lang           =   [
@@ -109,6 +110,10 @@ class Mind
 
         /* Determining the previous page address */
         $this->page_back = (isset($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : $this->page_current;
+
+        // Domain with a prefix and containing the project directory name
+        $this->project_path = ($_SERVER['SERVER_NAME'].'/' != $this->base_url) ? $_SERVER['SERVER_NAME'].$this->base_url : $this->base_url;
+        $this->project_path = ($this->is_ssl())?'https://'.$this->project_path : 'http://'.$this->project_path;
 
     }
 

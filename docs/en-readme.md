@@ -167,6 +167,10 @@ The currently displayed page path is kept in the variable `$this->page_current`.
 
 The previous page path is kept in the `$this->page_back` variable. The `public` property is defined to allow access from outside the class.
 
+##### public $project_path
+
+The project domain name is kept in the variable `$this->project_path` by combining the http or https prefix with the name of the directory where the project is hosted. The `public` property is defined to allow access from outside the class.
+
 ##### public $timezone
 
 The time zone of the project is kept in this variable, it is specified as `Europe/Istanbul` by default. The `public` property is defined to allow access from outside the class.
