@@ -172,7 +172,7 @@ Proje alan adı, http veya https ön eki ile projenin barındığı dizin adıyl
 
 ##### public $project_domain
 
-Proje alan adı, varsa uzantısıyla birlikte `$this->project_domain` değişkeninde `example.com`, `localhost`, `subdomain.example.com` veya `127.0.0.1` söz diziminde tutulur. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır.
+Proje alan adı, varsa uzantısıyla birlikte `$this->project_domain` değişkeninde `example.com`, `localhost`, `subdomain.example.com` veya `127.0.0.1` söz diziminde tutulur. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır. 
 
 ##### public $timezone
 

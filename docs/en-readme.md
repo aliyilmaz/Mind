@@ -174,7 +174,7 @@ The project domain name is kept in the variable `$this->project_path` by combini
 
 ##### public $project_domain
 
-The project domain name is kept in the syntax `example.com`, `localhost`, `subdomain.example.com` or `127.0.0.1` in the variable `$this->project_domain` with its extension, if any. The `public` property is defined to allow access from outside the class.
+The project domain name is kept in the syntax `example.com`, `localhost`, `subdomain.example.com` or `127.0.0.1` in the variable `$this->project_domain` with its extension, if any. The `public` property is defined to allow access from outside the class. 
 
 ##### public $timezone
 
