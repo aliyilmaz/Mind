@@ -116,6 +116,7 @@ class Mind
         $this->project_path = ($_SERVER['SERVER_NAME'].'/' != $this->base_url) ? $_SERVER['SERVER_NAME'].$this->base_url : $this->base_url;
         $this->project_path = ($this->is_ssl())?'https://'.$this->project_path : 'http://'.$this->project_path;
 
+        // Like example.com or test.example.com
         $this->project_domain = $this->normalizeDomain($this->project_path);
     }
 
