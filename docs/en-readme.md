@@ -171,6 +171,11 @@ The previous page path is kept in the `$this->page_back` variable. The `public` 
 
 The project domain name is kept in the variable `$this->project_path` by combining the http or https prefix with the name of the directory where the project is hosted. The `public` property is defined to allow access from outside the class.
 
+
+##### public $project_domain
+
+The project domain name is kept in the syntax `example.com`, `localhost`, `subdomain.example.com` or `127.0.0.1` in the variable `$this->project_domain` with its extension, if any. The `public` property is defined to allow access from outside the class.
+
 ##### public $timezone
 
 The time zone of the project is kept in this variable, it is specified as `Europe/Istanbul` by default. The `public` property is defined to allow access from outside the class.
@@ -329,6 +334,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [addressCodeList](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressCodeList)
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressGenerator)
 -   [committe](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#committe)
+-   [normalizeDomain](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#normalizeDomain)
 
 ##### System
 
@@ -6166,6 +6172,25 @@ echo '<hr>';
 $values = $this->committe($request, ['username', 'role'], ['username', 'role']);
 $this->print_pre($values);
 echo '<hr>';
+```
+
+---
+
+## normalizeDomain()
+
+Used to get domain address of specified url, this method supports domain variations in `$this->project_domain` variable.
+
+```php
+// echo $this->normalizeDomain('example.com:8080/test1/test2'); // example.com
+// echo $this->normalizeDomain('www.example.com/test1/test2'); // example.com
+// echo $this->normalizeDomain('subdomain.example.com/test1/test2'); // example.com
+// echo $this->normalizeDomain('https://example.com/test1/test2'); // example.com
+// echo $this->normalizeDomain('http://example.com/test1/test2'); // example.com
+// echo $this->normalizeDomain('http://www.example.com/test1/test2'); // example.com
+// echo $this->normalizeDomain('127.0.0.1:8080/test1/test2'); // 127.0.0.1
+// echo $this->normalizeDomain('http://127.0.0.1/test1/test2'); // 127.0.0.1
+// echo $this->normalizeDomain('https://127.0.0.1/test1/test2'); // 127.0.0.1
+echo $this->normalizeDomain('127.0.0.1/test1/test2'); // 127.0.0.1
 ```
 
 ---

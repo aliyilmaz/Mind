@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.4
+ * @version    Release: 5.7.5
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -24,6 +24,7 @@ class Mind
     public  $page_current   =   '';
     public  $page_back      =   '';
     public  $project_path   =   '';
+    public  $project_domain =   '';
     public  $timezone       =   'Europe/Istanbul';
     public  $timestamp;
     public  $lang           =   [
@@ -115,6 +116,7 @@ class Mind
         $this->project_path = ($_SERVER['SERVER_NAME'].'/' != $this->base_url) ? $_SERVER['SERVER_NAME'].$this->base_url : $this->base_url;
         $this->project_path = ($this->is_ssl())?'https://'.$this->project_path : 'http://'.$this->project_path;
 
+        $this->project_domain = $this->normalizeDomain($this->project_path);
     }
 
     public function __destruct()
@@ -4785,6 +4787,25 @@ class Mind
         }
 
         return $response;
+    }
+
+    /**
+     * Normalizes a domain URL.
+     *
+     * @param string $url The URL to be normalized.
+     * @return string The normalized URL.
+     */
+    public function normalizeDomain($url) {
+        $urlParts = parse_url($url);
+
+        // Start URL with "http: //" or "https: //" to check
+        $url = (!isset($urlParts['scheme'])) ? "http://" . $url : $url;
+        $urlParts = parse_url($url);
+
+        // Check if the domain starts with 'www.'
+        $domain = (substr($urlParts['host'], 0, 4) === 'www.') ? substr($urlParts['host'], 4) : $urlParts['host'];
+
+        return $domain;
     }
 
     /**
