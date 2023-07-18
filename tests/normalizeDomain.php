@@ -3,7 +3,6 @@ require_once ('../src/Mind.php');
 
 $Mind = new Mind();
 
-
 // echo $Mind->normalizeDomain('example.com:8080/test1/test2'); // example.com
 // echo $Mind->normalizeDomain('www.example.com/test1/test2'); // example.com
 // echo $Mind->normalizeDomain('subdomain.example.com/test1/test2'); // example.com
