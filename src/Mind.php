@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.5
+ * @version    Release: 5.7.6
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -118,6 +118,9 @@ class Mind
 
         // Like example.com or test.example.com
         $this->project_domain = $this->normalizeDomain($this->project_path);
+
+        $thought = (!empty($conf['thought'])) ? $conf['thought'] : null;
+        if(!is_null($thought)) { $this->addLayer($thought); }
     }
 
     public function __destruct()

@@ -117,6 +117,31 @@ $Mind = new Mind([
 
 ---
 
+## Düşünce oluşturmak (thought)
+
+Bu özellik, projenin tamamında etkin olması arzu edilen fikirlerin çalıştırılması için oluşturulmuştur. Sınıfı çağırırken `thought` anahtarına `string` veya `array` türünde dosya yolları uzantısız şekilde belirtildiğinde bu katmanların dahil edilmesi sağlanmış olur.
+
+```php
+$Mind = new Mind([
+    'thought'=>'app/views/welcome'
+]);
+
+```
+
+veya
+
+```php
+$Mind = new Mind([
+    'thought'=>[
+        'app/views/welcome',
+        'app/views/goodby'
+    ]
+]);
+
+```
+
+---
+
 ## Zaman Dilimi Ayarı
 
 İçeriğin doğru zaman damgasıyla işaretlenebilmesi için zaman dilimini kişiselleştirmek mümkündür. Varsayılan olarak `Europe/Istanbul` tanımlanmıştır. Sınıf dışından erişime izin vermek için `public` özelliği tanımlanmıştır. Daha fazla bilgi için [Desteklenen zaman dilimlerinin listesi](https://secure.php.net/manual/tr/timezones.php) bölümüne bakabilirsiniz.

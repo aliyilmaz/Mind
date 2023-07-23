@@ -118,6 +118,34 @@ $Mind = new Mind([
 ```
 ---
 
+
+---
+
+## Creating thought (thought)
+
+This feature was created to run ideas that are desired to be active throughout the project. When calling the class, specifying the `string` or `array` type file paths without an extension to the `thought` key ensures that these layers are included.
+
+```php
+$Mind = new Mind([
+    'thought'=>'app/views/welcome'
+]);
+
+```
+
+**or**
+
+```php
+$Mind = new Mind([
+    'thought'=>[
+        'app/views/welcome',
+        'app/views/goodby'
+    ]
+]);
+
+```
+
+---
+
 ## Time zone setting
 
 It is possible to personalize the time zone in order to mark the content with the right time stamp. By default, `Europe/Istanbul` is defined. The `public` property is defined to allow access from outside the class.For more information, see [List of supported timezones](https://secure.php.net/manual/en/timezones.php).
