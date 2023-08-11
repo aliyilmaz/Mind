@@ -5706,6 +5706,84 @@ $this->addLayer([
 ]);
 ```
 
+
+#### Define authority for layer
+
+This section addresses the steps to be taken when it is desired to restrict access to the files to be added during the process of adding layers only for users who meet the specified conditions. It is not mandatory to implement these steps; if no authorization is defined for a layer, the respective layer(s) will be accessible to everyone. If authorization is desired for the layer(s), the third parameter of the `addLayer()` method should be specified, and the necessary assignments should be made to the `$_SESSION['permissions']` variable as described in the scenario below. The application through an example scenario is presented below.
+
+**Scenario**
+When a user logs in, the `$_SESSION['permissions']` variable is assigned parameter(s) indicating the user's group(s) or permission, either as a `string` or an `array`. Subsequently, for the addLayer() method, these permission group(s) or parameter(s) indicating the permission, either as a `string` or an `array`, are specified as the third parameter. This way, only users with the specified permission can access the respective layer(s).
+
+##### Example
+
+```php
+// 2
+// [2,3,5] 
+// admin
+// ['admin', 'editor']
+$_SESSION['permissions'] = 2; 
+```
+
+```php
+$this->addLayer('app/views/home', null, 2);
+```
+**or**
+
+```php
+$this->addLayer([
+    'app/views/header',
+    'app/views/content',
+    'app/views/footer'
+], null, [2,3,5]);
+```
+**or**
+
+```php
+$file = [
+    'app/views/layout/header',
+    'app/views/home',
+    'app/views/layout/footer'
+];
+$cache = [
+    'app/middleware/auth',
+    'app/database/install',
+    'app/model/home'
+];
+$this->addLayer($file, $cache, 'admin');
+```
+**or**
+
+```php
+$this->addLayer('HomeController:index@create',
+[
+    'BlogController:index@create',
+    'LogController:index@create'
+], null, ['admin', 'editor']);
+```
+
+**or**
+
+```php
+$this->addLayer([
+    'BlogController:index@create',
+    'LogController:index@create'
+], null, ['admin', 'editor']);
+```
+
+**or**
+
+```php
+$this->addLayer([
+    'HomeController:index@create',
+    'StoreController:index@create'
+],
+[
+    'BlogController:index@create',
+    'LogController:index@create'
+],
+['admin', 'editor']);
+```
+
 ---
 
 ## columnSqlMaker()
@@ -6429,13 +6507,13 @@ class HomeController extends Mind
     public function index()
     {
         //
-        echo 'merhaba ben index';
+        echo 'Hello I am index';
     }
 
     public function create()
     {
         //
-        echo 'merhaba ben create';
+        echo 'Hello I Create';
     }
 
 }
@@ -6454,7 +6532,56 @@ Within this created `HomeController` class, `Mind` methods can be accessed with 
 
 If the method is called, the class name must be the same as the file name.
 
+#### Define authority for the route
 
+This section covers the steps to be taken when it is desired to restrict access to a route only for users who meet the specified conditions. It is not mandatory to implement these steps; if no authorization is defined for a route, the respective route will be accessible to everyone. If authorization is desired for a route, the fourth parameter of the route method should be specified, and the necessary assignments should be made to the `$_SESSION['permissions']` variable as described in the scenario below. The application through an example scenario is presented below.
+
+**Scenario**
+When a user logs in, the `$_SESSION['permissions']` variable is assigned the parameter(s) indicating the user's group(s) or permission, either as a `string` or an `array`. Subsequently, for the relevant route, these permission group(s) or parameter(s) indicating the permission, either as a `string` or an `array`, are specified as the fourth parameter of the route method. This way, only users with the specified permission are able to access the respective route.
+
+
+##### Example
+
+```php
+// 2
+// [2,3,5] 
+// admin
+// ['admin', 'editor']
+$_SESSION['permissions'] = 2; 
+```
+
+```php
+$Mind->route('test', 'app/views/test', null, 2);
+```
+**or**
+
+```php
+$Mind->route('test', 'app/views/test', null, [2,3,5]);
+```
+**or**
+
+```php
+$Mind->route('test', 'app/views/test', null, 'admin');
+```
+**or**
+
+```php
+$Mind->route('test', 'app/views/test', null, ['admin', 'editor']);
+```
+
+
+**Information** 
+If you want to send the Error code and error message, you can also send the 4th parameter as below. The `error` key is not required, if not specified, it references the following values by default.
+
+```php
+$Mind->route('test', 'app/views/test', null, [
+    'error'=>[
+            'code'=>'401',
+            'message'=>'You do not have the authority to display this route.'
+        ],
+    'params'=>1
+    ]
+);
 ---
 
 ## write()

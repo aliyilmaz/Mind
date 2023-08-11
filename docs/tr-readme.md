@@ -5656,6 +5656,85 @@ $this->addLayer([
 ]);
 ```
 
+
+
+#### Katman için yetki tanımlamak
+
+Bu kısım katman ekleme işlemi sırasında eklenecek dosyalara sadece belirtilen şartlara sahip kullanıcıların erişmesi istendiğinde yapılması gerekenleri konu alır ve uygulanması zorunlu değildir, katman için yetki tanımlaması yapılmamış ise ilgili katman(lar) herkes için erişilebilir olur. Eğer katman(lar) için yetki tanımlamak isteniyorsa `addLayer()` metodunun 3'ncü parametresi belirtilmeli ve aşağıdaki senaryoda anlatıldığı gibi `$_SESSION['permissions']` değişkenine gereken atamalar yapılmalıdır. Örnek bir senaryo üzerinden uygulanışı aşağıda bilgilerinize sunulmuştur.
+
+**Senaryo**
+Bir kullanıcı giriş yaptığında `$_SESSION['permissions']` değişkenine kullanıcının grubu-grupları veya onun yetkisini gösteren parametre veya parametreler, `string` ya da `array` türünde atanır. Ardından `addlayer()` metoduna 3'ncü parametre olarak bu yetki grubu-grupları veya onun yetkisini gösteren parametre veya parametreler `string` ya da `array` türünde belirtilir. Bu sayede söz konusu katman(lara) sadece bu yetkideki kullanıcılar erişebilir.
+
+##### Örnek
+
+```php
+// 2
+// [2,3,5] 
+// admin
+// ['admin', 'editor']
+$_SESSION['permissions'] = 2; 
+```
+
+```php
+$this->addLayer('app/views/home', null, 2);
+```
+veya
+
+```php
+$this->addLayer([
+    'app/views/header',
+    'app/views/content',
+    'app/views/footer'
+], null, [2,3,5]);
+```
+veya
+
+```php
+$file = [
+    'app/views/layout/header',
+    'app/views/home',
+    'app/views/layout/footer'
+];
+$cache = [
+    'app/middleware/auth',
+    'app/database/install',
+    'app/model/home'
+];
+$this->addLayer($file, $cache, 'admin');
+```
+veya
+
+```php
+$this->addLayer('HomeController:index@create',
+[
+    'BlogController:index@create',
+    'LogController:index@create'
+], null, ['admin', 'editor']);
+```
+
+veya
+
+```php
+$this->addLayer([
+    'BlogController:index@create',
+    'LogController:index@create'
+], null, ['admin', 'editor']);
+```
+
+veya
+
+```php
+$this->addLayer([
+    'HomeController:index@create',
+    'StoreController:index@create'
+],
+[
+    'BlogController:index@create',
+    'LogController:index@create'
+],
+['admin', 'editor']);
+```
+
 ---
 
 ## columnSqlMaker()
@@ -6250,13 +6329,15 @@ echo $this->getBrowser('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/53
 
 ## route()
 
-Route fonksiyonu özelleştirilebilir rotalar tanımlamak ve bu rotalara özel zihinler yüklemek için kullanılır. Zihin kelimesi, Model, View, Controller, Middleware gibi çeşitli katmanları tanımlamak amacıyla kullanılmıştır. Böylelikle geliştirici, katmanların hangi rotaya tanımlandığını açıkça görebilir, yönetebilir ve proje ihtiyacına özel tasarım deseni oluşturabilir.  
+Route fonksiyonu özelleştirilebilir rotalar tanımlamak ve bu rotalara özel zihinler yüklemek için kullanılır. Zihin kelimesi, Model, View, Controller, Middleware gibi çeşitli katmanları tanımlamak amacıyla kullanılmıştır. Böylelikle geliştirici, katmanların hangi rotaya tanımlandığını açıkça görebilir, yönetebilir ve proje ihtiyacına özel tasarım deseni oluşturabilir. Bu metot aynı zamanda belirtilen rotaya hangi yetkiye sahip ziyaretçilerin erişmesini belirlemeye de olanak tanır.
   
 Rotalar, `Mind.php` dosyasıyla aynı dizinde bulunan `index.php` dosyası içine tanımlanır, dolayısıyla `new Mind()` çağrısının atandığı değişkeni ön ek kabul ederek çalışır.
 
 `url`, `file` ve `cache` parametreleri alabilen `route()` fonksiyonu, `url` parametresini `string` olarak kabul eder, `file` ve `cache` parametreleriniyse `string` ve `array` olarak kabul etmektedir. Bu üç parametreden `file` ve `cache` parametrelerinin belirtilme zorunluluğu yoktur. 
 
 `file` ve `cache` parametreleri, uzantısı belirtilmeyen `php` dosyalarının yollarından meydana gelir. `file` ve `cache` parametresi aynı zamanda sınıf metotlarını çağırmak için de kullanılabilir. 
+
+`permissions` parametresine atanan değer `$_SESSION['permissions']` değişkenine atanmış `null`, `string` ve `array` türündeki değerlerle örtüşüyor ise o rotaya erişime izin verilir. Aksi taktirde erişim 401 hatası gösterilerek engellenir.
 
 Katmanların yüklenmesi hakkında daha fazla bilgi için, [addLayer()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#addLayer) maddesini inceleyebilirsiniz.
 
@@ -6405,6 +6486,55 @@ Oluşturulan bu `HomeController` sınıfı içinden `Mind` metotlarına `$this->
 Eğer metot çağırılırsa sınıf adıyla dosya adının aynı olması gerekmektedir.
 
 
+#### Rota için yetki tanımlamak
+
+Bu kısım bir rotaya sadece belirtilen şartlara sahip kullanıcıların erişmesi istendiğinde yapılması gerekenleri konu alır ve uygulanması zorunlu değildir, rota için yetki tanımlaması yapılmamış ise ilgili rota herkes için erişilebilir olur. Eğer rota için yetki tanımlamak isteniyorsa rota metodunun 4'ncü parametresi belirtilmeli ve aşağıdaki senaryoda anlatıldığı gibi `$_SESSION['permissions']` değişkenine gereken atamalar yapılmalıdır. Örnek bir senaryo üzerinden uygulanışı aşağıda bilgilerinize sunulmuştur.
+
+**Senaryo**
+Bir kullanıcı giriş yaptığında `$_SESSION['permissions']` değişkenine kullanıcının grubu-grupları veya onun yetkisini gösteren parametre veya parametreler, `string` ya da `array` türünde atanır. Ardından ilgili rotaya 4'ncü parametre olarak bu yetki grubu-grupları veya onun yetkisini gösteren parametre veya parametreler `string` ya da `array` türünde belirtilir. Bu sayede söz konusu rotaya sadece bu yetkideki kullanıcılar erişebilir.
+
+##### Örnek
+
+```php
+// 2
+// [2,3,5] 
+// admin
+// ['admin', 'editor']
+$_SESSION['permissions'] = 2; 
+```
+
+```php
+$Mind->route('test', 'app/views/test', null, 2);
+```
+veya
+
+```php
+$Mind->route('test', 'app/views/test', null, [2,3,5]);
+```
+veya
+
+```php
+$Mind->route('test', 'app/views/test', null, 'admin');
+```
+veya
+
+```php
+$Mind->route('test', 'app/views/test', null, ['admin', 'editor']);
+```
+
+**Bilgi** 
+Eğer Hata kodu ve hata mesajını göndermek isterseniz, 4'ncü parametreyi aşağıdaki şekilde de gönderebilirsiniz. `error` anahtarı zorunlu değildir, belirtilmezse varsayılan olarak aşağıdaki değerleri referans alır.
+
+```php
+$Mind->route('test', 'app/views/test', null, [
+    'error'=>[
+            'code'=>'401',
+            'message'=>'You do not have the authority to display this route.'
+        ],
+    'params'=>1
+    ]
+);
+```
 ---
 
 ## write()

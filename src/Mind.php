@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.6
+ * @version    Release: 5.7.7
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -35,8 +35,9 @@ class Mind
         'lang'      =>  'EN'
     ];
 
-    public $error_status    =   false;
-    public $errors          =   [];
+    public $error_status                =   false;
+    public $errors                      =   [];
+    public $error_permission_message    =   null;
 
     private $conf           =   [];
     private $db             =   [
@@ -121,6 +122,7 @@ class Mind
 
         $thought = (!empty($conf['thought'])) ? $conf['thought'] : null;
         if(!is_null($thought)) { $this->addLayer($thought); }
+
     }
 
     public function __destruct()
@@ -4097,12 +4099,20 @@ class Mind
     /**
      * Layer installer
      *
-     * @param string|array|null $file
-     * @param string|array|null $cache
+     * @param mixed $file
+     * @param mixed $cache
+     * @return void
      */
 
-    public function addLayer($file = null, $cache = null){
+    public function addLayer($file = null, $cache = null, $permissions = null){
         
+
+        if(!is_null($permissions)){
+            if(!$this->permission_verification($permissions)){
+                return'';
+            }
+        }
+
         // layer extension
         $ext = '.php';
 
@@ -4879,10 +4889,17 @@ class Mind
      * @param string $uri
      * @param mixed $file
      * @param mixed $cache
+     * @param mixed $permissions
      * @return bool
      */
-    public function route($uri, $file, $cache=null){
+    public function route($uri, $file, $cache=null, $permissions=null){
+
+        // Access blocking message            
+        $permission_code = (!isset($permissions['error']['code'])) ? '401' : $permissions['error']['code'];
+        $permission_message = (!isset($permissions['error']['message'])) ? 'You do not have the authority to display this route.' : $permissions['error']['message'];
         
+        $permissions = (isset($permissions['params'])) ? $permissions['params'] : $permissions;        
+
         // Access directives are being created.
         $this->policyMaker();
 
@@ -4970,6 +4987,9 @@ class Mind
                     'fields'=>$fields,
                     'params'=>$this->post
                 ];
+                if(!$this->permission_verification($permissions)){
+                    $this->abort($permission_code, $permission_message);
+                }
                 $this->addLayer($file, $cache);
                 exit();
             }
@@ -4985,6 +5005,9 @@ class Mind
                     'fields'=>$fields,
                     'params'=>$this->post
                 ];
+                if(!$this->permission_verification($permissions)){
+                    $this->abort($permission_code, $permission_message);
+                }
                 $this->addLayer($file, $cache);
                 exit();
             }
@@ -5226,6 +5249,45 @@ class Mind
         }
 
         return $result;
+    }
+
+    /**
+     * Permission verification
+     * 
+     * @param string|array|null $permissions
+     * @return void
+     */
+    public function permission_verification($permissions = null){
+
+        // It is made processable if the access permission to the route is defined
+        if(isset($permissions)) { 
+            $permissions = (!is_array($permissions))? array($permissions) : $permissions;
+        } else {
+            $permissions = null;
+        }
+
+        // If there are permissions assigned to the visitor, it is made processable
+        if(isset($_SESSION['permissions'])){
+            $_SESSION['permissions'] = (!is_array($_SESSION['permissions'])) ? array($_SESSION['permissions']) : $_SESSION['permissions'];
+        } else {
+            $_SESSION['permissions'] = null;
+        }
+
+        // Route and visitor's permissions are compared
+        if(!is_null($permissions) AND !is_null($_SESSION['permissions'])){
+            foreach($_SESSION['permissions'] as $permission){
+                if(!in_array($permission, $permissions)){
+                    return false;
+                }
+            }
+        } 
+
+        // If you don't have permits value, stop access
+        if(!is_null($permissions) AND is_null($_SESSION['permissions'])){
+            return false;
+        }
+
+        return true;
     }
 
     /**
