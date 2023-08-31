@@ -367,6 +367,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 ##### System
 
 -   [getOS](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getOS)
+-   [getClientOS](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getclientOS)
 -   [getSoftware](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getsoftware)
 -   [getBrowser](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getBrowser)
 -   [route](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#route)
@@ -4778,13 +4779,13 @@ $conf = array(
         // 'csrf'      =>  array('name'=>'_token'),
         // 'csrf'      =>  array('name'=>'_token', 'limit'=>150),
         'allow'     =>  [
-            'platform'=>'Windows', // ['Windows', 'Linux', 'Darwin']
+            'platform'=>'Windows', // ['Windows', 'Mac', 'Android','iOS']
             'browser'=>'Chrome', // ['Chrome', 'Firefox'], 
             'ip'=>'127.0.0.1', // ['192.168.2.200', '192.168.2.201', '222.222.222.222']
             'folder'=>'files'
         ],
         // 'deny'     =>  [
-        //     'platform'=>'Linux', // ['Windows', 'Linux', 'Darwin']
+        //     'platform'=>'Linux', // ['Windows', 'Mac', 'Android','iOS']
         //     'browser'=>'Firefox', // ['Chrome', 'Firefox'], 
         //     'ip'=>'127.0.0.2', // ['192.168.2.200', '192.168.2.201', '222.222.222.222']
         //     'folder'=>'archive'
@@ -4874,7 +4875,7 @@ $Mind = new Mind($conf);
 
 Each HTTP POST request creates a new `token` parameter. `allow` and `deny` can be used together, `deny` rules are taken into account in overlapping parts.
 
-Supported operating system names can be used in the method [getOS()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getos) in the `platform` section. In the `browser` section, the Internet browser names supported in the method [getBrowser()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getbrowser) are supported. In the `ip` part, ip addresses in the `ipv4` syntax can be used. Unless otherwise specified in the `folder` section, access to the `public` folder is granted.
+Supported operating system names can be used in the method [getClientOS()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getclientos) in the `platform` section. In the `browser` section, the Internet browser names supported in the method [getBrowser()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getbrowser) are supported. In the `ip` part, ip addresses in the `ipv4` syntax can be used. Unless otherwise specified in the `folder` section, access to the `public` folder is granted.
 
 In order for the `folder` setting to be valid on `nginx` servers, you must use [policyMaker()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#policyMaker) You can use the information note.
 
@@ -6309,6 +6310,18 @@ It is used to obtain the server operating system name on which the project is ru
 
 ```php
 echo $this->getOS();
+```
+
+---
+
+## getClientOS()
+
+It is used to obtain the operating system name of the user viewing the project. It supports `Windows`, `Mac`, `Linux`, `Android` and `iOS` operating systems, other operating systems are named `Unknown`.
+
+##### Example
+
+```php
+echo $this->getClientOS();
 ```
 
 ---

@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.7
+ * @version    Release: 5.7.8
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3399,7 +3399,7 @@ class Mind
         $conf['firewall']['deny']['ip'] = (!is_array($conf['firewall']['deny']['ip']) ? [$conf['firewall']['deny']['ip']] : $conf['firewall']['deny']['ip']);
         $conf['firewall']['deny']['folder'] = (!is_array($conf['firewall']['deny']['folder']) ? [$conf['firewall']['deny']['folder']] : $conf['firewall']['deny']['folder']);
 
-        $platform = $this->getOS();
+        $platform = $this->getClientOS();
         if(
             !empty($conf['firewall']['deny']['platform']) AND
             in_array($platform, array_values($conf['firewall']['deny']['platform'])) OR
@@ -4142,52 +4142,52 @@ class Mind
             // Checking for layer existence
             if(file_exists($layer['way'].$ext)) { 
                 require_once($layer['way'].$ext); 
+                // The class name is extracted from the layer path
+                $className = basename($layer['way']);
+
+                // If the class exists, it is assigned to the variable
+                if(class_exists($className)){ 
+                    $class = new $className();
+                    if(isset($class->post)){
+                        (array)$class->post = $this->post;
+                    }
+                    
+                    // If the method exists, it is executed.
+                    if(isset($layer['params'])){ 
+                        foreach ($layer['params'] as $param) { 
+                            $class->$param(); 
+                        } 
+                    }
+                    
+                    // If there are errors in the inner class, they are 
+                    // passed to the Mind class.
+                    if(isset($class->monitor['errors'])) {
+                        foreach($class->monitor['errors'] as $error){
+                            if(!empty($error)) { $this->monitor['errors'][] = $error; }
+                        }
+                    }
+                
+                    if(!empty($class->monitor['db'])){
+                        foreach($class->monitor['db'] as $mondb){
+                            $this->monitor['db'][md5($class->sql)] = $mondb;
+                        }
+                    }
+
+                    if(!empty($class->monitor['layer'])){
+                        foreach($class->monitor['layer'] as $monlayer){
+                            $this->monitor['layer'][] = $monlayer;
+                        }
+                    }
+
+                    if(!empty($class->monitor['route'])){
+                        foreach($class->monitor['route']['params'] as $layerparams){
+                            $this->monitor['route']['params'][] = $layerparams;
+                        }
+                    }
+                    
+                }
             }
             
-            // The class name is extracted from the layer path
-            $className = basename($layer['way']);
-
-            // If the class exists, it is assigned to the variable
-            if(class_exists($className)){ $class = new $className();
-                if(isset($class->post)){
-                    (array)$class->post = $this->post;
-                }
-                
-                // If the method exists, it is executed.
-                if(isset($layer['params'])){ 
-                    foreach ($layer['params'] as $param) { 
-                        $class->$param(); 
-                    } 
-                }
-                
-                // If there are errors in the inner class, they are 
-                // passed to the Mind class.
-                if(isset($class->monitor['errors'])) {
-                    foreach($class->monitor['errors'] as $error){
-                        if(!empty($error)) { $this->monitor['errors'][] = $error; }
-                    }
-                }
-               
-                if(!empty($class->monitor['db'])){
-                    foreach($class->monitor['db'] as $mondb){
-                        $this->monitor['db'][md5($class->sql)] = $mondb;
-                    }
-                }
-
-                if(!empty($class->monitor['layer'])){
-                    foreach($class->monitor['layer'] as $monlayer){
-                        $this->monitor['layer'][] = $monlayer;
-                    }
-                }
-
-                if(!empty($class->monitor['route'])){
-                    foreach($class->monitor['route']['params'] as $layerparams){
-                        $this->monitor['route']['params'][] = $layerparams;
-                    }
-                }
-                
-            }
-
         }
 
      }
@@ -4834,6 +4834,28 @@ class Mind
             case stristr($os, 'lin'): return 'Linux';
             default : return 'Unknown';
         }
+    }
+    /**
+     * Detecting an client operating system
+     * @return string
+     */
+    public function getClientOS(){
+        $userAgent = $_SERVER['HTTP_USER_AGENT'];
+
+        if (strpos($userAgent, 'Windows') !== false) {
+            $os = 'Windows';
+        } elseif (strpos($userAgent, 'Mac') !== false) {
+            $os = 'Mac';
+        } elseif (strpos($userAgent, 'Linux') !== false) {
+            $os = 'Linux';
+        } elseif (strpos($userAgent, 'Android') !== false) {
+            $os = 'Android';
+        } elseif (strpos($userAgent, 'iOS') !== false) {
+            $os = 'iOS';
+        } else {
+            $os = 'Unknown';
+        }
+        return $os;
     }
 
     /**

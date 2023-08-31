@@ -362,6 +362,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 ##### Sistem
 
 -   [getOS](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getOS)
+-   [getClientOs](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getClientOs)
 -   [getSoftware](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getsoftware)
 -   [getBrowser](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getBrowser)
 -   [route](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#route)
@@ -4730,13 +4731,13 @@ $conf = array(
         // 'csrf'      =>  array('name'=>'_token'),
         // 'csrf'      =>  array('name'=>'_token', 'limit'=>150),
         'allow'     =>  [
-            'platform'=>'Windows', // ['Windows', 'Linux', 'Darwin']
+            'platform'=>'Windows', // ['Windows', 'Mac', 'Android','iOS']
             'browser'=>'Chrome', // ['Chrome', 'Firefox'], 
             'ip'=>'127.0.0.1', // ['192.168.2.200', '192.168.2.201', '222.222.222.222']
             'folder'=>'files'
         ],
         // 'deny'     =>  [
-        //     'platform'=>'Linux', // ['Windows', 'Linux', 'Darwin']
+        //     'platform'=>'Linux', // ['Windows', 'Mac', 'Android','iOS']
         //     'browser'=>'Firefox', // ['Chrome', 'Firefox'], 
         //     'ip'=>'127.0.0.2', // ['192.168.2.200', '192.168.2.201', '222.222.222.222']
         //     'folder'=>'archive'
@@ -4826,7 +4827,7 @@ $Mind = new Mind($conf);
 
 Her HTTP POST isteği yeni bir `token` parametresi oluşmasını sağlar. `allow` ve `deny` birlikte kullanılabilir, çakışan kısımlarda `deny` kuralları dikkate alınır.
 
-`platform` kısmında [getOS()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getos) metodunda desteklenen işletim sistemi adları kullanılabilir. `browser` kısmında [getBrowser()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getbrowser) metodunda desteklenen İnternet tarayıcısı adları desteklenmektedir. `ip` kısmında `ipv4` söz dizimindeki ip adresleri kullanılabilir. `folder` kısmında aksi belirtilmezse `public` klasörüne erişim izni verilir.
+`platform` kısmında [getClientOS()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getclientos) metodunda desteklenen işletim sistemi adları kullanılabilir. `browser` kısmında [getBrowser()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getbrowser) metodunda desteklenen İnternet tarayıcısı adları desteklenmektedir. `ip` kısmında `ipv4` söz dizimindeki ip adresleri kullanılabilir. `folder` kısmında aksi belirtilmezse `public` klasörüne erişim izni verilir.
 
 `folder` ile ilgili yapılan ayarlamanın `nginx` sunucularda da geçerli olabilmesi için, [policyMaker()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#policyMaker) maddesinde değinilen bilgi notundan istifade edebilirsiniz.
 
@@ -6260,6 +6261,18 @@ Projenin çalıştığı sunucu işletim sistemi ismini elde etmek için kullan�
 
 ```php
 echo $this->getOS();
+```
+
+---
+
+## getClientOS()
+
+Projeyi görüntüleyen kullanıcının işletim sistemi ismini elde etmek için kullanılır. `Windows`, `Mac`, `Linux`, `Android` ve `iOS` işletim sistemlerini desteklemektedir, bunlar dışındaki işletim sistemleri `Unknown` olarak isimlendirilir.
+
+##### Örnek
+
+```php
+echo $this->getClientOS();
 ```
 
 ---
