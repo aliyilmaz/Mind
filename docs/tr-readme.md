@@ -349,6 +349,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toSeconds)
 -   [toTime](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toTime)
+-   [toISO8601](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toISO8601)
 -   [toRFC3339](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toRFC3339)
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getipaddress)
@@ -6040,9 +6041,23 @@ echo $this->toTime(7320);
 
 ---
 
+## toISO8601()
+
+Kendisiyle paylaşılan [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standardında ve  `string` türündeki bir zaman damgasını [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standardında bir zaman damgasını dönüştürmeye yarar.
+
+##### Örnek
+
+```php
+echo $this->toISO8601('2012-01-18 11:45');
+// echo $this->toISO8601('2012-01-18 11:45:00+01:00');
+// echo $this->toISO8601('2012-01-18T11:45:00+01:00');
+```
+
+---
+
 ## toRFC3339()
 
-Kendisiyle paylaşılan `string` türündeki bir tarihi, [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standardında bir zaman damgasına dönüştürmeye yarar.
+Kendisiyle paylaşılan [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standardında ve `string` türündeki bir zaman damgasını, [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standardında bir zaman damgasına dönüştürmeye yarar.
 
 ##### Örnek
 

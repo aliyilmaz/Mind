@@ -354,6 +354,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toSeconds)
 -   [toTime](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toTime)
+-   [toISO8601](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toISO8601)
 -   [toRFC3339](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toRFC3339)
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getipaddress)
@@ -6089,9 +6090,26 @@ echo $this->toTime(7320);
 
 ---
 
+
+## toISO8601()
+
+It converts a time stamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard, shared with it as a `string` type, to a time stamp in the [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard.
+
+
+##### Örnek
+
+```php
+echo $this->toISO8601('2012-01-18 11:45');
+// echo $this->toISO8601('2012-01-18 11:45:00+01:00');
+// echo $this->toISO8601('2012-01-18T11:45:00+01:00');
+```
+
+---
+
 ## toRFC3339()
 
-It converts a date of type `string` shared with it to a timestamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard.
+It converts a time stamp in the [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard, shared with it as a `string` type, to a time stamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard.
+
 
 ##### Example
 

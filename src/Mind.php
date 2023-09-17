@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.8
+ * @version    Release: 5.7.9
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4521,7 +4521,20 @@ class Mind
     }
 
     /**
-     * Converts a given date to RFC 3339 format.
+     * Converts dates containing RFC3339 and ISO 8601 
+     * syntax to a full ISO 8601 syntax (Y-m-d H:i:s).
+     *
+     * @param string $date The date to convert.
+     * @return string The date in RFC 3339 format.
+     */
+    public function toISO8601($date){
+        $dateTime = new DateTime($date);
+        return $dateTime->format("Y-m-d H:i:s");
+    }
+
+    /**
+     * Converts a date containing ISO 8601 syntax to 
+     * RFC 3339 syntax.
      *
      * @param string $date The date to convert.
      * @return string The date in RFC 3339 format.
