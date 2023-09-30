@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.7.9
+ * @version    Release: 5.8.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3807,7 +3807,7 @@ class Mind
      * @return array An array containing the names of popular bots, such as search engine crawlers and social media bots.
      */
     public function bots(){
-        return ['Alexabot','AhrefsBot','Applebot','ArchiveBot','Baiduspider','Barkrowler','BLEXBot','Bingbot','BUbiNG','CCBot','Charlotte','Cliqzbot','Crawler','Discordbot','DotBot','DuckDuckBot','Embedly','ExB Language Crawler','Exabot','Facebot','FatBot','FlipboardProxy','Flamingo_Search','Genieo','Googlebot','ia_archiver','Infohelfer','Instagram Bot','LinkedInBot','Linguee Bot','LivelapBot','LoadImpactPageAnalyzer','MagpieRSS','Mail.RU_Bot','MetaJobBot','MetaURI','MJ12bot','MojeekBot','MSRBOT','Netvibes','OpenHoseBot','OutclicksBot','Phantom','PhantomJS','Pinterest','Pinterestbot','Python-urllib','QQBrowser','Qseero','Qwantify','Redditbot','RubedoBot','SafeBrowsing','SafeDNSBot','Screaming Frog','SemrushBot','Sogou','Soso','spbot','SurveyBot','TelegramBot','Tumblrbot','Twitterbot','UnwindFetchor','VimeoBot','VoilàBot','WBSearchBot','Weibo','WhatsApp','WordPress','YandexBot','YouTubeBot'];
+        return ['Alexabot','AhrefsBot','Applebot','ArchiveBot','Baiduspider','Barkrowler','BLEXBot','Bingbot','BUbiNG','CCBot','Charlotte','Cliqzbot','Crawler','Discordbot','DotBot','DuckDuckBot','Embedly','ExB Language Crawler','Exabot','Facebot','FatBot','FlipboardProxy','Flamingo_Search','Genieo','Googlebot','Google-InspectionTool', 'ia_archiver','Infohelfer','Instagram Bot','LinkedInBot','Linguee Bot','LivelapBot','LoadImpactPageAnalyzer','MagpieRSS','Mail.RU_Bot','MetaJobBot','MetaURI','MJ12bot','MojeekBot','MSRBOT','Netvibes','OpenHoseBot','OutclicksBot','Phantom','PhantomJS','Pinterest','Pinterestbot','Python-urllib','QQBrowser','Qseero','Qwantify','Redditbot','RubedoBot','SafeBrowsing','SafeDNSBot','Screaming Frog','SemrushBot','Sogou','Soso','spbot','SurveyBot','TelegramBot','Tumblrbot','Twitterbot','UnwindFetchor','VimeoBot','VoilàBot','WBSearchBot','Weibo','WhatsApp','WordPress','YandexBot','YouTubeBot'];
         
     }
 
@@ -4521,18 +4521,6 @@ class Mind
     }
 
     /**
-     * Converts dates containing RFC3339 and ISO 8601 
-     * syntax to a full ISO 8601 syntax (Y-m-d H:i:s).
-     *
-     * @param string $date The date to convert.
-     * @return string The date in RFC 3339 format.
-     */
-    public function toISO8601($date){
-        $dateTime = new DateTime($date);
-        return $dateTime->format("Y-m-d H:i:s");
-    }
-
-    /**
      * Converts a date containing ISO 8601 syntax to 
      * RFC 3339 syntax.
      *
@@ -4542,6 +4530,18 @@ class Mind
     public function toRFC3339($date){
         $dateObject  = new DateTime($date);
         return $dateObject->format("Y-m-d\TH:i:sP");
+    }
+
+    /**
+     * Converts dates containing RFC3339 and ISO 8601 
+     * syntax to a full ISO 8601 syntax (Y-m-d H:i:s).
+     *
+     * @param string $date The date to convert.
+     * @return string The date in RFC 3339 format.
+     */
+    public function toISO8601($date){
+        $dateTime = new DateTime($date);
+        return $dateTime->format("Y-m-d H:i:s");
     }
 
     /**
@@ -5696,8 +5696,13 @@ class Mind
     public function captcha($level=3, $length=8, $width=320, $height=60){
         $_SESSION['captcha'] = $this->generateToken($length);
 
-        $im_width = (is_null($width)) ? 320 : $width;
-        $im_width = (strstr($width, '%', $width)) ? 320 : $width;
+        $im_width = 320;
+        if(!is_null($width)){
+            if(!strstr($width, '%', $width)){
+                $im_width = $width;
+                $width = $width.'px';
+            }
+        }
 
         $im_height = (is_null($height)) ? 60 : $height;
         $im_height = (strstr($height, '%', $height)) ? 60 : $height;
@@ -5735,10 +5740,13 @@ class Mind
         }
 
         ?>
-        <div class="form-group">
-            <label for="captcha"><img style="height:<?=$height;?>px; width:<?=$width;?>; object-fit: cover;image-rendering:high-quality;image-rendering: auto;image-rendering: crisp-edges;image-rendering: pixelated;" src="data:image/png;base64,<?=base64_encode($image_data);?>"></label><br>
-            <input type="text" id="captcha" name="captcha" class="form-control">
+        <div class="form-group" style="position:relative;">
+            <label for="captcha"><img style="height:<?=$height;?>px; width:<?=$width;?>; object-fit: cover;image-rendering:high-quality;image-rendering: auto;image-rendering: crisp-edges;image-rendering: pixelated; position:absolute;" src="data:image/png;base64,<?=base64_encode($image_data);?>"></label>
         </div>
+        <br><br>
+        <input type="text" style="width:<?=$width;?>;" id="captcha" name="captcha" class="form-control">
+        
+
         <?php
 
     }

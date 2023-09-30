@@ -349,8 +349,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toSeconds)
 -   [toTime](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toTime)
--   [toISO8601](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toISO8601)
 -   [toRFC3339](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toRFC3339)
+-   [toISO8601](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toISO8601)
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getlang)
@@ -5217,7 +5217,7 @@ $this->print_pre($this->timezones());
 ## bots()
 
 Bu fonksiyon, Yaygın 72 bot'un ismini dizi olarak geri döndürmeye yarar. 
-**Desteklenen botlar:** Alexabot, AhrefsBot, Applebot, ArchiveBot, Baiduspider, Barkrowler, BLEXBot, Bingbot, BUbiNG, CCBot, Charlotte, Cliqzbot, Crawler, Discordbot, DotBot, DuckDuckBot, Embedly, ExB Language Crawler, Exabot, Facebot, FatBot, FlipboardProxy, Flamingo_Search, Genieo, Googlebot, ia_archiver, Infohelfer, Instagram Bot, LinkedInBot, Linguee Bot, LivelapBot, LoadImpactPageAnalyzer, MagpieRSS, Mail.RU_Bot, MetaJobBot, MetaURI, MJ12bot, MojeekBot, MSRBOT, Netvibes, OpenHoseBot, OutclicksBot, Phantom, PhantomJS, Pinterest, Pinterestbot, Python-urllib, QQBrowser, Qseero, Qwantify, Redditbot, RubedoBot, SafeBrowsing, SafeDNSBot, Screaming Frog, SemrushBot, Sogou, Soso, spbot, SurveyBot, TelegramBot, Tumblrbot, Twitterbot, UnwindFetchor, VimeoBot, VoilàBot, WBSearchBot, Weibo, WhatsApp, WordPress, YandexBot, YouTubeBot
+**Desteklenen botlar:** Alexabot, AhrefsBot, Applebot, ArchiveBot, Baiduspider, Barkrowler, BLEXBot, Bingbot, BUbiNG, CCBot, Charlotte, Cliqzbot, Crawler, Discordbot, DotBot, DuckDuckBot, Embedly, ExB Language Crawler, Exabot, Facebot, FatBot, FlipboardProxy, Flamingo_Search, Genieo, Googlebot, Google-InspectionTool, ia_archiver, Infohelfer, Instagram Bot, LinkedInBot, Linguee Bot, LivelapBot, LoadImpactPageAnalyzer, MagpieRSS, Mail.RU_Bot, MetaJobBot, MetaURI, MJ12bot, MojeekBot, MSRBOT, Netvibes, OpenHoseBot, OutclicksBot, Phantom, PhantomJS, Pinterest, Pinterestbot, Python-urllib, QQBrowser, Qseero, Qwantify, Redditbot, RubedoBot, SafeBrowsing, SafeDNSBot, Screaming Frog, SemrushBot, Sogou, Soso, spbot, SurveyBot, TelegramBot, Tumblrbot, Twitterbot, UnwindFetchor, VimeoBot, VoilàBot, WBSearchBot, Weibo, WhatsApp, WordPress, YandexBot, YouTubeBot
 
 ##### Örnek
 
@@ -6038,21 +6038,6 @@ echo '7320 - 02:02:00<br>';
 echo $this->toTime(7320);
 ```
 
-
----
-
-## toISO8601()
-
-Kendisiyle paylaşılan [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standardında ve  `string` türündeki bir zaman damgasını [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standardında bir zaman damgasını dönüştürmeye yarar.
-
-##### Örnek
-
-```php
-echo $this->toISO8601('2012-01-18 11:45');
-// echo $this->toISO8601('2012-01-18 11:45:00+01:00');
-// echo $this->toISO8601('2012-01-18T11:45:00+01:00');
-```
-
 ---
 
 ## toRFC3339()
@@ -6070,6 +6055,20 @@ veya
 
 ```php
 echo $this->toRFC3339($this->timestamp);
+```
+
+---
+
+## toISO8601()
+
+Kendisiyle paylaşılan [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standardında ve  `string` türündeki bir zaman damgasını [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standardında bir zaman damgasını dönüştürmeye yarar.
+
+##### Örnek
+
+```php
+echo $this->toISO8601('2012-01-18 11:45');
+// echo $this->toISO8601('2012-01-18 11:45:00+01:00');
+// echo $this->toISO8601('2012-01-18T11:45:00+01:00');
 ```
 
 

@@ -354,8 +354,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toSeconds)
 -   [toTime](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toTime)
--   [toISO8601](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toISO8601)
 -   [toRFC3339](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toRFC3339)
+-   [toISO8601](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toISO8601)
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getlang)
@@ -5265,7 +5265,7 @@ $this->print_pre($this->timezones());
 ## bots()
 
 This function serves to return the common 72 Bot as a series.
-**Supported boots:** Alexabot, AhrefsBot, Applebot, ArchiveBot, Baiduspider, Barkrowler, BLEXBot, Bingbot, BUbiNG, CCBot, Charlotte, Cliqzbot, Crawler, Discordbot, DotBot, DuckDuckBot, Embedly, ExB Language Crawler, Exabot, Facebot, FatBot, FlipboardProxy, Flamingo_Search, Genieo, Googlebot, ia_archiver, Infohelfer, Instagram Bot, LinkedInBot, Linguee Bot, LivelapBot, LoadImpactPageAnalyzer, MagpieRSS, Mail.RU_Bot, MetaJobBot, MetaURI, MJ12bot, MojeekBot, MSRBOT, Netvibes, OpenHoseBot, OutclicksBot, Phantom, PhantomJS, Pinterest, Pinterestbot, Python-urllib, QQBrowser, Qseero, Qwantify, Redditbot, RubedoBot, SafeBrowsing, SafeDNSBot, Screaming Frog, SemrushBot, Sogou, Soso, spbot, SurveyBot, TelegramBot, Tumblrbot, Twitterbot, UnwindFetchor, VimeoBot, VoilàBot, WBSearchBot, Weibo, WhatsApp, WordPress, YandexBot, YouTubeBot
+**Supported boots:** Alexabot, AhrefsBot, Applebot, ArchiveBot, Baiduspider, Barkrowler, BLEXBot, Bingbot, BUbiNG, CCBot, Charlotte, Cliqzbot, Crawler, Discordbot, DotBot, DuckDuckBot, Embedly, ExB Language Crawler, Exabot, Facebot, FatBot, FlipboardProxy, Flamingo_Search, Genieo, Googlebot, Google-InspectionTool, ia_archiver, Infohelfer, Instagram Bot, LinkedInBot, Linguee Bot, LivelapBot, LoadImpactPageAnalyzer, MagpieRSS, Mail.RU_Bot, MetaJobBot, MetaURI, MJ12bot, MojeekBot, MSRBOT, Netvibes, OpenHoseBot, OutclicksBot, Phantom, PhantomJS, Pinterest, Pinterestbot, Python-urllib, QQBrowser, Qseero, Qwantify, Redditbot, RubedoBot, SafeBrowsing, SafeDNSBot, Screaming Frog, SemrushBot, Sogou, Soso, spbot, SurveyBot, TelegramBot, Tumblrbot, Twitterbot, UnwindFetchor, VimeoBot, VoilàBot, WBSearchBot, Weibo, WhatsApp, WordPress, YandexBot, YouTubeBot
 
 ##### Example
 
@@ -6091,21 +6091,6 @@ echo $this->toTime(7320);
 ---
 
 
-## toISO8601()
-
-It converts a time stamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard, shared with it as a `string` type, to a time stamp in the [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard.
-
-
-##### Örnek
-
-```php
-echo $this->toISO8601('2012-01-18 11:45');
-// echo $this->toISO8601('2012-01-18 11:45:00+01:00');
-// echo $this->toISO8601('2012-01-18T11:45:00+01:00');
-```
-
----
-
 ## toRFC3339()
 
 It converts a time stamp in the [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard, shared with it as a `string` type, to a time stamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard.
@@ -6126,6 +6111,23 @@ echo $this->toRFC3339($this->timestamp);
 
 
 ---
+
+
+## toISO8601()
+
+It converts a time stamp in the [RFC3339](https://datatracker.ietf.org/doc/html/rfc3339) standard, shared with it as a `string` type, to a time stamp in the [ISO8601](https://www.iso.org/iso-8601-date-and-time-format.html) standard.
+
+
+##### Örnek
+
+```php
+echo $this->toISO8601('2012-01-18 11:45');
+// echo $this->toISO8601('2012-01-18 11:45:00+01:00');
+// echo $this->toISO8601('2012-01-18T11:45:00+01:00');
+```
+
+---
+
 
 ## summary()
 
