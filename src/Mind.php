@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.0
+ * @version    Release: 5.7.9
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4186,8 +4186,8 @@ class Mind
                     }
                     
                 }
-            }
-            
+            }   
+
         }
 
      }
@@ -5949,7 +5949,7 @@ class Mind
 
     ?>
     
-        <style>div.popup{display:none;position:fixed;z-index:9999999;height:auto;<?=$theme['div_popup_position'];?>border-radius:2px;margin:10px;box-shadow:0 0 15px 0 rgba(98,98,98,.75);padding:1rem;transition:1s;width:-webkit-fill-available;<?=$theme['div_popup'];?>}div.popup p{font-size:14px;font-weight:600;letter-spacing:.4px;line-height:22.9px;font-family:Arial,sans-serif}div.popup a{<?=$theme['div_popup_a'];?>font-weight:700;text-decoration:none}div.popup a:hover{ <?=$theme['div_popup_a_hover'];?>text-decoration: underline; transition:color .2s}button#popup_accept,button#popup_decline{border-width:0;font-size:14px;padding:7px 20px;cursor:pointer; float:left;}button#popup_accept:hover,button#popup_decline:hover{transition:background-color .5s}button#popup_accept{<?=$theme['btn_accept_popup'];?>}button#popup_accept:hover{<?=$theme['btn_accept_popup_hover'];?>}button#popup_decline{<?=$theme['btn_decline_popup'];?>}button#popup_decline:hover{<?=$theme['btn_decline_popup_hover'];?>} div.popup_counter{float: left;position: absolute;height: 40px;padding: 6px;margin: -1px;right: 8px; bottom:8px; width: 40px;border-radius: 40px;text-align: center;<?=$theme['div_popup_counter'];?>;font-size: 26px;line-height: 40px;}</style>
+        <style>div.popup{display:none;position:fixed;z-index:9999999;height:auto;<?=$theme['div_popup_position'];?>border-radius:2px;margin:10px;box-shadow:0 0 15px 0 rgba(98,98,98,.75);padding:1rem;transition:1s;width:-webkit-fill-available;<?=$theme['div_popup'];?>}div.popup p{font-size:14px;font-weight:600;letter-spacing:.4px;line-height:22.9px;font-family:Arial,sans-serif}div.popup a{<?=$theme['div_popup_a'];?>font-weight:700;text-decoration:none}div.popup a:hover{ <?=$theme['div_popup_a_hover'];?>text-decoration: underline; transition:color .2s}button#popup_accept,button#popup_decline{border-width:0;font-size:14px;padding:7px 20px;cursor:pointer; float:left;}button#popup_accept:hover,button#popup_decline:hover{transition:background-color .5s}button#popup_accept{<?=$theme['btn_accept_popup'];?>}button#popup_accept:hover{<?=$theme['btn_accept_popup_hover'];?>}button#popup_decline{<?=$theme['btn_decline_popup'];?>}button#popup_decline:hover{<?=$theme['btn_decline_popup_hover'];?>} div.popup_counter{float: left;position: absolute;height: 40px;padding: 6px;margin: -1px;right: 8px; bottom:8px; width: 40px;border-radius: 40px;text-align: center;<?=$theme['div_popup_counter'];?>;font-size: 26px;line-height: 40px;}@media only screen and (max-width: 500px) { div.popup{width:95vw;}}</style>
 
         <div class="popup">
             
@@ -6059,6 +6059,7 @@ class Mind
      * @return string
      */
     public function managerSentence($text, $numSentences) {
+        $text = htmlspecialchars(strip_tags(html_entity_decode($text)));
         $sentences = preg_split('/(?<=[.?!])\s+/', $text, $numSentences + 1, PREG_SPLIT_NO_EMPTY); // split the sentences in the text
         return implode(" ", array_slice($sentences, 0, $numSentences)); // concatenate the specified number of sentences and return as a string
     }
