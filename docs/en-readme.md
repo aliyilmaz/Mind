@@ -7662,7 +7662,15 @@ This method serves to create a pop-up area for display needs such as disclaimers
 * Defining `theme` is not mandatory. By default `red` is defined. Other than `red`, `white` and `black` are supported.
 * Defining `position` is not mandatory. By default `bottom` is defined. `top`, `bottom` and `full` are supported.
 * `button` is not mandatory to define. By default, the positive button is defined as `Yes` and the negative button as `No, Thanks`. If a button is to be removed, the corresponding button's `text` key should be left blank. If a button is to be redirected when it is clicked, the relevant address should be defined in the `href` part of the button.
-* `script` is not mandatory to define. If specified, the buttons must exist, because this section hosts the codes whose fate will be determined according to visitor approval. (Like search engine tracking code to run after disclaimer acceptance)
+* `script` is not mandatory to define. If specified, buttons must be present, because this section hosts codes whose fate will be determined according to the visitor's approval. (such as the search engine tracking code that will be run upon acceptance of the Disclaimer). The tag syntaxes allowed in this section are as follows:
+
+    ```html
+    1. <script></script>
+    2. <script type="application/javascript">console.log('test');</script>
+    3. <script async src="script.js"></script> 
+    ```
+It should be noted that regardless of acceptance of the disclaimer, javascript files are detected and loaded. Only codes that trigger functions in files or any javascript code are included in the condition.
+
 * `timeout` is not mandatory to define. Makes the pop-up area disappear after the specified seconds.
 * `url` is not required to define. Cannot be used without specifying `timeout`.
 * `again` is used to determine whether the opened area should be opened when the page is accessed again, in cases other than clicks. By default `true` is specified so the dropdown field is displayed every time the page is accessed. `again` can be used together with `timeout`. If this usage is not desired to be displayed again, `again` should be specified as `false`.

@@ -7614,7 +7614,15 @@ Bu metot feragatname, reklam, duyuru gibi gösterimler ihtiyaçları için açı
 * `theme` tanımlamak zorunlu değildir. Varsayılan olarak `red` tanımlanmıştır. `red` dışında `white` ve `black`  desteklenmektedir.
 * `position` tanımlamak zorunlu değildir. Varsayılan olarak `bottom` tanımlanmıştır. `top`, `bottom` ve `full` desteklenmektedir.
 * `button`, tanımlamak zorunlu değildir. Varsayılan olarak olumlu buton `Yes`, olumsuz buton ise `No, Thanks` olarak tanımlanmıştır. Eğer bir buton kaldırılmak isteniyorsa, ilgili butonun `text` anahtarının karşılığı boş bırakılmalıdır. Eğer bir buton tıklandığında yönlendirilmek isteniyorsa, ilgili butonun `href` kısmına ilgili adres tanımlanmalıdır.
-* `script`, tanımlamak zorunlu değildir. Eğer belirtilirse butonların var olması gereklidir, çünkü bu kısım ziyaretçi onayına göre akıbeti belirlenecek kodlara ev sahipliği yapmaktadır. (Feragatname'nin kabulü sonrasında çalıştırılacak arama motoru izleme kodu gibi)
+* `script`, tanımlamak zorunlu değildir. Eğer belirtilirse butonların var olması gereklidir, çünkü bu kısım ziyaretçi onayına göre akıbeti belirlenecek kodlara ev sahipliği yapmaktadır. (Feragatname'nin kabulü sonrasında çalıştırılacak arama motoru izleme kodu gibi). Bu kısımda izin verilen tag söz dizimleri aşağıdaki gibidir:
+
+    ```html
+    1. <script></script>
+    2. <script type="application/javascript">console.log('test');</script>
+    3. <script async src="script.js"></script> 
+    ```
+Unutulmamalıdır ki feragatin kabulünden bağımsız olarak javascript dosyaları tespit edilip yüklenir. Sadece, dosyalardaki fonksiyonları tetikleyen kodlar veya herhangi bir javascript kodu koşul içine alınmıştır.
+
 * `timeout`, tanımlamak zorunlu değildir. Belirtilen saniye sonra pop-up alanının kaybolmasını sağlar.
 * `url`, tanımlamak zorunlu değildir. `timeout` belirtilmeden kullanılamaz.
 * `again`, tıklamaların dışında kalan hallerde açılan alanın sayfaya tekrar erişildiğinde açılıp açılmamasını belirlemek amacıyla kullanılır. Varsayılan olarak `true` belirtildiğinden sayfaya her erişildiğinde açılır alanın gösterilmesi sağlanır. `again`, `timeout` ile beraber kullanılabilir, bu kullanım şeklinde tekrar gösterilmesi istenmiyorsa `again`, `false` olarak belirtilmelidir.
@@ -7637,7 +7645,7 @@ $Mind->popup($str, [
         ]
     ],
     // 'again'=>false, // default "true"
-    'script'=>"<!-- Google Tag Manager 2020 --><script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-XXXXXX');</script><!-- End Google Tag Manager -->",
+    'script'=>'<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag(\'js\', new Date()); gtag(\'config\', \'G-XXXXXXXXXX\');</script>',
     'redirect'=>[
         'timeout'=>5000, // default 0
         'url'=>'https://www.mozilla.com' // default empty (required timeout)
