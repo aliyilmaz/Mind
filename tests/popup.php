@@ -21,7 +21,7 @@ $Mind->popup($str, [
         ]
     ],
     // 'again'=>false, // default "true"
-    'script'=>'<script async src="https://www.googletagmanager.com/gtag/js?id=G-QKJXMMNRT6"></script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag(\'js\', new Date()); gtag(\'config\', \'G-QKJXMMNRT6\');</script>',
+    'script'=>'<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script><script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag(\'js\', new Date()); gtag(\'config\', \'G-XXXXXXXXXX\');</script>',
     'redirect'=>[
         'timeout'=>5000, // default 0
         'url'=>'https://www.mozilla.com' // default empty (required timeout)
