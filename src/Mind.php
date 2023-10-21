@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.1
+ * @version    Release: 5.8.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -6026,29 +6026,50 @@ class Mind
                 }
                 
             });
-            
-            <?php 
-
-            if(!empty($options['script'])){
-
-                $left = "\n\t<!-- script -->\n";
-                $right = "\n\t<!-- /script -->\n";
-                if(stristr($options['script'], '<script>')){
-                    $options['script'] = str_replace('<script>', '<script>if(localStorage.getItem("popup") == \'true\'){', $options['script']);
-                }
-                if(stristr($options['script'], '<script type="text/javascript">')){
-                    $options['script'] = str_replace('<script type="text/javascript">', '<script type="text/javascript">if(localStorage.getItem("popup") == \'true\'){', $options['script']);
-                }
-                $options['script'] = str_replace('</script>', '}</script>', $options['script']);
-                $options['script'] = $left."\t\t".$options['script'].$right;
-            }
-        ?>
-        
         </script>
-        
-        <?=$options['script'];?>
-        
         <?php
+
+        if(!empty($options['script'])){
+
+            $AllCode = '';
+            $JSFiles = '';
+
+            $scriptPattern1 = $this->get_contents('<script>', '</script>', $options['script']);
+            foreach ($scriptPattern1 as $index => $codeItem1) {
+                if(!empty($codeItem1)){
+                    $AllCode .= $codeItem1;
+                    $options['script'] = str_replace('<script>'.$codeItem1.'</script>', '', $options['script']);
+                }
+            }
+
+            $scriptPattern2 = $this->get_contents('<script type="application/javascript">', '</script>', $options['script']);
+            foreach ($scriptPattern2 as $index => $codeItem2) {
+                if(!empty($codeItem2)){
+                    $AllCode .= $codeItem2;
+                    $options['script'] = str_replace('<script type="application/javascript">'.$codeItem2.'</script>', '', $options['script']);
+                }
+            }
+
+            if(stristr($options['script'], 'src=') OR stristr($options['script'], 'async')){
+
+                $scriptPattern3 = $this->get_contents('<script', '</script>', $options['script']);
+                foreach ($scriptPattern3 as $index => $codeItem3) {
+                    if(!empty($codeItem3)){
+                        $JSFiles .= '<script'.$codeItem3.'</script>';
+                        $options['script'] = str_replace('<script'.$codeItem3.'</script>', '', $options['script']);
+                    }
+                }
+            }
+
+            if(!empty($JSFiles)){
+                echo $JSFiles;
+            }
+            if(!empty($AllCode)){
+                echo '<script>if(localStorage.getItem("popup") == \'true\'){'.$AllCode.'}</script>';
+            }
+            
+        }
+
         
     }
 
