@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.2
+ * @version    Release: 5.8.3
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -129,7 +129,7 @@ class Mind
     {
         $this->conn = null;
         $this->monitor = [];
-        if($this->error_status){ $this->abort('404', 'Not Found.'); }
+        if($this->error_status){ header("HTTP/1.1 404 Not Found"); $this->abort('404', 'Not Found.'); }
     }
 
     /**
