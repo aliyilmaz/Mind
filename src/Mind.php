@@ -129,7 +129,7 @@ class Mind
     {
         $this->conn = null;
         $this->monitor = [];
-        if($this->error_status){ header("HTTP/1.1 404 Not Found"); $this->abort('404', 'Not Found.'); }
+        if($this->error_status){ $this->abort('404', 'Not Found.'); }
     }
 
     /**
@@ -4608,14 +4608,14 @@ class Mind
             }
 
             foreach ($status as $key => $code) {
-                if(!in_array($code, $this->addressCodeList())){
+                if(!in_array($code, array_keys($this->addressCodeList()))){
                     return $result;
                 } else {
                     $statusList[] = $code;
                 }
             }
         } else {
-            $statusList = $this->addressCodeList();
+            $statusList = array_keys($this->addressCodeList());
         }
         
         $mh = curl_multi_init();
@@ -4655,8 +4655,9 @@ class Mind
      * 
      */
     public function addressCodeList(){
-        // Codes collected from http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
-        return array(0,100,101,102,200,201,202,203,204,205,206,207,208,226,300,301,302,303,304,305,306,307,308,400,401,402,403,404,405,406,407,408,409,410,411,412,413,414,415,416,417,418,419,420,422,423,424,425,426,428,429,431,444,449,450,451,494,495,496,497,499,500,501,502,503,504,505,506,507,508,509,510,511,598,599);
+        $httpStatusCodes = array(0 => "Not defined",100 => "Continue",101 => "Switching Protocols",102 => "Processing",200 => "OK",201 => "Created",202 => "Accepted",203 => "Non-Authoritative Information",204 => "No Content",205 => "Reset Content",206 => "Partial Content",207 => "Multi-Status",208 => "Already Reported",226 => "IM Used",300 => "Multiple Choices",301 => "Moved Permanently",302 => "Found",303 => "See Other",304 => "Not Modified",305 => "Use Proxy",306 => "(Unused)",307 => "Temporary Redirect",308 => "Permanent Redirect",400 => "Bad Request",401 => "Unauthorized",402 => "Payment Required",403 => "Forbidden",404 => "Not Found",405 => "Method Not Allowed",406 => "Not Acceptable",407 => "Proxy Authentication Required",408 => "Request Timeout",409 => "Conflict",410 => "Gone",411 => "Length Required",412 => "Precondition Failed",413 => "Payload Too Large",414 => "URI Too Long",415 => "Unsupported Media Type",416 => "Range Not Satisfiable",417 => "Expectation Failed",418 => "I'm a teapot",419 => "Authentication Timeout",420 => "Method Failure",422 => "Unprocessable Entity",423 => "Locked",424 => "Failed Dependency",425 => "Unordered Collection",426 => "Upgrade Required",428 => "Precondition Required",429 => "Too Many Requests",431 => "Request Header Fields Too Large",444 => "Connection Closed Without Response",449 => "Retry With",450 => "Blocked by Windows Parental Controls",451 => "Unavailable For Legal Reasons",494 => "Request Header Too Large",495 => "Cert Error",496 => "No Cert",497 => "HTTP to HTTPS",499 => "Client Closed Request",500 => "Internal Server Error",501 => "Not Implemented",502 => "Bad Gateway",503 => "Service Unavailable",504 => "Gateway Timeout",505 => "HTTP Version Not Supported",506 => "Variant Also Negotiates",507 => "Insufficient Storage",508 => "Loop Detected",509 => "Bandwidth Limit Exceeded",510 => "Not Extended",511 => "Network Authentication Required",598 => "Network read timeout error",599 => "Network connect timeout error");
+        
+        return $httpStatusCodes;
     }
 
     /**
@@ -5682,6 +5683,10 @@ class Mind
      * @return void
      */
     public function abort($code, $message){    
+        $codelist = $this->addressCodeList();
+        if(isset($codelist[$code])){
+            header($_SERVER['SERVER_PROTOCOL']." ".$code." ".$codelist[$code]);
+        }
         exit('<!DOCTYPE html><html lang="en"><head> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1"> <title>'.$code.'</title> <style>html, body{background-color: #fff; color: #636b6f; font-family: Arial, Helvetica, sans-serif; font-weight: 100; height: 100vh; margin: 0;}.full-height{height: 100vh;}.flex-center{align-items: center; display: flex; justify-content: center;}.position-ref{position: relative;}.code{border-right: 2px solid; font-size: 26px; padding: 0 15px 0 15px; text-align: center;}.message{font-size: 18px; text-align: center;}div.buttons{position:absolute;margin-top: 60px;}a{color: #333;font-size: 14px;text-decoration: underline;}a:hover{text-decoration:none;}</style></head><body><div class="flex-center position-ref full-height"> <div class="buttons"><a href="'.$this->page_back.'">Back to Page</a>&nbsp;|&nbsp;<a href="'.$this->base_url.'">Home</a></div><div class="code"> '.$code.' </div><div class="message" style="padding: 10px;"> '.$message.' </div></div></body></html>');
     }
 
