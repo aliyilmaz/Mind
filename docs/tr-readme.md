@@ -393,6 +393,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [popup](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#popup)
 -   [managerSentence](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#managerSentence)
 -   [format_date](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#format_date)
+-   [formatPrice](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#formatPrice)
 
 ---
 
@@ -7685,6 +7686,7 @@ echo $this->managerSentence($str, 2);
 Ortaya çıkan gizemli bir virüs, tüm şehri etkisi altına alır. Virüsten etkilenenler birer birer canavara dönüşmektedir.
 ```
 
+---
 
 ## format_date()
 Kendisiyle paylaşılan tarihi, belirtilen dil koduna ve belirtilen tarih formatına göre dönüştürüp geri döndürmeye yarar. Üç parametre alır, ilk parametre tarihtir ve zorunludur. İkinci parametre dil kodudur ve zorunlu değildir, belirtilmezse varsayılan olarak `en_US` kullanılır. Üçüncü parametre tarih formatıdır ve zorunlu değildir, belirtilmezse varsayılan olarak tarihin mevcut formatını referans alır.
@@ -7781,9 +7783,46 @@ veya
 $date_string = '28 Nisan 2023';
 echo $this->format_date($date_string, 'pt_PT', 'Y F d'); // 2023 Abril 28
 ```
+---
 
+## formatPrice()
+Bu fonksiyon, kendisiyle paylaşılan değeri, para birimi türünden bağımsız olarak evrensel fiyat formatına dönüştürmeye yarar.
 
+###### Örnek
 
+```php
+$price = '605'; // 605.00
+echo $this->formatPrice($price);
+```
+
+**veya**
+
+```php
+$price = '605.00'; // 605.00
+echo $this->formatPrice($price);
+```
+
+**veya**
+
+```php
+$price = '4235'; // 4,235.00
+echo $this->formatPrice($price);
+```
+
+**veya**
+
+```php
+$price = '4,235'; // 4,235.00
+echo $this->formatPrice($price);
+
+```
+
+**veya**
+
+```php
+$price = '4,235.00'; // 4,235.00
+echo $this->formatPrice($price);
+```
 
 
 

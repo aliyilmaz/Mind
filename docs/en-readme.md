@@ -398,6 +398,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [popup](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#popup)
 -   [managerSentence](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#managerSentence)
 -   [format_date](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#format_date)
+-   [formatPrice](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#formatPrice)
 
 ---
 
@@ -7833,3 +7834,43 @@ $date_string = '28 Nisan 2023';
 echo $this->format_date($date_string, 'pt_PT', 'Y F d'); // 2023 Abril 28
 ```
 
+---
+
+## formatPrice()
+This function serves to convert the value shared with it into the universal price format, regardless of the currency type.
+
+###### Example
+
+```php
+$price = '605'; // 605.00
+echo $this->formatPrice($price);
+```
+
+**or**
+
+```php
+$price = '605.00'; // 605.00
+echo $this->formatPrice($price);
+```
+
+**or**
+
+```php
+$price = '4235'; // 4,235.00
+echo $this->formatPrice($price);
+```
+
+**or**
+
+```php
+$price = '4,235'; // 4,235.00
+echo $this->formatPrice($price);
+
+```
+
+**or**
+
+```php
+$price = '4,235.00'; // 4,235.00
+echo $this->formatPrice($price);
+```
