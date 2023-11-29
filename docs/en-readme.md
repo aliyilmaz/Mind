@@ -7849,28 +7849,6 @@ echo $this->formatPrice($price);
 **or**
 
 ```php
-$price = '605.00'; // 605.00
-echo $this->formatPrice($price);
-```
-
-**or**
-
-```php
 $price = '4235'; // 4,235.00
-echo $this->formatPrice($price);
-```
-
-**or**
-
-```php
-$price = '4,235'; // 4,235.00
-echo $this->formatPrice($price);
-
-```
-
-**or**
-
-```php
-$price = '4,235.00'; // 4,235.00
 echo $this->formatPrice($price);
 ```
