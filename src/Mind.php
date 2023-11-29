@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.5
+ * @version    Release: 5.8.6
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3807,7 +3807,7 @@ class Mind
      * @return array An array containing the names of popular bots, such as search engine crawlers and social media bots.
      */
     public function bots(){
-        return ['Alexabot','AhrefsBot','Applebot','ArchiveBot','Baiduspider','Barkrowler','BLEXBot','Bingbot','BUbiNG','CCBot','Charlotte','Cliqzbot','Crawler','Discordbot','DotBot','DuckDuckBot','Embedly','ExB Language Crawler','Exabot','Facebot','FatBot','FlipboardProxy','Flamingo_Search','Genieo','Googlebot','Google-InspectionTool', 'ia_archiver','Infohelfer','Instagram Bot','LinkedInBot','Linguee Bot','LivelapBot','LoadImpactPageAnalyzer','MagpieRSS','Mail.RU_Bot','MetaJobBot','MetaURI','MJ12bot','MojeekBot','MSRBOT','Netvibes','OpenHoseBot','OutclicksBot','Phantom','PhantomJS','Pinterest','Pinterestbot','Python-urllib','QQBrowser','Qseero','Qwantify','Redditbot','RubedoBot','SafeBrowsing','SafeDNSBot','Screaming Frog','SemrushBot','Sogou','Soso','spbot','SurveyBot','TelegramBot','Tumblrbot','Twitterbot','UnwindFetchor','VimeoBot','VoilàBot','WBSearchBot','Weibo','WhatsApp','WordPress','YandexBot','YouTubeBot'];
+        return ['Alexabot','AhrefsBot','Applebot','ArchiveBot','Baiduspider','Barkrowler','BLEXBot','Bingbot','BUbiNG','CCBot','Charlotte','Cliqzbot','cortex','Crawler','Discordbot','DotBot','DuckDuckBot','Embedly','ExB Language Crawler','Exabot','facebookexternalhit','Facebot','FatBot','FlipboardProxy','Flamingo_Search','Genieo','Googlebot','Google-InspectionTool', 'ia_archiver','Infohelfer','Instagram Bot','LinkedInBot','Linguee Bot','LivelapBot','LoadImpactPageAnalyzer','MagpieRSS','Mail.RU_Bot','MetaJobBot','MetaURI','MJ12bot','MojeekBot','MSRBOT','Netvibes','OpenHoseBot','OutclicksBot','Phantom','PhantomJS','Pinterest','Pinterestbot','Python-urllib','QQBrowser','Qseero','Qwantify','Redditbot','RubedoBot','SafeBrowsing','SafeDNSBot','Screaming Frog','SemrushBot','Sogou','Soso','spbot','SurveyBot','TelegramBot','Tumblrbot','Twitterbot','UnwindFetchor','VimeoBot','VoilàBot','WBSearchBot','Weibo','WhatsApp','WordPress','YandexBot','YouTubeBot'];
         
     }
 
@@ -6164,14 +6164,6 @@ class Mind
         } else {
             $lastParams = $text; // Note: This line seems incorrect. Did you mean $lastParams = $price;?
         }
-        
-        // Remove trailing '00' if present.
-        if($lastParams == 00){
-            $price = substr($price, 0, -2);
-        }
-        
-        // Remove dots and commas from the price string.
-        $price = str_replace(['.', ','], '', $price);
         
         // Convert the price to a floating-point number.
         $price = floatval($price);
