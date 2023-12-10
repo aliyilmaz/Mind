@@ -7553,14 +7553,16 @@ Array
 ---
 
 ## json_encode()
-It serves to convert the specified string to json format. Unlike PHP's `json_encode` method, it uses the `JSON_UNESCAPED_UNICODE` definition by default, the second parameter is specified as `true` by default. In this way, the json data is compressed and takes up less space.
+It serves to convert the specified string to json format. Unlike PHP's `json_encode` method, it uses the `JSON_UNESCAPED_UNICODE` definition by default, the second parameter is specified as `true` by default. In this way, the json data is compressed and takes up less space. The third parameter is specified as false, thus preventing the page title from being json by default.
 
 If the json data is to be obtained in a legible structure, the second parameter should be specified as `false`. Thus, a legible json output is obtained by applying the `JSON_PRETTY_PRINT` definition.
+
+If it is desired that the page where the json data is printed on the screen has a json header, the third parameter should be set to 'true'. This usage method is preferred in API layers that respond to the JavaScript side.
 
 code:
 ```php
 $data = ['Beyazıt Karataş: The name of the national combat aircraft must be "Turkish Eagle"!', 'Ali Yılmaz'];
-echo $this->json_encode($data); // $this->json_encode($data, false);
+echo $this->json_encode($data); // $this->json_encode($data, false); or $this->json_encode($data, false, true);
 ```
 
 output:

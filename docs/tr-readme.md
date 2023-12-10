@@ -7505,14 +7505,16 @@ Array
 ---
 
 ## json_encode()
-Belirtilen diziyi json biçimine dönüştürmeye yarar. PHP'nin `json_encode` metodundan farklı olarak, `JSON_UNESCAPED_UNICODE` tanımı varsayılan olarak kullanır, ikinci parametre varsayılan olarak `true` belirtilmiştir. Bu sayede json verisi sıkıştırılmış halde olup daha az yer kaplamaktadır. 
+Belirtilen diziyi json biçimine dönüştürmeye yarar. PHP'nin `json_encode` metodundan farklı olarak, `JSON_UNESCAPED_UNICODE` tanımı varsayılan olarak kullanır, ikinci parametre varsayılan olarak `true` belirtilmiştir. Bu sayede json verisi sıkıştırılmış halde olup daha az yer kaplamaktadır. Üçüncü parametre ise false belirtilmiş olup bu sayede sayfa başlığının json olması varsayılan olarak engellenmiştir.
 
 Eğer json verisi okunaklı bir yapıda elde edilmek istenirse, ikinci parametre `false` olarak belirtilmelidir. Böylelikle `JSON_PRETTY_PRINT` tanımı uygulanarak okunaklı bir json çıktısı elde edilmiş olur. 
+
+Eğer json verisinin ekrana basıldığı sayfanın json header başlığına sahip olması arzu ediliyorsa, üçüncü parametre `true` yapılmalıdır. Bu kullanım şekli javascript tarafına yanıt veren API katmanlarında tercih edilmektedir.
 
 kod:
 ```php
 $data = ['Beyazıt Karataş: Milli Muharif Uçağın adı "Türk Kartalı" olmalı!', 'Ali Yılmaz'];
-echo $this->json_encode($data); // $this->json_encode($data, false);
+echo $this->json_encode($data); // $this->json_encode($data, false); veya $this->json_encode($data, false, true);
 ```
 
 çıktı:

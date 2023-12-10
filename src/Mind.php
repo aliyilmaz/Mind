@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.6
+ * @version    Release: 5.8.7
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -5815,7 +5815,8 @@ class Mind
      * @param string $data
      * @return string
      */
-    public function json_encode($data, $min = true){
+    public function json_encode($data, $min = true, $header=false){
+        if($header==true){ header('Content-Type: application/json; charset=utf-8'); }
         $data = ($min === true) ? json_encode($data, JSON_UNESCAPED_UNICODE) : json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         return str_replace(['&#039;', '&quot;', '&amp;'], ['\'', '\"', '&'], $data);
     }
