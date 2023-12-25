@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.7
+ * @version    Release: 5.8.8
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -1060,6 +1060,7 @@ class Mind
             }
         }
 
+        
         if(!empty($options['search']['and']) AND is_array($options['search']['and'])){
 
             if(!isset($options['search']['and'][0])){
@@ -1137,6 +1138,28 @@ class Mind
         
         $sql .= (!empty($ignoredBox)) ? $SP.' NOT ('.implode(' OR ', $ignoredBox).')' : '';
 
+        $betweenSql = '';
+        $SP = (!empty($sql)) ? ' AND' : ' WHERE';
+        if(!empty($options['search']['between']) AND is_array($options['search']['between'])){           
+            if(empty($options['search']['between']['column'])){
+                $options['search']['between']['column'] = $this->increments($tblName);
+            }
+            if(!isset($options['search']['between']['params'][0])){
+                $options['search']['between']['params'] = array($options['search']['between']['params']);
+            }
+            $betweenSql .= (!empty($sql)) ? ' AND ' : ' ';
+            foreach ($options['search']['between']['params'] as $key => $row) {
+                $betweenSqlBox[] = '('.$options['search']['between']['column'].' BETWEEN ? AND ?)';
+                $executeArray[] = $row['min'];
+                $executeArray[] = $row['max'];
+            }
+
+            if(!empty($betweenSqlBox)){                
+                $sql .= $SP.' ('.implode(' OR ', $betweenSqlBox).')';
+            }
+   
+        }
+
         if(!empty($options['sort'])){
 
             list($columnName, $sort) = explode(':', $options['sort']);
@@ -1145,7 +1168,7 @@ class Mind
             }
 
         }
-
+        
         if(!empty($options['limit'])){
 
             if(!empty($options['limit']['start']) AND $options['limit']['start']>0){
@@ -1167,11 +1190,13 @@ class Mind
         $result = array();
         
         $this->sql = 'SELECT '.$sqlColumns.' FROM `'.$tblName.'` '.$sql;
-
+        
         try{
 
             $query = $this->conn->prepare($this->sql);
+
             $query->execute($executeArray);
+
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
             if(isset($options['format'])){

@@ -1611,6 +1611,81 @@ $options = [
   $this->print_pre($data);
 ```
 
+#### between: Minumum ve Maksimum değerler arasındaki verileri almak
+
+Özellikle tarih ve sayı aralıklarının elde edilmesinin istendiği yerlerde kullanılır.
+
+**Örneğin:**
+* Belirtilen iki tarih arasında gerçekleşen depremler 
+* Belirtilen tarihler arasında dünyaya gelenler
+* Belirtilen yaş aralığındaki üyeler
+* En çok yazı yazanlar
+* En çok ziyaret eden kullanıcılar
+
+gibi...
+
+Sütun adı belirtilmezse varsayılan olarak auto_increment tanımlanmış sütun adını `column` hanesine tanımlar.
+
+Minumum ve Maksimum parametreler, tek veya çoklu dizi olarak gönderilebilir. Minumum değeri `min` anahtarına, maksimum değer ise `max` anahtarına tanımlanır.
+
+Diğer search özellikleriyle uyumludur.
+
+**Kullanım Örnekleri**
+
+1) Sütun adı olmadan parametrelerin belirtilmesi
+```php
+$this->print_pre($this->getData('earthquakes', [
+    'search'=>[        
+        'and'=>[
+            'eventType'=>'Patlama'
+        ],
+        'between'=>[
+            'params'=>[
+                'min'=>'1',
+                'max'=>'1000'
+            ]
+            // 'params'=>[
+            //     [
+            //         'min'=>'1',
+            //         'max'=>'1000'
+            //     ]
+            // ]
+        ]
+    ],
+    'limit'=>[
+        'end'=>2
+    ],
+    'sort'=>'eventDate:DESC'
+]));
+```
+
+2) Sütun adıyla beraber parametrelerin belirtilmesi
+```php
+$this->print_pre($this->getData('earthquakes', [
+    'search'=>[        
+        'and'=>[
+            'eventType'=>'Patlama'
+        ],
+        'between'=>[
+            'column'=>'eventDate',
+            'params'=>[
+                'min'=>'2023-02-06T01:17:32',
+                'max'=>'2023-07-07T10:24:47'
+            ]
+            // 'params'=>[
+            //     [
+            //         'min'=>'2023-02-01',
+            //         'max'=>'2023-07-07'
+            //     ]
+            // ]
+        ]
+    ],
+    'limit'=>[
+        'end'=>2
+    ],
+    'sort'=>'eventDate:DESC'
+]));
+```
 
 #### join: Tabloları eşitleme
 

@@ -1645,6 +1645,82 @@ $options = [
   $this->print_pre($data);
 ```
 
+#### between: Retrieving data between Minimum and Maximum values
+
+It is especially used where date and number ranges are desired to be obtained.
+
+**For example:**
+* Earthquakes that occurred between the two specified dates
+* Those born between the specified dates
+* Members in the specified age range
+* People who wrote the most posts
+* Most visited users
+
+like...
+
+If the column name is not specified, by default auto_increment defines the defined column name in the `column` field.
+
+Minimum and Maximum parameters can be sent as single or multiple strings. The minimum value is defined in the `min` key and the maximum value is defined in the `max` key.
+
+It is compatible with other search features.
+
+**Usage Examples**
+
+1) Specifying parameters without column name
+```php
+$this->print_pre($this->getData('earthquakes', [
+    'search'=>[        
+        'and'=>[
+            'eventType'=>'Patlama'
+        ],
+        'between'=>[
+            'params'=>[
+                'min'=>'1',
+                'max'=>'1000'
+            ]
+            // 'params'=>[
+            //     [
+            //         'min'=>'1',
+            //         'max'=>'1000'
+            //     ]
+            // ]
+        ]
+    ],
+    'limit'=>[
+        'end'=>2
+    ],
+    'sort'=>'eventDate:DESC'
+]));
+```
+
+2) Specifying parameters along with the column name
+```php
+$this->print_pre($this->getData('earthquakes', [
+    'search'=>[        
+        'and'=>[
+            'eventType'=>'Patlama'
+        ],
+        'between'=>[
+            'column'=>'eventDate',
+            'params'=>[
+                'min'=>'2023-02-06T01:17:32',
+                'max'=>'2023-07-07T10:24:47'
+            ]
+            // 'params'=>[
+            //     [
+            //         'min'=>'2023-02-01',
+            //         'max'=>'2023-07-07'
+            //     ]
+            // ]
+        ]
+    ],
+    'limit'=>[
+        'end'=>2
+    ],
+    'sort'=>'eventDate:DESC'
+]));
+```
+
 #### join: Syncing tables
 
 It provides results by matching columns in different tables with each other. It supports `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL OUTER JOIN` matching types and is not case sensitive. The usage example is presented below for your information. `name` represents the matching type, `tables` represents the tables to be mapped, `primary` represents the column equivalent in the reference table, `secondary` represents the column equivalent in the table in question, and `fields` represents the column names to be displayed. If `fields` is left blank, all columns will be displayed.
