@@ -323,6 +323,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_port_open)
 -   [is_bot](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_bot)
 -   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#fileExists)
+-   [stristr](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#stristr)
+-   [strstr](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#strstr)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#validate)
 
 ##### Helper
@@ -3798,6 +3800,150 @@ if($this->is_bot($userAgent)){
     echo 'This value seems to be a bot.';
 } else {
     echo 'No, this value doesn\'t seem to belong to a bot.';
+}
+```
+
+---
+
+## stristr()
+
+This method, which is an improvement of the [`stristr`](https://www.php.net/manual/en/function.stristr.php) function used in PHP, works by accepting the haystack and the needle as both `string` and `array` types. If the 3rd parameter is specified, as in PHP, the part up to the found needle is returned.
+
+**Haystack and Needle samples**
+
+```php
+$needle = 'beautiful';
+$haystack = 'We are in the last days of December.We are preparing to meet a Wonderful new year!';
+
+```
+
+**or**
+
+```php
+$needle = [
+    'beautiful',
+    'wonderful'
+];
+$haystack = 'We are in the last days of December.We are preparing to meet a Wonderful new year!';
+
+```
+
+**or**
+
+```php
+$needle = 'beautiful';
+$haystack = [
+    'We are in the last days of December.We are preparing to meet a Wonderful new year!',
+    'But the first spring is beautiful!'
+];
+
+```
+
+**or**
+
+```php
+$needle = [
+    'beautiful',
+    'wonderful'
+];
+$haystack = [
+    'We are in the last days of December.We are preparing to meet a Wonderful new year!',
+    'But the first spring is beautiful!'
+];
+
+```
+
+**Usage examples**
+```php
+
+if($this->stristr($haystack, $needle)){
+    echo 'Found.';
+} else {
+    echo 'Not found.';
+}
+
+```
+**or**
+
+```php
+
+$condition = $this->stristr($haystack, $needle, true);
+if($condition){
+    echo 'Found: '.$condition;
+} else {
+    echo 'Not found.';
+}
+```
+
+---
+
+## strstr()
+
+This method, which is an improvement of the [`strstr`](https://www.php.net/manual/en/function.strstr.php) function used in PHP, works by accepting the haystack and the needle as both `string` and `array` types. If the 3rd parameter is specified, as in PHP, the part up to the found needle is returned.
+
+**Haystack and Needle samples**
+
+```php
+$needle = 'beautiful';
+$haystack = 'We are in the last days of December.We are preparing to meet a Wonderful new year!';
+
+```
+
+**or**
+
+```php
+$needle = [
+    'beautiful',
+    'wonderful'
+];
+$haystack = 'We are in the last days of December.We are preparing to meet a Wonderful new year!';
+
+```
+
+**or**
+
+```php
+$needle = 'beautiful';
+$haystack = [
+    'We are in the last days of December.We are preparing to meet a Wonderful new year!',
+    'But the first spring is beautiful!'
+];
+
+```
+
+**or**
+
+```php
+$needle = [
+    'beautiful',
+    'wonderful'
+];
+$haystack = [
+    'We are in the last days of December.We are preparing to meet a Wonderful new year!',
+    'But the first spring is beautiful!'
+];
+
+```
+
+**Usage examples**
+```php
+
+if($this->strstr($haystack, $needle)){
+    echo 'Found.';
+} else {
+    echo 'Not found.';
+}
+
+```
+**or**
+
+```php
+
+$condition = $this->strstr($haystack, $needle, true);
+if($condition){
+    echo 'Found: '.$condition;
+} else {
+    echo 'Not found.';
 }
 ```
 

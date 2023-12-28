@@ -318,6 +318,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [is_port_open](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_port_open)
 -   [is_bot](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_bot)
 -   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#fileExists)
+-   [stristr](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#stristr)
+-   [strstr](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#strstr)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#validate)
 
 ##### Yardımcı
@@ -3771,6 +3773,149 @@ if($this->fileExists('https://github.githubassets.com/images/modules/logos_page/
     echo 'Dosya var';
 } else {
     echo 'Dosya yok';
+}
+```
+---
+
+## stristr()
+
+PHP'de kullanılan [`stristr`](https://www.php.net/manual/tr/function.stristr.php) fonksiyonunun geliştirilmiş hali olan bu yöntem, samanlık ve iğnenin hem `string` hem de `array` türü olarak kabul edilmesiyle çalışır. PHP'de olduğu gibi 3. parametre belirtilirse bulunan iğneye kadar olan kısım döndürülür.
+
+**Samanlık ve İğne örnekleri**
+
+```php
+$needle = 'güzel';
+$haystack = 'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!';
+
+```
+
+**veya**
+
+```php
+$needle = [
+    'güzel',
+    'harikulade'
+];
+$haystack = 'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!';
+
+```
+
+**veya**
+
+```php
+$needle = 'güzel';
+$haystack = [
+    'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!',
+    'Ama ilk bahar da güzel!'
+];
+
+```
+
+**veya**
+
+```php
+$needle = [
+    'güzel',
+    'harikulade'
+];
+$haystack = [
+    'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!',
+    'Ama ilk bahar da güzel!'
+];
+
+```
+
+**Kullanım örnekleri**
+```php
+
+if($this->stristr($haystack, $needle)){
+    echo 'Bulundu.';
+} else {
+    echo 'Bulunamadı.';
+}
+
+```
+**veya**
+
+```php
+
+$condition = $this->stristr($haystack, $needle, true);
+if($condition){
+    echo 'Bulundu: '.$condition;
+} else {
+    echo 'Bulunamadı.';
+}
+```
+
+---
+
+## strstr()
+
+PHP'de kullanılan [`strstr`](https://www.php.net/manual/tr/function.strstr.php) fonksiyonunun geliştirilmiş hali olan bu yöntem, samanlık ve iğnenin hem `string` hem de `array` türü olarak kabul edilmesiyle çalışır. PHP'de olduğu gibi 3. parametre belirtilirse bulunan iğneye kadar olan kısım döndürülür.
+
+**Samanlık ve İğne örnekleri**
+
+```php
+$needle = 'güzel';
+$haystack = 'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!';
+
+```
+
+**veya**
+
+```php
+$needle = [
+    'güzel',
+    'harikulade'
+];
+$haystack = 'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!';
+
+```
+
+**veya**
+
+```php
+$needle = 'güzel';
+$haystack = [
+    'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!',
+    'Ama ilk bahar da güzel!'
+];
+
+```
+
+**veya**
+
+```php
+$needle = [
+    'güzel',
+    'harikulade'
+];
+$haystack = [
+    'Aralık ayının son günlerindeyiz. Harikulade yeni bir yılı karşılamaya hazırlanıyoruz!',
+    'Ama ilk bahar da güzel!'
+];
+
+```
+
+**Kullanım örnekleri**
+```php
+
+if($this->strstr($haystack, $needle)){
+    echo 'Bulundu.';
+} else {
+    echo 'Bulunamadı.';
+}
+
+```
+**veya**
+
+```php
+
+$condition = $this->strstr($haystack, $needle, true);
+if($condition){
+    echo 'Bulundu: '.$condition;
+} else {
+    echo 'Bulunamadı.';
 }
 ```
 

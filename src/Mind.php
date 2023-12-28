@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.8.9
+ * @version    Release: 5.9.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2652,6 +2652,52 @@ class Mind
         curl_close($ch);
 
         return ($responseCode == 200) ? true : false;
+    }
+
+    /**
+     * It is a version of the series of "stristr" methods that 
+     * support the series
+     * 
+     * @param string|array $haystack
+     * @param string|array $needle
+     * @param bool $before_needle
+     * 
+     * @return bool|string // Returns the matched substring. If needle is not found, returns false.
+     */
+    public function stristr($haystack, $needle, $before_needle = false){
+        $haystack = !is_array($haystack) ? [$haystack] : $haystack;
+        $needle = !is_array($needle) ? [$needle] : $needle;
+        foreach ($haystack as $key => $haystack_item) {
+            foreach ($needle as $needle_item) {                
+                if(stristr($haystack_item, $needle_item)){
+                   return (!$before_needle) ? true : stristr($haystack_item, $needle_item, true);
+                }
+            }
+        }
+        return false;
+    }
+    
+    /**
+     * It is a version of the series of "strstr" methods that 
+     * support the series
+     * 
+     * @param string|array $haystack
+     * @param string|array $needle
+     * @param bool $before_needle
+     * 
+     * @return bool|string // Returns the matched substring. If needle is not found, returns false.
+     */
+    public function strstr($haystack, $needle, $before_needle = false){
+        $haystack = !is_array($haystack) ? [$haystack] : $haystack;
+        $needle = !is_array($needle) ? [$needle] : $needle;
+        foreach ($haystack as $key => $haystack_item) {
+            foreach ($needle as $needle_item) {                
+                if(strstr($haystack_item, $needle_item)){
+                   return (!$before_needle) ? true : strstr($haystack_item, $needle_item, true);
+                }
+            }
+        }
+        return false;
     }
     
     /**
@@ -6208,6 +6254,6 @@ class Mind
         
         // Return the formatted price as a string.
         return $formattedPrice;
-    }
+    }   
       
 }
