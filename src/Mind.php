@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.0
+ * @version    Release: 5.9.1
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -741,13 +741,22 @@ class Mind
      * @return bool
      */
     public function insert($tblName, $values, $trigger=null){
+                    
+        if(!is_null($values)){
+            if (is_numeric(array_keys($values)[0])) {
+                $values = array_values($values);
+            } else {
+                $values = [$values];
+            }
+        }
         
-        if(!isset($values[0])){
-            $values = array($values);
-        } 
-        if(!isset($trigger[0]) AND !is_null($trigger)){
-            $trigger = array($trigger);
-        } 
+        if(!is_null($trigger)){
+            if (is_numeric(array_keys($trigger)[0])) {
+                $trigger = array_values($trigger);
+            } else {
+                $trigger = [$trigger];
+            }
+        }
         
         try {
             $this->conn->beginTransaction();
