@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.1
+ * @version    Release: 5.9.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -5295,11 +5295,6 @@ class Mind
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
             curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
             curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-
-            $cookie_file = tempnam(sys_get_temp_dir(), 'cookie');
-            curl_setopt($ch, CURLOPT_COOKIEJAR, $cookie_file);
-            curl_setopt($ch, CURLOPT_COOKIEFILE, $cookie_file); 
-            unlink($cookie_file);
 
             if(!empty($options['post'])){
                 curl_setopt($ch, CURLOPT_POST, true);
