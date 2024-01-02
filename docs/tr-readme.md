@@ -1693,6 +1693,17 @@ $this->print_pre($this->getData('earthquakes', [
 
 Farklı tablolarda bulunan sütunların birbirleriyle eşlenerek sonuçların elde edilmesini sağlar, `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL OUTER JOIN` eşleme türlerini desteklemekte olup küçük büyük harf duyarlılığı bulunmamaktadır. Kullanım örneği aşağıda bilgilerinize sunulmuştur. `name` eşleme türünü, `tables` eşlenecek tabloları, `primary`, referans tablosundaki sütun karşılığını, `secondary` söz konusu tablodaki sütun karşılığını, `fields` ise görüntülenmesi istenen sütun isimlerini temsil etmektedir. `fields` boş bırakılırsa tüm sütunlar görüntülenir.
 
+**JOIN'ler Hakkında**
+`INNER JOIN`, iki tablo arasında eşleşen kayıtları getirir. Yani, her iki tabloda bulunan ortak değerlere sahip satırları döndürür.
+
+`LEFT JOIN`, sol taraftaki (ilk belirtilen) tablodaki tüm kayıtları ve bu kayıtlara eşleşen sağ taraftaki tablodaki kayıtları getirir. Eğer eşleşme yoksa, sağ taraftaki tablodaki sütunlar NULL değeri alır.
+
+`RIGHT JOIN`, sağ taraftaki (ikinci belirtilen) tablodaki tüm kayıtları ve bu kayıtlara eşleşen sol taraftaki tablodaki kayıtları getirir. Eğer eşleşme yoksa, sol taraftaki tablodaki sütunlar NULL değeri alır.
+
+`FULL OUTER JOIN`, her iki tablodaki tüm kayıtları getirir. Eşleşen kayıtlar normal bir INNER JOIN gibi davranır, eşleşmeyenler ise NULL değeri alır. Bu şekilde, her iki tablodaki tüm veriyi içerir. 
+
+**Bilgi:** Normalde SQLServer ve Sqlite gibi veritabanlarında çalışan ama MYSQL'de çalışmayan `FULL OUTER JOIN` ifadesini desteklediğimiz tüm veritabanlarında çalışan bir teknikle yeteneklerimz arasına ekledik.
+
 ##### Örnek
 
 ```php

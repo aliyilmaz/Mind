@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.2
+ * @version    Release: 5.9.3
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -966,6 +966,7 @@ class Mind
         $andSql = '';
         $orSql = '';
         $keywordSql = '';
+
         $columns = $this->columnList($tblName);
 
         if(!empty($options['column'])){
@@ -978,6 +979,8 @@ class Mind
             $columns = array_values($options['column']);
         } 
         $sqlColumns = $tblName.'.'.implode(', '.$tblName.'.', $columns);
+
+        // join old position
 
         $prefix = '';
         $suffix = ' = ?';
@@ -1014,7 +1017,7 @@ class Mind
             foreach ( $searchColumns as $column ) {
 
                 foreach ( $keyword as $value ) {
-                    $prepareArray[] = $prefix.$column.$suffix;
+                    $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
                     $executeArray[] = $value;
                 }
 
@@ -1057,7 +1060,7 @@ class Mind
                 foreach ($row as $column => $value) {
 
                     $x[$key][] = $prefix.$column.$suffix;
-                    $prepareArray[] = $prefix.$column.$suffix;
+                    $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
                     $executeArray[] = $value;
                 }
                 
@@ -1068,7 +1071,6 @@ class Mind
                 }
             }
         }
-
         
         if(!empty($options['search']['and']) AND is_array($options['search']['and'])){
 
@@ -1081,7 +1083,7 @@ class Mind
                 foreach ($row as $column => $value) {
 
                     $x[$key][] = $prefix.$column.$suffix;
-                    $prepareArray[] = $prefix.$column.$suffix;
+                    $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
                     $executeArray[] = $value;
                 }
                 
@@ -1140,7 +1142,7 @@ class Mind
             !empty($options['search']['and']) OR
             !empty($options['search']['keyword'])
         ){
-            $sql = 'WHERE '.implode($delimiter, $sqlBox);            
+            $sql .= 'WHERE '.implode($delimiter, $sqlBox);            
         }
         
         $SP = (!empty($sql)) ? ' AND' : ' WHERE';
@@ -1169,11 +1171,70 @@ class Mind
    
         }
 
+        if(!empty($options['join'])){            
+            
+            $joinTypes = ['INNER JOIN', 'LEFT JOIN', 'RIGHT JOIN', 'FULL OUTER JOIN'];
+            if(in_array(mb_strtoupper($options['join']['name']), $joinTypes)){
+                $options['join']['name'] = mb_strtoupper($options['join']['name']);
+                $inner = [];
+                $xinnerColumns = [];
+
+                foreach ($options['join']['tables'] as $table_name => $schema) {
+                    $sub_columns = $this->columnList($table_name);
+                    if(empty($schema['fields'])){
+                        $schema['fields'] = $sub_columns;
+                    }
+                    if(!is_array($schema['fields'])){
+                        $schema['fields'] = array($schema['fields']);
+                    }
+                    $schema['fields'] = array_intersect($sub_columns, $schema['fields']);
+    
+                    foreach ($schema['fields'] as $field) {
+                        $xinnerColumns[] = $table_name.'.'.$field.' AS '.$table_name.'_'.$field;
+                    }
+                }
+                $sqlColumns .= ', '.implode(', ',$xinnerColumns);
+
+                if($options['join']['name'] === 'FULL OUTER JOIN'){
+
+                    foreach ($options['join']['tables'] as $table_name => $schema) {
+                        $inner[] =  "LEFT JOIN ".$table_name." ON ".$tblName.".".$schema['primary']."=".$table_name.".".$schema['secondary'];
+                    }
+                    // add where
+                    $inner[] = $sql;
+
+                    $inner[] = 'UNION';
+                    $inner[] = 'SELECT '.$sqlColumns.' FROM '.$tblName.' ';
+                    foreach ($options['join']['tables'] as $table_name => $schema) {
+                        $inner[] =  "RIGHT JOIN ".$table_name." ON ".$tblName.".".$schema['primary']."=".$table_name.".".$schema['secondary'];
+                    }
+                    // add where
+                    $inner[] = $sql;
+                    
+                    $jonExecuteArray = $executeArray;
+                    foreach ($executeArray as $value) {
+                        $jonExecuteArray[] = $value;
+                    }
+                    $executeArray = $jonExecuteArray;
+                } else {
+                    foreach ($options['join']['tables'] as $table_name => $schema) {
+                        $inner[] = $options['join']['name']." ".$table_name." ON ".$tblName.".".$schema['primary']."=".$table_name.".".$schema['secondary'];
+                    }
+                    $inner[] = $sql;
+                }
+            
+                $sql = "\n\t".implode("\n\t", $inner);        
+                $sql .= ' AND '.$tblName.".".$schema['primary'].' IS NULL';
+            }
+
+        }
+        
+
         if(!empty($options['sort'])){
 
             list($columnName, $sort) = explode(':', $options['sort']);
             if(in_array($sort, array('asc', 'ASC', 'desc', 'DESC'))){
-                $sql .= ' ORDER BY '.$columnName.' '.strtoupper($sort);
+                $sql .= ' ORDER BY '.$columnName.' '.mb_strtoupper($sort);
             }
 
         }
@@ -1198,12 +1259,12 @@ class Mind
 
         $result = array();
         
-        $this->sql = 'SELECT '.$sqlColumns.' FROM `'.$tblName.'` '.$sql;
-        
+        $this->sql = 'SELECT '.$sqlColumns.' FROM '.$tblName.' '.$sql;
+        // echo $this->sql;        
         try{
 
             $query = $this->conn->prepare($this->sql);
-
+            // $this->print_pre($executeArray);
             $query->execute($executeArray);
 
             $result = $query->fetchAll(PDO::FETCH_ASSOC);
@@ -1219,6 +1280,7 @@ class Mind
             return $result;
 
         }catch (Exception $e){
+            // $this->print_pre($e);
             return $result;
         }
         
