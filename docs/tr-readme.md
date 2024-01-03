@@ -1694,6 +1694,7 @@ $this->print_pre($this->getData('earthquakes', [
 Farklı tablolarda bulunan sütunların birbirleriyle eşlenerek sonuçların elde edilmesini sağlar, `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL OUTER JOIN` eşleme türlerini desteklemekte olup küçük büyük harf duyarlılığı bulunmamaktadır. Kullanım örneği aşağıda bilgilerinize sunulmuştur. `name` eşleme türünü, `tables` eşlenecek tabloları, `primary`, referans tablosundaki sütun karşılığını, `secondary` söz konusu tablodaki sütun karşılığını, `fields` ise görüntülenmesi istenen sütun isimlerini temsil etmektedir. `fields` boş bırakılırsa tüm sütunlar görüntülenir.
 
 **JOIN'ler Hakkında**
+
 `INNER JOIN`, iki tablo arasında eşleşen kayıtları getirir. Yani, her iki tabloda bulunan ortak değerlere sahip satırları döndürür.
 
 `LEFT JOIN`, sol taraftaki (ilk belirtilen) tablodaki tüm kayıtları ve bu kayıtlara eşleşen sağ taraftaki tablodaki kayıtları getirir. Eğer eşleşme yoksa, sağ taraftaki tablodaki sütunlar NULL değeri alır.

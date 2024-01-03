@@ -1728,6 +1728,7 @@ $this->print_pre($this->getData('earthquakes', [
 It provides results by matching columns in different tables with each other. It supports `INNER JOIN`, `LEFT JOIN`, `RIGHT JOIN`, `FULL OUTER JOIN` matching types and is not case sensitive. The usage example is presented below for your information. `name` represents the matching type, `tables` represents the tables to be mapped, `primary` represents the column equivalent in the reference table, `secondary` represents the column equivalent in the table in question, and `fields` represents the column names to be displayed. If `fields` is left blank, all columns will be displayed.
 
 **About JOINs**
+
 `INNER JOIN` returns matching records between two tables. That is, it returns rows with common values found in both tables.
 
 `LEFT JOIN` returns all records from the left-hand (first specified) table and the records from the right-hand table that match those records. If there is no match, the columns in the right-hand table are NULL.
