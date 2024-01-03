@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.3
+ * @version    Release: 5.9.4
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -980,8 +980,6 @@ class Mind
         } 
         $sqlColumns = $tblName.'.'.implode(', '.$tblName.'.', $columns);
 
-        // join old position
-
         $prefix = '';
         $suffix = ' = ?';
         if(!empty($options['search']['scope'])){
@@ -1059,9 +1057,11 @@ class Mind
 
                 foreach ($row as $column => $value) {
 
-                    $x[$key][] = $prefix.$column.$suffix;
-                    $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
-                    $executeArray[] = $value;
+                    $x[$key][] = (is_null($value)) ? $tblName.'.'.$column.' IS NULL' : $prefix.$column.$suffix;
+                    if(!is_null($value)){
+                        $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
+                        $executeArray[] = $value;
+                    }
                 }
                 
                 $orSql .= '('.implode(' OR ', $x[$key]).')';
@@ -1082,9 +1082,11 @@ class Mind
 
                 foreach ($row as $column => $value) {
 
-                    $x[$key][] = $prefix.$column.$suffix;
-                    $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
-                    $executeArray[] = $value;
+                    $x[$key][] = (is_null($value)) ? $tblName.'.'.$column.' IS NULL' : $prefix.$column.$suffix;
+                    if(!is_null($value)){
+                        $prepareArray[] = $prefix.$tblName.'.'.$column.$suffix;
+                        $executeArray[] = $value;
+                    }
                 }
                 
                 $andSql .= '('.implode(' AND ', $x[$key]).')';
@@ -1121,8 +1123,10 @@ class Mind
                 foreach ($options['search']['ignored'] as $rows) {
                     $ign = [];
                     foreach ($rows as $key => $row) {
-                        $ign[] =  $key.'=?';
-                        $executeArray[] = $row;
+                        $ign[] =  (is_null($row)) ? $tblName.'.'.$key.' IS NULL' :$key.'=?';
+                        if(!is_null($row)){
+                            $executeArray[] = $row;
+                        }
                     }  
                     $ignoredBox[] = '('.implode(' AND ', $ign).')';
                     
@@ -1130,8 +1134,10 @@ class Mind
             } else {
                 $ign = [];
                 foreach ($options['search']['ignored'] as $key => $row) {
-                    $ign[] =  $key.'=?';
-                    $executeArray[] = $row;
+                    $ign[] =  (is_null($row)) ? $tblName.'.'.$key.' IS NULL' : $key.'=?';
+                    if(!is_null($row)){
+                        $executeArray[] = $row;
+                    }
                 }
                 $ignoredBox[] = implode(' AND ', $ign);
             }
