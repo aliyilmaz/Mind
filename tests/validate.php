@@ -10,10 +10,10 @@ $Mind = new Mind();
  | required, email, url, phone, color, https, http,
  | json, max-num, min-num, max-char, min-char, numeric,
  | min-age, max-age, date, unique, knownunique, available, 
- | unchanged, bool, iban, ipv4, ipv6, blood, coordinate, 
- | distance, languages, morse, binary, timecode, currencies,
- | decimal, isbn, in, slug, port, port_open, fileExists, md5,
- | base64, bot
+ | unchanged, bool, iban, ipv4, ipv6, blood, latitude, longitude,
+ | coordinate, distance, languages, morse, binary, timecode, 
+ | currencies, decimal, isbn, in, slug, port, port_open, fileExists, 
+ | md5, base64, bot
  | 
  */
 
@@ -39,6 +39,8 @@ $data = array(
     'ipv4Address'       =>  '127.0.0.1',
     'ipv6Address'       =>  '2001:0db8:85a3:08d3:1319:8a2e:0370:7334',
     'bloodGroup'        =>  '0+',
+    'latitude'          =>  '41.008610',
+    'longitude'         =>  '28.971111',
     'coordinates'       =>  '41.008610,28.971111',
     'distances'         =>  '41.008610,28.971111@39.925018,32.836956',
     'language'          =>  'TR',
@@ -83,7 +85,9 @@ $rule = array(
     'ipv4Address'       =>  'ipv4',
     'ipv6Address'       =>  'ipv6',
     'bloodGroup'        =>  'blood:0+',
-    'coordinates'       =>  'required|coordinate',
+    'latitude'          =>  'latitude',
+    'longitude'         =>  'longitude',
+    'coordinates'       =>  'coordinate',
     'distances'         =>  'distance:349 km',
     'language'          =>  'languages',
     'morse_code'        =>  'morse',
@@ -169,6 +173,12 @@ $message = array(
     ),
     'bloodGroup'=>array(
         'blood'=>'The blood group according to the instructions should be specified.'
+    ),
+    'latitude'=>array(
+        'latitude'=>'A valid latitude must be specified.'
+    ),
+    'longitude'=>array(
+        'longitude'=>'A valid longitude must be specified.'
     ),
     'coordinates'=>array(
         'coordinate'=>'A valid coordinate must be specified.'

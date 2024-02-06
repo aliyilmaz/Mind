@@ -3967,6 +3967,8 @@ $data = array(
     'ipv4Address'       =>  '127.0.0.1',
     'ipv6Address'       =>  '2001:0db8:85a3:08d3:1319:8a2e:0370:7334',
     'bloodGroup'        =>  '0+',
+    'latitude'          =>  '41.008610',
+    'longitude'         =>  '28.971111',
     'coordinates'       =>  '41.008610,28.971111',
     'distances'         =>  '41.008610,28.971111@39.925018,32.836956',
     'language'          =>  'TR',
@@ -4013,7 +4015,9 @@ $rule = array(
     'ipv4Address'       =>  'ipv4',
     'ipv6Address'       =>  'ipv6',
     'bloodGroup'        =>  'blood:0+',
-    'coordinates'       =>  'required|coordinate',
+    'latitude'          =>  'latitude',
+    'longitude'         =>  'longitude',
+    'coordinates'       =>  'coordinate',
     'distances'         =>  'distance:349 km',
     'language'          =>  'languages',
     'morse_code'        =>  'morse',
@@ -4100,6 +4104,12 @@ $message = array(
     ),
     'bloodGroup'=>array(
         'blood'=>'Talimatlara göre kan grubu belirtilmelidir.'
+    ),
+    'latitude'=>array(
+        'latitude'=>'Geçerli bir enlem belirtilmelidir.'
+    ),
+    'latitude'=>array(
+        'latitude'=>'Geçerli bir boylam belirtilmelidir.'
     ),
     'coordinates'=>array(
         'coordinate'=>'Geçerli bir koordinat belirtilmelidir.'
@@ -4443,6 +4453,22 @@ veya
 blood:0+ 
 ```
 
+
+##### latitude
+
+Enlem parametresinin geçerli bir enlem değeri olması gerektiğini ifade etmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `latitude` yazarak kullanılabilir.
+
+```php
+latitude
+```
+
+##### longitude
+
+Boylam parametresinin geçerli bir boylam değeri olması gerektiğini ifade etmek için kullanılır. Ekstra bir parametreye ihtiyaç duymadığından `longitude` yazarak kullanılabilir.
+
+```php
+longitude
+```
 
 ##### coordinate
 

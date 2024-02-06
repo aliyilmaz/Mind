@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.4
+ * @version    Release: 5.9.5
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2848,7 +2848,6 @@ class Mind
                 }
                 
                 switch ($name) {
-                    // minimum say kuralı
                     case 'min-num':
                         if(!is_numeric($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
@@ -2858,7 +2857,6 @@ class Mind
                             }
                         }
                     break;
-                    // maksimum sayı kuralı
                     case 'max-num':
                         if(!is_numeric($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
@@ -2868,25 +2866,21 @@ class Mind
                             }
                         }
                     break;
-                    // minimum karakter kuralı
                     case 'min-char':
                         if(strlen($data[$column])<$extra){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                         break;
-                    // maksimum karakter kuralı
                     case 'max-char':
                         if(strlen($data[$column])>$extra){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                         break;
-                    // E-Posta adresi kuralı
                     case 'email':
                         if(!$this->is_email($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Zorunlu alan kuralı
                     case 'required':
                         if(!isset($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
@@ -2897,13 +2891,11 @@ class Mind
                         }
                         
                     break;
-                    // Telefon numarası kuralı
                     case 'phone':
                         if(!$this->is_phone($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Tarih kuralı
                     case 'date':
                         if(empty($extra)){
                             $extra = 'Y-m-d';
@@ -2912,55 +2904,46 @@ class Mind
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // json kuralı 
                     case 'json':
                         if(!$this->is_json($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Renk kuralı 
                     case 'color':
                         if(!$this->is_color($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // URL kuralı 
                     case 'url':
                         if(!$this->is_url($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // https kuralı 
                     case 'https':
                         if(!$this->is_https($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // http kuralı 
                     case 'http':
                         if(!$this->is_http($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Numerik karakter kuralı 
                     case 'numeric':
                         if(!is_numeric($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Minumum yaş sınırlaması kuralı 
                     case 'min-age':
                         if(!$this->is_age($data[$column], $extra)){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Maksimum yaş sınırlaması kuralı 
                     case 'max-age':
                         if(!$this->is_age($data[$column], $extra, 'max')){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // Benzersiz parametre kuralı 
                     case 'unique':
 
                         if(!$this->is_table($extra)){
@@ -2976,7 +2959,6 @@ class Mind
                         } 
 
                     break;
-                    // Benzeri olan parametre kuralı
                     case 'available':
                         $availableColumn = $column;
                         if(isset($limit)){
@@ -3027,9 +3009,7 @@ class Mind
                         }
 
                     break;
-                    // Doğrulama kuralı 
                     case 'bool':
-                        // Geçerlilik kontrolü
                         $acceptable = array(true, false, 'true', 'false', 0, 1, '0', '1');
                         $wrongTypeMessage = 'True, false, 0 or 1 must be specified.';
 
@@ -3078,26 +3058,22 @@ class Mind
                             }
                         }
 
-                        break;
-                    // IBAN doğrulama kuralı
+                    break;
                     case 'iban':
                         if(!$this->is_iban($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // ipv4 doğrulama kuralı
                     case 'ipv4':
                         if(!$this->is_ipv4($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // ipv6 doğrulama kuralı
                     case 'ipv6':
                         if(!$this->is_ipv6($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                     break;
-                    // kan grubu ve uyumu kuralı
                     case 'blood':
                         if(!empty($extra)){
                             if(!$this->is_blood($data[$column], $extra)){
@@ -3108,10 +3084,22 @@ class Mind
                                 $this->errors[$column][$name] = $message[$column][$name];
                             }
                         }
-                    break;
-                    // Koordinat kuralı
-                    case 'coordinate':
+                    break;                           
+                    case 'latitude':
 
+                        if(!$this->is_latitude($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        } 
+
+                    break;
+                    case 'longitude':
+
+                        if(!$this->is_longitude($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        } 
+
+                    break;                    
+                    case 'coordinate':
                         if(!strstr($data[$column], ',')){
                             $this->errors[$column][$name] = $message[$column][$name];
                         } else {
@@ -3155,90 +3143,89 @@ class Mind
                         } else {
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
-                        break;
-                        case 'languages':
-                            if(!in_array($data[$column], array_keys($this->languages()))){
+                    break;
+                    case 'languages':
+                        if(!in_array($data[$column], array_keys($this->languages()))){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'morse':
+                        if(!$this->is_morse($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'binary':
+                        if(!$this->is_binary($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'timecode':
+                        if(!$this->is_timecode($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'currencies':
+                        if(!in_array($data[$column], array_keys($this->currencies()))){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'decimal':
+                        if(!$this->is_decimal($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'isbn':
+                        if(!$this->is_isbn($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'in':
+                        if(!empty($extra)){
+                            $extra = strpos($extra, ',') ? explode(',', $extra) : [$extra];
+                            if(!in_array($data[$column], $extra)){
                                 $this->errors[$column][$name] = $message[$column][$name];
                             }
-                            break;
-                        case 'morse':
-                            if(!$this->is_morse($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'binary':
-                            if(!$this->is_binary($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'timecode':
-                            if(!$this->is_timecode($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'currencies':
-                            if(!in_array($data[$column], array_keys($this->currencies()))){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'decimal':
-                            if(!$this->is_decimal($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'isbn':
-                            if(!$this->is_isbn($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'in':
-                            if(!empty($extra)){
-                                $extra = strpos($extra, ',') ? explode(',', $extra) : [$extra];
-                                if(!in_array($data[$column], $extra)){
-                                    $this->errors[$column][$name] = $message[$column][$name];
-                                }
-                            } else {
-                                $this->errors[$column][$name] = 'The haystack was not found.';
-                            }
+                        } else {
+                            $this->errors[$column][$name] = 'The haystack was not found.';
+                        }
 
-                            break;
-                        case 'slug':
-                            if(!$this->is_slug($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'port':
-                            if(!$this->is_port($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'port_open':
-                            $extra = ($extra == '') ? null : $extra;
-                            if(!$this->is_port_open($data[$column], $extra)){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'fileExists':
-                            if(!$this->fileExists($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'md5':
-                            if(!$this->is_md5($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'base64':
-                            if(!$this->is_base64($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                        case 'bot':
-                            if(!$this->is_bot($data[$column])){
-                                $this->errors[$column][$name] = $message[$column][$name];
-                            }
-                            break;
-                    // Geçersiz kural engellendi.
+                    break;
+                    case 'slug':
+                        if(!$this->is_slug($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'port':
+                        if(!$this->is_port($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'port_open':
+                        $extra = ($extra == '') ? null : $extra;
+                        if(!$this->is_port_open($data[$column], $extra)){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'fileExists':
+                        if(!$this->fileExists($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'md5':
+                        if(!$this->is_md5($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'base64':
+                        if(!$this->is_base64($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;
+                    case 'bot':
+                        if(!$this->is_bot($data[$column])){
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                    break;                    
                     default:
                         $this->errors[$column][$name] = 'Invalid rule has been blocked.';
                     break;
@@ -4676,6 +4663,9 @@ class Mind
      * @return string The date in RFC 3339 format.
      */
     public function toRFC3339($date){
+        if(is_null($date) || !strtotime($date)) {
+            return null;
+        }
         $dateObject  = new DateTime($date);
         return $dateObject->format("Y-m-d\TH:i:sP");
     }
@@ -4688,6 +4678,9 @@ class Mind
      * @return string The date in RFC 3339 format.
      */
     public function toISO8601($date){
+        if(is_null($date) || !strtotime($date)) {
+            return null;
+        }
         $dateTime = new DateTime($date);
         return $dateTime->format("Y-m-d H:i:s");
     }
