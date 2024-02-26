@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.5
+ * @version    Release: 5.9.6
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3415,8 +3415,8 @@ class Mind
      * @param string $str
      * @return string
      */
-    public function filter($str){
-        return htmlspecialchars($str);
+    public function filter($str){        
+        return htmlspecialchars((!is_null($str)) ? $str : '');
     }
 
     /**
