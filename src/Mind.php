@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.6
+ * @version    Release: 5.9.7
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2968,7 +2968,7 @@ class Mind
                         if(!$this->is_table($extra)){
                             $this->errors[$column][$name][] = 'Table not found.';
                         }
-                        
+                        $availableColumn = (empty($availableColumn)) ? $column : $availableColumn;                        
                         if(!$this->is_column($extra,$availableColumn)){
                             $this->errors[$column][$name][] = 'Column not found.';
                         }
