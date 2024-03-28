@@ -4037,6 +4037,7 @@ $data = array(
 // Rule
 $rule = array(
     'username'          =>  'available:users',
+    // 'username'          =>  'available:users:second_username',
     // 'username'          =>  'knownunique:users:username:aliyilmaz'
     // 'username'          =>  'knownunique:users:aliyilmaz'
     'title'             =>  'required|unique:posts',
@@ -4403,7 +4404,7 @@ available:users
 
 
 ```php
-available:users:username
+available:users:second_username
 ```
 
 

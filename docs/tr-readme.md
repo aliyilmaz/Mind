@@ -3994,6 +3994,7 @@ $data = array(
 // Kural
 $rule = array(
     'username'          =>  'available:users',
+    // 'username'          =>  'available:users:second_username',
     // 'username'          =>  'knownunique:users:username:aliyilmaz'
     // 'username'          =>  'knownunique:users:aliyilmaz'
     'title'             =>  'required|unique:posts',
@@ -4359,7 +4360,7 @@ veya
 
 
 ```php
-available:users:username
+available:users:second_username
 ```
 
 
