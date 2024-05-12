@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.7
+ * @version    Release: 5.9.8
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -5898,32 +5898,25 @@ class Mind
      * @return bool
      */
     public function rm_r($paths) {
-
-        if(!is_array($paths)){
-            $paths = array($paths);
-        }
-        
-        foreach ($paths as $path) {
-            
-            if(is_file($path)){
-                return unlink($path);
+        if (is_array($paths)) {
+            foreach ($paths as $path) {
+                $this->rm_r($path);
             }
-    
-            if(is_dir($path)){
-    
-                $files = array_diff(scandir($path), array('.','..'));
-                foreach ($files as $file) {
-                    $this->rm_r($path.'/'.$file); 
+        } else {
+            if (is_file($paths)) {                
+                unlink($paths);                
+                $dirPath = dirname($paths);
+                while (is_dir($dirPath)) {
+                    $files = scandir($dirPath);                    
+                    if (count($files) === 2 && in_array('.', $files) && in_array('..', $files)) {
+                        rmdir($dirPath);                        
+                        $dirPath = dirname($dirPath);
+                    } else {                        
+                        break;
+                    }
                 }
-                return rmdir($path);
-
-            } else {
-                return false;
             }
-
         }
-        
-        return true;
     }
 
     /**
