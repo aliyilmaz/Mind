@@ -325,6 +325,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#fileExists)
 -   [stristr](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#stristr)
 -   [strstr](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#strstr)
+-   [is_callsign](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_callsign)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#validate)
 
 ##### Helper
@@ -361,6 +362,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getlang)
+-   [blood_groups](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#blood_groups)
+-   [getDonor](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getDonor)
 -   [getAddressCode](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getAddressCode)
 -   [addressCodeList](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressCodeList)
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressGenerator)
@@ -3976,6 +3979,19 @@ if($this->fileExists('https://github.githubassets.com/images/modules/logos_page/
 ```
 
 
+## is_callsign()
+
+This method is used to determine whether the specified `string` type parameter is a radio call number. If it is a call number, `true` is returned, otherwise `false` is returned.
+
+##### Example
+
+```php
+if($this->is_callsign('NMTZ')){
+    echo 'Valid';
+} else {
+    echo 'Invalid';
+}
+```
 ---
 
 ## validate()
@@ -4030,7 +4046,8 @@ $data = array(
     'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
     'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
-    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    'call_sign'         =>  'NMTZ'
 
 );
 
@@ -4078,7 +4095,8 @@ $rule = array(
     'logo_file'         =>  'fileExists',
     'password_md5'      =>  'md5',
     'password_base64'   =>  'base64',
-    'user_agent'        =>  'bot'
+    'user_agent'        =>  'bot',
+    'call_sign'         =>  'callsign'
 );
 
 // Message
@@ -4204,7 +4222,10 @@ $message = array(
     ),
     'user_agent'=>array(
         'bot'=>'A valid boat identity must be specified.'
-    )
+    ),
+    'call_sign'=>[
+        'callsign'=> 'A valid radio call sign must be specified.'
+    ]
 
 );
 
@@ -4668,6 +4689,15 @@ It is used to express that the specified parameter must belong to a valid bot, i
 
 ```php
 bot
+```
+---
+
+
+##### callsign
+It is used to indicate that the specified parameter must be a valid radio callsign, and it checks this using the [is_callsign()](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_callsign) method. Since it does not need an extra parameter, it can be used by writing `callsign`.
+
+```php
+callsign
 ```
 
 ---
@@ -6424,6 +6454,31 @@ It serves to obtain the abbreviation of the language of the internet browser of 
 echo $this->getLang();
 ```
 
+
+---
+
+## blood_groups()
+
+This method is used to obtain all blood groups together with their donors. 
+
+##### Example
+
+```php
+$this->print_pre($this->blood_groups());
+```
+
+
+---
+
+## getDonor()
+
+This method is used to obtain donor blood groups that can give blood to the specified blood group. It takes a blood group value in `string` data type and returns the response as `array`.
+
+##### Example
+
+```php
+$this->print_pre($this->getDonor('AB+'));
+```
 
 ---
 

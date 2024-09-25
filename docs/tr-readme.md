@@ -320,6 +320,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [fileExists](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#fileExists)
 -   [stristr](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#stristr)
 -   [strstr](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#strstr)
+-   [is_callsign](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_callsign)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#validate)
 
 ##### Yardımcı
@@ -356,6 +357,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [summary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#summary)
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getlang)
+-   [blood_groups](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#blood_groups)
+-   [getDonor](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getDonor)
 -   [getAddressCode](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getAddressCode)
 -   [addressCodeList](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#addressCodeList)
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#addressGenerator)
@@ -3933,6 +3936,38 @@ if($condition){
 
 ---
 
+## fileExists()
+
+Belirtilen `string` türündeki dosya yolunun erişilebilirliğini sorgulamak amacıyla kullanılır. Eğer dosya erişilebilir durumdaysa `true` değilse `false` yanıtı döndürülür.
+
+##### Örnek
+
+```php
+if($this->fileExists('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png')){
+    echo 'Dosya var';
+} else {
+    echo 'Dosya yok';
+}
+```
+---
+
+---
+
+## is_callsign()
+
+Bu metot belirtilen `string` türündeki parametrenin telsiz çağrı numarası olup olmadığını anlamak amacıyla kullanılır. Eğer bir çağrı numarasıysa `true` değilse `false` yanıtı döndürülür.
+
+##### Örnek
+
+```php
+if($this->is_callsign('NMTZ')){
+    echo 'Geçerli';
+} else {
+    echo 'Geçersiz';
+}
+```
+---
+
 ## validate()
 
 Farklı türdeki verilerin belirtilen kurallara uygunluğunu tek seferde kontrol etmek amacıyla kullanılır. Kuralları ihlal eden veriler varsa ve hata mesajı belirtilmişse `$this->errors` dizi değişkenine hata mesajları tanımlanır, hata mesajı belirtilmemişse verilerin dizi anahtarları `$this->errors` dizi değişkenine tanımlanır ve `false` yanıtı döndürülür. Herhangi bir kural ihlali yok ise `true` yanıtı döndürülür. 
@@ -3985,7 +4020,8 @@ $data = array(
     'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     'password_hash'     =>  'e10adc3949ba59abbe56e057f20f883e',
     'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
-    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    'call_sign'         =>  'NMTZ'
 
 
 
@@ -4035,7 +4071,8 @@ $rule = array(
     'logo_file'         =>  'fileExists',
     'password_md5'      =>  'md5',
     'password_base64'   =>  'base64',
-    'user_agent'        =>  'bot'
+    'user_agent'        =>  'bot',
+    'call_sign'         =>  'callsign'
 );
 
 
@@ -4162,7 +4199,10 @@ $message = array(
     ),
     'user_agent'=>array(
         'bot'=>'Geçerli bir bot kimliği belirtilmelidir.'
-    )
+    ),
+    'call_sign'=>[
+        'callsign'=> 'Geçerli bir telsiz çağrı işareti belirtilmelidir.'
+    ]
 
 );
 
@@ -6373,6 +6413,30 @@ echo $this->getLang();
 
 ---
 
+## blood_groups()
+
+Bu yöntemle tüm kan grupları, bağışçılarıyla birlikte elde edilebilmektedir.
+
+##### Örnek
+
+```php
+$this->print_pre($this->blood_groups());
+```
+
+---
+
+## getDonor()
+
+Bu yöntem, belirtilen kan grubuna kan verebilecek donör kan gruplarını elde etmek için kullanılır. `string` veri türünde bir kan grubu değeri alır ve `array` olarak yanıtı döndürür.
+
+##### Örnek
+
+```php
+$this->print_pre($this->getDonor('AB+'));
+```
+
+
+---
 ## getAddressCode()
 
 Alan adları ve IP Adreslerinin HTTP yanıt kodlarını elde etmek amacıyla kullanılır. Bir veya daha fazla adresin yanıt kodunun talep edilmesi mümkündür. 

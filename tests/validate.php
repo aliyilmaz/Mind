@@ -13,7 +13,7 @@ $Mind = new Mind();
  | unchanged, bool, iban, ipv4, ipv6, blood, latitude, longitude,
  | coordinate, distance, languages, morse, binary, timecode, 
  | currencies, decimal, isbn, in, slug, port, port_open, fileExists, 
- | md5, base64, bot
+ | md5, base64, bot, callsign
  | 
  */
 
@@ -57,7 +57,8 @@ $data = array(
     'logo_file'         =>  'https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png',
     'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
     'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
-    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'
+    'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    'call_sign'         =>  'NMTZ'
 
  );
 
@@ -105,7 +106,8 @@ $rule = array(
     'logo_file'         =>  'fileExists',
     'password_md5'      =>  'md5',
     'password_base64'   =>  'base64',
-    'user_agent'        =>  'bot'
+    'user_agent'        =>  'bot',
+    'call_sign'         =>  'callsign'
 );
 
 // Message
@@ -231,7 +233,10 @@ $message = array(
     ),
     'user_agent'=>array(
         'bot'=>'A valid boat identity must be specified.'
-    )
+    ),
+    'call_sign'=>[
+        'callsign'=> 'A valid radio call sign must be specified.'
+    ]
 
 );
 
