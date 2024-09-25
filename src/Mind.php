@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.8
+ * @version    Release: 5.9.9
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2337,37 +2337,12 @@ class Mind
      * Blood group verification
      *
      * @param $blood
-     * @param string $donor
+     * @param string|null $donor
      * @return bool
      */
     public function is_blood($blood, $donor = null){
 
-        $bloods = array(
-            'AB+'=> array(
-                'AB+', 'AB-', 'B+', 'B-', 'A+', 'A-', '0+', '0-'
-            ),
-            'AB-'=> array(
-                'AB-', 'B-', 'A-', '0-'
-            ),
-            'B+'=> array(
-                'B+', 'B2-', '0+', '0-'
-            ),
-            'B-'=> array(
-                'B-', '0-'
-            ),
-            'A+'=> array(
-                'A+', 'A-', '0+', '0-'
-            ),
-            'A-'=> array(
-                'A-', '0-'
-            ),
-            '0+'=> array(
-                '0+', '0-'
-            ),
-            '0-'=> array(
-                '0-'
-            )
-        );
+        $bloods = $this->blood_groups();
 
         $map = array_keys($bloods);
 
@@ -2775,6 +2750,16 @@ class Mind
             }
         }
         return false;
+    }
+
+    /**
+     * Validity of radio call sign
+     * @param string $callsign
+     * @return bool
+     */
+    public function is_callsign($callsign) {
+        $pattern = '/^[A-Z0-9]{3,6}$/'; 
+        return preg_match($pattern, $callsign);
     }
     
     /**
@@ -3225,7 +3210,12 @@ class Mind
                         if(!$this->is_bot($data[$column])){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
-                    break;                    
+                    break;        
+                    case 'callsign':
+                        if(!$this->is_callsign($data[$column])) {
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                        break;            
                     default:
                         $this->errors[$column][$name] = 'Invalid rule has been blocked.';
                     break;
@@ -4726,6 +4716,54 @@ class Mind
      */
     public function getLang(){
         return mb_strtoupper(mb_substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+    }
+
+    /**
+     * @return array
+     */
+    public function blood_groups(){
+        $bloods = array(
+            'AB+'=> array(
+                'AB+', 'AB-', 'B+', 'B-', 'A+', 'A-', '0+', '0-'
+            ),
+            'AB-'=> array(
+                'AB-', 'B-', 'A-', '0-'
+            ),
+            'B+'=> array(
+                'B+', 'B2-', '0+', '0-'
+            ),
+            'B-'=> array(
+                'B-', '0-'
+            ),
+            'A+'=> array(
+                'A+', 'A-', '0+', '0-'
+            ),
+            'A-'=> array(
+                'A-', '0-'
+            ),
+            '0+'=> array(
+                '0+', '0-'
+            ),
+            '0-'=> array(
+                '0-'
+            )
+        );
+        
+        return $bloods;
+    }
+
+    /**
+     * @param string $blood
+     * @return array
+     */
+    public function getDonor($blood){
+        $bloods = $this->blood_groups();
+
+        if(!in_array($blood, array_keys($bloods))){            
+            return [];
+        }
+        
+        return $bloods[mb_strtoupper($blood)];
     }
 
     /**
@@ -6286,15 +6324,7 @@ class Mind
      * @return string The formatted price as a string.
      */
     public function formatPrice($price){
-        // Check the last two characters of the price and store them in $lastParams.
-        $lastParams = '';
-        if (strlen($price) >= 2) {
-            $lastTwoCharacters = substr($price, -2);
-            $lastParams = $lastTwoCharacters; 
-        } else {
-            $lastParams = $text; // Note: This line seems incorrect. Did you mean $lastParams = $price;?
-        }
-        
+
         // Convert the price to a floating-point number.
         $price = floatval($price);
         
