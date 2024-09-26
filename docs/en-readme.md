@@ -363,7 +363,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getlang)
 -   [blood_groups](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#blood_groups)
--   [getDonor](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getDonor)
+-   [getDonors](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getDonors)
+-   [getRecipients](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getRecipients)
 -   [getAddressCode](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getAddressCode)
 -   [addressCodeList](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressCodeList)
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressGenerator)
@@ -6470,14 +6471,27 @@ $this->print_pre($this->blood_groups());
 
 ---
 
-## getDonor()
+## getDonors()
 
 This method is used to obtain donor blood groups that can give blood to the specified blood group. It takes a blood group value in `string` data type and returns the response as `array`.
 
 ##### Example
 
 ```php
-$this->print_pre($this->getDonor('AB+'));
+$this->print_pre($this->getDonors('AB+'));
+```
+
+
+---
+
+## getRecipients()
+
+This method is used to obtain the blood groups to which the specified blood group can donate blood. It takes a blood group value in `string` data type and returns the response as `array`.
+
+##### Example
+
+```php
+$this->print_pre($this->getRecipients('AB+'));
 ```
 
 ---

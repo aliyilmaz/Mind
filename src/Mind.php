@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 5.9.9
+ * @version    Release: 6.0.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4721,42 +4721,26 @@ class Mind
     /**
      * @return array
      */
-    public function blood_groups(){
-        $bloods = array(
-            'AB+'=> array(
-                'AB+', 'AB-', 'B+', 'B-', 'A+', 'A-', '0+', '0-'
-            ),
-            'AB-'=> array(
-                'AB-', 'B-', 'A-', '0-'
-            ),
-            'B+'=> array(
-                'B+', 'B2-', '0+', '0-'
-            ),
-            'B-'=> array(
-                'B-', '0-'
-            ),
-            'A+'=> array(
-                'A+', 'A-', '0+', '0-'
-            ),
-            'A-'=> array(
-                'A-', '0-'
-            ),
-            '0+'=> array(
-                '0+', '0-'
-            ),
-            '0-'=> array(
-                '0-'
-            )
-        );
-        
-        return $bloods;
+    public function blood_groups() {
+        $blood_groups = [
+            'AB+' => ['AB+', 'AB-', 'B+', 'B-', 'A+', 'A-', '0+', '0-'],
+            'AB-' => ['AB-', 'B-', 'A-', '0-'],
+            'B+' => ['B+', 'B-', '0+', '0-'],
+            'B-' => ['B-', '0-'],
+            'A+' => ['A+', 'A-', '0+', '0-'],
+            'A-' => ['A-', '0-'],
+            '0+' => ['0+', '0-'],
+            '0-' => ['0-']
+        ];
+    
+        return $blood_groups;
     }
 
     /**
      * @param string $blood
      * @return array
      */
-    public function getDonor($blood){
+    public function getDonors($blood){
         $bloods = $this->blood_groups();
 
         if(!in_array($blood, array_keys($bloods))){            
@@ -4764,6 +4748,22 @@ class Mind
         }
         
         return $bloods[mb_strtoupper($blood)];
+    }
+
+    /**
+     * @param string $blood
+     * @return array
+     */
+    public function getRecipients($blood){
+        $bloods = $this->blood_groups();
+
+        $towhom = [];
+        foreach ($bloods as $group => $donors) {
+            if (in_array($blood, $donors)) {
+                $towhom[] = $group;
+            }
+        }
+        return $towhom;
     }
 
     /**

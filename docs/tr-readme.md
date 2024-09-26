@@ -358,7 +358,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [getIPAddress](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getipaddress)
 -   [getLang](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getlang)
 -   [blood_groups](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#blood_groups)
--   [getDonor](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getDonor)
+-   [getDonors](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getDonors)
+-   [getRecipients](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getRecipients)
 -   [getAddressCode](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getAddressCode)
 -   [addressCodeList](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#addressCodeList)
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#addressGenerator)
@@ -6425,14 +6426,27 @@ $this->print_pre($this->blood_groups());
 
 ---
 
-## getDonor()
+## getDonors()
 
 Bu yöntem, belirtilen kan grubuna kan verebilecek donör kan gruplarını elde etmek için kullanılır. `string` veri türünde bir kan grubu değeri alır ve `array` olarak yanıtı döndürür.
 
 ##### Örnek
 
 ```php
-$this->print_pre($this->getDonor('AB+'));
+$this->print_pre($this->getDonors('AB+'));
+```
+
+
+---
+
+## getRecipients()
+
+Bu yöntem, belirtilen kan grubunun kan verebileceği kan gruplarını elde etmek için kullanılır. `string` veri türünde bir kan grubu değeri alır ve `array` olarak yanıtı döndürür.
+
+##### Örnek
+
+```php
+$this->print_pre($this->getRecipients('AB+'));
 ```
 
 
