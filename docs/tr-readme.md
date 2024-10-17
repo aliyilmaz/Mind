@@ -348,6 +348,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [wayMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#wayMaker)
 -   [generateToken](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#generateToken)
 -   [coordinatesMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#coordinatesMaker)
+-   [tileToLatLon](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#tileToLatLon)
+-   [latLonToTile](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#latLonToTile)
 -   [encodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#encodeSize)
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#toSeconds)
@@ -6178,6 +6180,53 @@ veya
 
 
 **Bilgi:** Chrome, Firefox tarayıcılarınında test edilmiştir. Cep telefonu yoluyla paylaşılan konumların doğruluk oranı ortalama 4 ile 12 m2'dir. Eski nesil GPS modüle sahip masaüstü bilgisayar yoluyla paylaşılan konumların doğruluk oranı ise ortalama 7.000 m2'dir.
+
+---
+
+## tileToLatLon()
+
+Bu metot Web Mercator projeksiyonuyla görselleştirilmiş bir `tile` öğesinin bilgilerini Enlem, Boylam ve Yakınlaştırma değerine dönüştürmeye yarar. Belirtilmesi zorunlu 3 parametre alır. İlki yakınlaşmtırma değeri, ikincisi x değeri, üçüncüsü ise y değeridir. Sonuçlar dizi olarak geri döndürülür.
+
+##### Örnek
+```php
+$z = '16'; 
+$x = '38750'; 
+$y = '24830';
+$render = $this->tileToLatLon($z, $x, $y);
+
+$this->print_pre($render);
+
+// Array
+// (
+//     [zoom] => 16
+//     [lat] => 39.918162846609
+//     [lon] => 32.860107421875
+// )
+```
+---
+
+## latLonToTile()
+
+Bu metot, Enlem, Boylam ve Yakınlaştırma değerini, Web Mercator projeksiyonuyla görselleştirilecek `tile` öğesinin alacağı konum bilgilerine dönüştürmeye yarar. Belirtilmesi zorunlu 3 parametre alır. İlki yakınlaşmtırma değeri, ikincisi enlem değeri, üçüncüsü ise boylam değeridir. Sonuçlar dizi olarak geri döndürülür.
+
+##### Örnek
+```php
+
+$zoom = '16'; 
+$lat = '39.91790000'; 
+$lon = '32.86268000';
+$render = $this->latLonToTile($zoom, $lat, $lon);
+
+$this->print_pre($render);
+
+// Array
+// (
+//     [z] => 16
+//     [x] => 38750
+//     [y] => 24830
+// )
+
+```
 
 ---
 

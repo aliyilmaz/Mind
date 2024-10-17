@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.0
+ * @version    Release: 6.0.1
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4551,6 +4551,43 @@ class Mind
 
         <?php
     }
+
+    /**
+     * Converts tile coordinates (x, y) and zoom level to 
+     * latitude and longitude.
+     *
+     * @param int $zoom The zoom level.
+     * @param int $x The x coordinate (tile).
+     * @param int $y The y coordinate (tile).
+     * @return array An associative array containing 'zoom', 'lat' 
+     * (latitude), and 'lon' (longitude).
+     */
+    public function tileToLatLon($zoom, $x, $y) {
+        $n = pow(2, $zoom);
+        $lon_deg = $x / $n * 360.0 - 180.0;
+        $lat_rad = atan(sinh(pi() * (1 - 2 * $y / $n)));
+        $lat_deg = rad2deg($lat_rad);
+        return ['zoom' => $zoom, 'lat' => $lat_deg, 'lon' => $lon_deg];
+    }
+
+    /**
+     * Converts latitude and longitude to tile coordinates (x, y) at 
+     * a given zoom level.
+     *
+     * @param int $zoom The zoom level.
+     * @param float $lat The latitude.
+     * @param float $lon The longitude.
+     * @return array An associative array containing 'z' (zoom), 'x' 
+     * (tile x coordinate), and 'y' (tile y coordinate).
+     */
+    public function latLonToTile($zoom, $lat, $lon) {
+        $lat_rad = deg2rad($lat);
+        $n = pow(2, $zoom);
+        $x_tile = floor(($lon + 180.0) / 360.0 * $n);
+        $y_tile = floor((1.0 - log(tan($lat_rad) + 1.0 / cos($lat_rad)) / pi()) / 2.0 * $n);
+        return ['z' => $zoom, 'x' => $x_tile, 'y' => $y_tile];
+    }
+
 
     /**
      * Convert size

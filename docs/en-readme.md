@@ -353,6 +353,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [wayMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#wayMaker)
 -   [generateToken](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#generateToken)
 -   [coordinatesMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#coordinatesMaker)
+-   [tileToLatLon](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#tileToLatLon)
+-   [latLonToTile](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#latLonToTile)
 -   [encodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#encodeSize)
 -   [decodeSize](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#decodeSize)
 -   [toSeconds](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#toSeconds)
@@ -6216,6 +6218,53 @@ This function is used to obtain the location information if the visitor's GPS lo
 
 
 ****Information:**** Chrome has been tested in Firefox browsers.The accuracy of the locations shared by mobile phone is an average of 4 to 12 m2 on average.The accuracy of the locations shared via the old generation GPS modular desktop computer is 7,000 m2 on average.
+
+---
+
+## tileToLatLon()
+
+This method is used to convert the information of a `tile` element visualized with Web Mercator projection into Latitude, Longitude and Zoom value. It takes 3 mandatory parameters. The first is the zoom value, the second is the x value, and the third is the y value. The results are returned as an array.
+
+##### Example
+```php
+$z = '16'; 
+$x = '38750'; 
+$y = '24830';
+$render = $this->tileToLatLon($z, $x, $y);
+
+$this->print_pre($render);
+
+// Array
+// (
+//     [zoom] => 16
+//     [lat] => 39.918162846609
+//     [lon] => 32.860107421875
+// )
+```
+---
+
+## latLonToTile()
+
+This method is used to convert the Latitude, Longitude and Zoom values ​​into the location information that the `tile` element will receive to be visualized with the Web Mercator projection. It takes 3 mandatory parameters. The first is the zoom value, the second is the latitude value, and the third is the longitude value. The results are returned as an array.
+
+##### Example
+```php
+
+$zoom = '16'; 
+$lat = '39.91790000'; 
+$lon = '32.86268000';
+$render = $this->latLonToTile($zoom, $lat, $lon);
+
+$this->print_pre($render);
+
+// Array
+// (
+//     [z] => 16
+//     [x] => 38750
+//     [y] => 24830
+// )
+
+```
 
 ---
 
