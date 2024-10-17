@@ -6185,7 +6185,7 @@ veya
 
 ## tileToLatLon()
 
-Bu metot Web Mercator projeksiyonuyla görselleştirilmiş bir `tile` öğesinin bilgilerini Enlem, Boylam ve Yakınlaştırma değerine dönüştürmeye yarar. Belirtilmesi zorunlu 3 parametre alır. İlki yakınlaşmtırma değeri, ikincisi x değeri, üçüncüsü ise y değeridir. Sonuçlar dizi olarak geri döndürülür.
+Bu metot Web Mercator projeksiyonuyla görselleştirilmiş bir `tile` öğesinin bilgilerini Enlem, Boylam ve Yakınlaştırma değerine dönüştürmeye yarar. Belirtilmesi zorunlu 3 parametre alır. İlki yakınlaştırma değeri, ikincisi x değeri, üçüncüsü ise y değeridir. Sonuçlar dizi olarak geri döndürülür.
 
 ##### Örnek
 ```php
@@ -6207,7 +6207,7 @@ $this->print_pre($render);
 
 ## latLonToTile()
 
-Bu metot, Enlem, Boylam ve Yakınlaştırma değerini, Web Mercator projeksiyonuyla görselleştirilecek `tile` öğesinin alacağı konum bilgilerine dönüştürmeye yarar. Belirtilmesi zorunlu 3 parametre alır. İlki yakınlaşmtırma değeri, ikincisi enlem değeri, üçüncüsü ise boylam değeridir. Sonuçlar dizi olarak geri döndürülür.
+Bu metot, Enlem, Boylam ve Yakınlaştırma değerini, Web Mercator projeksiyonuyla görselleştirilecek `tile` öğesinin alacağı konum bilgilerine dönüştürmeye yarar. Belirtilmesi zorunlu 3 parametre alır. İlki yakınlaştırma değeri, ikincisi enlem değeri, üçüncüsü ise boylam değeridir. Sonuçlar dizi olarak geri döndürülür.
 
 ##### Örnek
 ```php
