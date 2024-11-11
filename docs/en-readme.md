@@ -913,16 +913,17 @@ $this->tableClear(array('my_table0', 'my_table1'));
 
 ## columnClear()
 
-It is used to delete all records of one or more columns in a database table. Column names can be sent as `string` or `array`. `username` and `password` represent column names. A `true` response is returned if the operation is successful, and a `false` response is returned.
+It is used to delete all records belonging to one or more columns in a database table. It takes two parameters, one is the table name in type `string` and the other is the column names in type `string` or `array`. `users` represents the table name, `username` and `password` represents the column names. If the operation is successful, `true` is returned, otherwise `false` is returned.
+
 ##### Example
 
 ```php
-$this->columnClear('username');
+$this->columnClear('users', 'username');
 ```
 **or**
 
 ```php
-$this->columnClear(array('username', 'password'));
+$this->columnClear('users', array('username', 'password'));
 ```
     
 ---

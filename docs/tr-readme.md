@@ -896,16 +896,16 @@ $this->tableClear(array('my_table0', 'my_table1'));
 
 ## columnClear()
 
-Bir veritabanı tablosunda bulunan bir veya daha fazla sütuna ait kayıtların tamamını silmek amacıyla kullanılır. `string` veya `array` olarak sütun isimleri gönderilebilir. `username` ve `password` sütun isimlerini temsil eder. İşlem başarılıysa `true`, değilse `false` yanıtı döndürülür.
+Bir veritabanı tablosunda bulunan bir veya daha fazla sütuna ait kayıtların tamamını silmek amacıyla kullanılır. İki parametre alır, biri `string` türünde tablo adı diğeri `string` veya `array` türünde sütun isimleridir. `users` tablo adını, `username` ve `password` sütun isimlerini temsil eder. İşlem başarılıysa `true`, değilse `false` yanıtı döndürülür.
 
 ##### Örnek
 
 ```php
-$this->columnClear('username');
+$this->columnClear('users', 'username');
 ```
 veya
 ```php
-$this->columnClear(array('username', 'password'));
+$this->columnClear('users', array('username', 'password'));
 ```
     
 ---

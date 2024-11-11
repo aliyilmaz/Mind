@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.1
+ * @version    Release: 6.0.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2369,9 +2369,9 @@ class Mind
      * @param float|int|string $latitude
      * @return bool
      */
-    public function is_latitude($latitude){
-        $lat_pattern  = '/\A[+-]?(?:90(?:\.0{1,18})?|\d(?(?<=9)|\d?)\.\d{1,18})\z/x';
-
+    public function is_latitude($latitude) {
+        $lat_pattern  = '/\A[+-]?(?:90(?:\.0+)?|(?:[0-8]?\d(?:\.\d+)?|90(?:\.0+)?))\z/';
+    
         if (preg_match($lat_pattern, $latitude)) {
             return true;
         } else {
@@ -2384,9 +2384,10 @@ class Mind
      * @param float|int|string $longitude
      * @return bool
      */
-    public function is_longitude($longitude){
-        $long_pattern = '/\A[+-]?(?:180(?:\.0{1,18})?|(?:1[0-7]\d|\d{1,2})\.\d{1,18})\z/x';
+    public function is_longitude($longitude) {
 
+        $long_pattern = '/\A[+-]?(?:180(?:\.0+)?|(?:1[0-7]\d|\d{1,2})(?:\.\d+)?)\z/';
+    
         if (preg_match($long_pattern, $longitude)) {
             return true;
         } else {
