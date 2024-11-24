@@ -321,6 +321,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [stristr](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#stristr)
 -   [strstr](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#strstr)
 -   [is_callsign](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_callsign)
+-   [is_timezone](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_timezone)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#validate)
 
 ##### Yardımcı
@@ -347,6 +348,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [columnSqlMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#columnSqlMaker)
 -   [wayMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#wayMaker)
 -   [generateToken](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#generateToken)
+-   [astronomy](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#astronomy)
 -   [coordinatesMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#coordinatesMaker)
 -   [tileToLatLon](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#tileToLatLon)
 -   [latLonToTile](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#latLonToTile)
@@ -3971,6 +3973,19 @@ if($this->is_callsign('NMTZ')){
 ```
 ---
 
+## is_timezone()
+Bu metot belirtilen `string` türündeki parametrenin geçerli bir zaman dilimi olup olmadığını anlamak amacıyla kullanılır. Eğer bir zaman dilimiyse `true` değilse `false` yanıtı döndürülür.
+
+```php
+if($this->is_timezone('Europe/Istanbul')){
+    echo 'Bu bir zaman dilimi.';
+} else {
+    echo 'Bu bir zaman dilimi değildir.';
+}
+```
+
+---
+
 ## validate()
 
 Farklı türdeki verilerin belirtilen kurallara uygunluğunu tek seferde kontrol etmek amacıyla kullanılır. Kuralları ihlal eden veriler varsa ve hata mesajı belirtilmişse `$this->errors` dizi değişkenine hata mesajları tanımlanır, hata mesajı belirtilmemişse verilerin dizi anahtarları `$this->errors` dizi değişkenine tanımlanır ve `false` yanıtı döndürülür. Herhangi bir kural ihlali yok ise `true` yanıtı döndürülür. 
@@ -4024,7 +4039,8 @@ $data = array(
     'password_hash'     =>  'e10adc3949ba59abbe56e057f20f883e',
     'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
     'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-    'call_sign'         =>  'NMTZ'
+    'call_sign'         =>  'NMTZ',
+    'timezone'          =>  'Europe/Istanbul'
 
 
 
@@ -4075,7 +4091,8 @@ $rule = array(
     'password_md5'      =>  'md5',
     'password_base64'   =>  'base64',
     'user_agent'        =>  'bot',
-    'call_sign'         =>  'callsign'
+    'call_sign'         =>  'callsign',
+    'timezone'          =>  'timezone'
 );
 
 
@@ -4205,6 +4222,9 @@ $message = array(
     ),
     'call_sign'=>[
         'callsign'=> 'Geçerli bir telsiz çağrı işareti belirtilmelidir.'
+    ],
+    'timezone'=>[
+        'timezone'=> 'Geçerli bir zaman dilimi belirtilmelidir.'
     ]
 
 );
@@ -4668,6 +4688,23 @@ bot
 ```
 ---
 
+##### callsign
+Belirtilen parametrenin geçerli bir radyo çağrı işareti olması gerektiğini belirtmek için kullanılır ve bunu [is_callsign()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_callsign) metodunu kullanarak kontrol eder. Ekstra bir parametreye ihtiyaç duymadığı için `callsign` yazılarak kullanılabilir.
+
+```php
+callsign
+```
+
+---
+
+##### timezone
+Belirtilen parametrenin geçerli bir zaman dilimi olması gerektiğini belirtmek için kullanılır ve bunu [is_timezone()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_timezone) metodunu kullanarak kontrol eder. Ekstra bir parametreye ihtiyaç duymadığı için `timezone` yazılarak kullanılabilir.
+
+```php
+timezone
+```
+
+---
 
 ## policyMaker()
 
@@ -6065,6 +6102,30 @@ veya
 
 ```php
 echo $this->generateToken(30);
+```
+
+---
+
+## astronomy()
+Bu fonksiyon, php'nin `date_sun_info()` komutunun sonuçlarını döndürür. İlerleyen süreçte başka bazı astronomik verileri sunması da değerlendirilmektedir. 4 parametre alır. Birinci parametre enlem, ikinci parametre boylam, üçüncü parametre zaman, dördüncü parametre ise zaman dilimidir. Sadece enlem ve boylamı belirtmek gereklidir. Zaman ve zaman dilimi belirtilmezse `$this->timestamp` ve `$this->timezone` değişkenlerine tanımlanan değerler kullanılır. Üçüncü parametre olan zaman verisi, UNIX zaman damgası türünde de belirtilebilir.
+
+```php
+$lat = 39.92500;
+$lon = 32.83694;
+$date_str = $this->timestamp;
+$astronomy = $this->astronomy($lat, $lon, $date_str);
+$this->print_pre($astronomy);
+```
+
+**veya**
+
+```php
+$lat = 39.92500;
+$lon = 32.83694;
+$date_str = strtotime('2024-02-12');
+$timezone = 'America/Toronto';
+$astronomy = $this->astronomy($lat, $lon, $date_str, $timezone);
+$this->print_pre($astronomy);
 ```
 
 ---

@@ -326,6 +326,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [stristr](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#stristr)
 -   [strstr](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#strstr)
 -   [is_callsign](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_callsign)
+-   [is_timezone](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_timezone)
 -   [validate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#validate)
 
 ##### Helper
@@ -352,6 +353,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [columnSqlMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#columnSqlMaker)
 -   [wayMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#wayMaker)
 -   [generateToken](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#generateToken)
+-   [astronomy](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#astronomy)
 -   [coordinatesMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#coordinatesMaker)
 -   [tileToLatLon](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#tileToLatLon)
 -   [latLonToTile](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#latLonToTile)
@@ -3998,6 +4000,19 @@ if($this->is_callsign('NMTZ')){
 ```
 ---
 
+## is_timezone()
+This method is used to determine whether the specified `string` type parameter is a valid timezone. If it is a timezone, `true` is returned, otherwise `false` is returned.
+
+```php
+if($this->is_timezone('Europe/Istanbul')){
+    echo 'This is a timezone.';
+} else {
+    echo 'This is not a timezone.';
+}
+```
+
+---
+
 ## validate()
 
 It is used to check the compliance of different types of data with the specified rules at once. If there is data that violates the rules and an error message is specified, error messages are defined in the array variable `$this->errors`, if no error message is specified, the string keys of the data are defined in the array variable `$this->errors` and the response `false` is returned. If there is no rule violation, a `true` response is returned.
@@ -4051,7 +4066,8 @@ $data = array(
     'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
     'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
     'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-    'call_sign'         =>  'NMTZ'
+    'call_sign'         =>  'NMTZ',
+    'timezone'          =>  'Europe/Istanbul'
 
 );
 
@@ -4100,7 +4116,8 @@ $rule = array(
     'password_md5'      =>  'md5',
     'password_base64'   =>  'base64',
     'user_agent'        =>  'bot',
-    'call_sign'         =>  'callsign'
+    'call_sign'         =>  'callsign',
+    'timezone'          =>  'timezone'
 );
 
 // Message
@@ -4229,6 +4246,9 @@ $message = array(
     ),
     'call_sign'=>[
         'callsign'=> 'A valid radio call sign must be specified.'
+    ],
+    'timezone'=>[
+        'timezone'=> 'A valid timezone should be specified.'
     ]
 
 );
@@ -4704,6 +4724,14 @@ It is used to indicate that the specified parameter must be a valid radio callsi
 callsign
 ```
 
+---
+
+##### timezone
+It is used to indicate that the specified parameter must be a valid time zone and checks this using the [is_timezone()](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_timezone) method. Since it does not need an extra parameter, it can be used by writing `timezone`.
+
+```php
+timezone
+```
 ---
 
 ## policyMaker()
@@ -6104,6 +6132,33 @@ echo $this->generateToken();
 
 ```php
 echo $this->generateToken(30);
+```
+
+---
+
+
+---
+
+## astronomy()
+This function returns the results of php's `date_sun_info()` command. It is also being evaluated to provide some other astronomical data in the future. It takes 4 parameters. The first parameter is latitude, the second parameter is longitude, the third parameter is time, and the fourth parameter is time zone. It is only necessary to specify latitude and longitude. If time and time zone are not specified, the values ​​defined in the `$this->timestamp` and `$this->timezone` variables are used. The third parameter, time data, can also be specified in UNIX timestamp type.
+
+```php
+$lat = 39.92500;
+$lon = 32.83694;
+$date_str = $this->timestamp;
+$astronomy = $this->astronomy($lat, $lon, $date_str);
+$this->print_pre($astronomy);
+```
+
+**or**
+
+```php
+$lat = 39.92500;
+$lon = 32.83694;
+$date_str = strtotime('2024-02-12');
+$timezone = 'America/Toronto';
+$astronomy = $this->astronomy($lat, $lon, $date_str, $timezone);
+$this->print_pre($astronomy);
 ```
 
 ---

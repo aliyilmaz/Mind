@@ -13,7 +13,7 @@ $Mind = new Mind();
  | unchanged, bool, iban, ipv4, ipv6, blood, latitude, longitude,
  | coordinate, distance, languages, morse, binary, timecode, 
  | currencies, decimal, isbn, in, slug, port, port_open, fileExists, 
- | md5, base64, bot, callsign
+ | md5, base64, bot, callsign, timezone
  | 
  */
 
@@ -58,7 +58,8 @@ $data = array(
     'password_md5'      =>  'e10adc3949ba59abbe56e057f20f883e',
     'password_base64'   =>  'YWRtaW5pc3RyYXRvcg==',
     'user_agent'        =>  'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
-    'call_sign'         =>  'NMTZ'
+    'call_sign'         =>  'NMTZ',
+    'timezone'          =>  'Europe/Istanbul'
 
  );
 
@@ -107,7 +108,8 @@ $rule = array(
     'password_md5'      =>  'md5',
     'password_base64'   =>  'base64',
     'user_agent'        =>  'bot',
-    'call_sign'         =>  'callsign'
+    'call_sign'         =>  'callsign',
+    'timezone'          =>  'timezone'
 );
 
 // Message
@@ -236,6 +238,9 @@ $message = array(
     ),
     'call_sign'=>[
         'callsign'=> 'A valid radio call sign must be specified.'
+    ],
+    'timezone'=>[
+        'timezone'=> 'A valid timezone should be specified.'
     ]
 
 );

@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.2
+ * @version    Release: 6.0.3
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2762,6 +2762,25 @@ class Mind
         $pattern = '/^[A-Z0-9]{3,6}$/'; 
         return preg_match($pattern, $callsign);
     }
+
+    /**
+     * Checks if the given timezone is valid.
+     *
+     * This method checks whether a given timezone string is a valid timezone
+     * identifier according to the list of identifiers provided by the
+     * DateTimeZone class.
+     *
+     * @param string $timezone The timezone string to check.
+     * @return bool Returns true if the timezone is valid, otherwise false.
+     */
+    public function is_timezone($timezone) {
+        if (in_array($timezone, DateTimeZone::listIdentifiers())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     
     /**
      * Validation
@@ -3217,6 +3236,11 @@ class Mind
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
                         break;            
+                    case 'timezone':
+                        if(!$this->is_timezone($data[$column])) {
+                            $this->errors[$column][$name] = $message[$column][$name];
+                        }
+                        break;
                     default:
                         $this->errors[$column][$name] = 'Invalid rule has been blocked.';
                     break;
@@ -4506,6 +4530,37 @@ class Mind
         return $key;
     }
 
+    /**
+     * It will first provide date_sun_info() data and, 
+     * over time, other astronomical information.
+     * 
+     * @param string $timestamp
+     * @param float $lat The latitude.
+     * @param float $lon The longitude.
+     * @param null|string $timezone
+     * @return array
+     */
+    public function astronomy($lat, $lon, $timestamp = null, $timezone = null) {
+        
+        $timestamp = is_null($timestamp) ? $this->timestamp : $timestamp;
+        $timestamp = ($this->is_date($timestamp)) ? strtotime($timestamp) : $timestamp;
+
+        if ($this->is_timezone($timezone)) {
+            date_default_timezone_set($timezone);
+        }
+
+        $sun_info = date_sun_info($timestamp, $lat, $lon);
+        $astronomical_data = array_map(function($time) {
+            return date('Y-m-d H:i:s', $time);
+        }, $sun_info);
+
+        if (is_null($timezone)) {
+            date_default_timezone_set($this->timezone);
+        }
+
+        return $astronomical_data;
+    }
+    
     /**
      * Coordinates marker
      * 
