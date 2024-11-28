@@ -348,6 +348,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [columnSqlMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#columnSqlMaker)
 -   [wayMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#wayMaker)
 -   [generateToken](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#generateToken)
+-   [getSunPhase](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getSunPhase)
+-   [getMoonPhase](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getMoonPhase)
 -   [astronomy](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#astronomy)
 -   [coordinatesMaker](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#coordinatesMaker)
 -   [tileToLatLon](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#tileToLatLon)
@@ -6106,26 +6108,106 @@ echo $this->generateToken(30);
 
 ---
 
-## astronomy()
-Bu fonksiyon, php'nin `date_sun_info()` komutunun sonuçlarını döndürür. İlerleyen süreçte başka bazı astronomik verileri sunması da değerlendirilmektedir. 4 parametre alır. Birinci parametre enlem, ikinci parametre boylam, üçüncü parametre zaman, dördüncü parametre ise zaman dilimidir. Sadece enlem ve boylamı belirtmek gereklidir. Zaman ve zaman dilimi belirtilmezse `$this->timestamp` ve `$this->timezone` değişkenlerine tanımlanan değerler kullanılır. Üçüncü parametre olan zaman verisi, UNIX zaman damgası türünde de belirtilebilir.
+## getSunPhase()
+
+Bu metot, php'nin `date_sun_info()` komutundan dönen güneş verilerini derleyerek döndürmeye yarar. Aşağıdaki parametreleri alır.
+
+- Enlem (zorunlu)
+- Boylam (zorunlu)
+- Zaman Damgası (isteğe bağlıdır, eğer gönderilmezse `$this->timestamp` zaman damgası kullanılır.)
+- Zaman Dilimi (isteğe bağlıdır, eğer gönderilmezse `$this->timezone` zaman dilimi kullanılır.)
+
+#### Örnek
 
 ```php
-$lat = 39.92500;
-$lon = 32.83694;
-$date_str = $this->timestamp;
-$astronomy = $this->astronomy($lat, $lon, $date_str);
-$this->print_pre($astronomy);
+$sun = $this->getSunPhase(39.92500,32.83694);
+$this->print_pre($sun);
+```
+**veya**
+
+```php
+$sun = $this->getSunPhase(39.92500,32.83694, '2024-11-28 23:19:21');
+$this->print_pre($sun);
 ```
 
 **veya**
 
 ```php
-$lat = 39.92500;
-$lon = 32.83694;
-$date_str = strtotime('2024-02-12');
-$timezone = 'America/Toronto';
-$astronomy = $this->astronomy($lat, $lon, $date_str, $timezone);
-$this->print_pre($astronomy);
+$sun = $this->getSunPhase(39.92500,32.83694, '2024-11-28 23:19:21', 'UTC');
+$this->print_pre($sun);
+```
+---
+
+## getMoonPhase()
+
+Bu metot, matematiksel hesaplamalarla oluşturulan ay verilerini döndürmeye yarar. Aşağıdaki parametreleri alır.
+
+- Zaman Damgası (zorunlu)
+- Zaman Dilimi (isteğe bağlıdır, eğer gönderilmezse `$this->timezone` zaman dilimi kullanılır.)
+
+#### Örnek
+
+```php
+$moon = $this->getMoonPhase('2024-11-30 07:43:30');
+$this->print_pre($moon);
+
+```
+**veya**
+
+```php
+$moon = $this->getMoonPhase('2024-11-28 23:19:21', 'America/Toronto');
+$this->print_pre($moon);
+```
+
+---
+
+## astronomy()
+Bu metot, astronomik verileri sağlayan `getSunPhase()` ve `getMoonPhase()` metotlarının sonuçlarını döndürür. 
+
+Güneş verilerine erişmek için `sun` anahtarına aşağıdaki parametreler gönderilmelidir.
+- lat (zorunlu)
+- lon (zorunlu)
+- timestamp (isteğe bağlıdır, eğer gönderilmezse `$this->timestamp` zaman damgası kullanılır.)
+- timezone (isteğe bağlıdır, eğer gönderilmezse `$this->timezone` zaman dilimi kullanılır.)
+
+Ay verilerine erişmek için `moon` anahtarına aşağıdaki parametreler gönderilmelidir.
+- timestamp (zorunlu)
+- timezone (isteğe bağlıdır, eğer gönderilmezse `$this->timezone` zaman dilimi kullanılır.)
+
+
+**Bilgi:** `timestamp` parametreleri, UNIX zaman damgası türünde de belirtilebilir.
+
+##### Örnek
+
+```php
+$request = $this->astronomy([
+    'sun'=> [
+        'lat'=>39.92500,
+        'lon'=>32.83694
+    ],
+    'moon'=> [
+        'timestamp'=>$this->timestamp
+    ]
+]);
+$this->print_pre($request);
+```
+
+**veya**
+
+```php
+$request = $this->astronomy([
+    'sun'=> [
+        'lat'=>39.92500,
+        'lon'=>32.83694,
+        'timestamp'=>$this->timestamp,
+        'timezone'=>'America/Toronto'
+    ],
+    'moon'=> [
+        'timestamp'=>$this->timestamp,
+        'timezone'=>'UTC'
+    ]
+]);
+$this->print_pre($request);
 ```
 
 ---

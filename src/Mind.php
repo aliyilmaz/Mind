@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.3
+ * @version    Release: 6.0.4
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4530,35 +4530,168 @@ class Mind
         return $key;
     }
 
-    /**
-     * It will first provide date_sun_info() data and, 
-     * over time, other astronomical information.
-     * 
-     * @param string $timestamp
-     * @param float $lat The latitude.
-     * @param float $lon The longitude.
-     * @param null|string $timezone
-     * @return array
-     */
-    public function astronomy($lat, $lon, $timestamp = null, $timezone = null) {
+    /** 
+     * Returns astronomy data.
+     * @param array $request Request array containing sun and moon data.
+     * @return array Response array containing sun and moon phases.
+    */
+    public function astronomy($request) {
         
+        $response = [];
+
+        if(isset($request['sun'])){
+            $sun = [
+                'lat'=>$request['sun']['lat'],
+                'lon'=>$request['sun']['lon'],
+                'timestamp'=>!isset($request['sun']['timestamp']) ? null : $request['sun']['timestamp'],
+                'timezone'=>!isset($request['sun']['timezone']) ? null : $request['sun']['timezone']
+            ];
+            $response['sun'] = $this->getSunPhase($sun['lat'], $sun['lon'], $sun['timestamp'], $sun['timezone']);
+        }
+
+        if(isset($request['moon'])){
+            $moon = [
+                'timestamp'=>!isset($request['moon']['timestamp']) ? null : $request['moon']['timestamp'],
+                'timezone'=>!isset($request['moon']['timezone']) ? null : $request['moon']['timezone']
+            ];
+            $response['moon'] = $this->getMoonPhase($moon['timestamp'], $moon['timezone']);
+        }
+        return $response;
+    }
+
+    /**
+     * Retrieves the sun phases.
+     *
+     * @param float $lat Latitude information.
+     * @param float $lon Longitude information.
+     * @param int|null $timestamp Timestamp (default: current timestamp).
+     * @param string|null $timezone Timezone (default: current timezone).
+     * 
+     * @return array An array containing sun phase information.
+     */
+    public function getSunPhase($lat, $lon, $timestamp = null, $timezone = null)
+    {
         $timestamp = is_null($timestamp) ? $this->timestamp : $timestamp;
-        $timestamp = ($this->is_date($timestamp)) ? strtotime($timestamp) : $timestamp;
+        $timestamp = $this->is_date($timestamp) ? strtotime($timestamp) : $timestamp;
 
         if ($this->is_timezone($timezone)) {
             date_default_timezone_set($timezone);
         }
 
-        $sun_info = date_sun_info($timestamp, $lat, $lon);
-        $astronomical_data = array_map(function($time) {
-            return date('Y-m-d H:i:s', $time);
-        }, $sun_info);
+        $sun_info_all = [
+            'timezone'=>is_null($timezone) ? $this->timezone : $timezone,
+            'timestamp'=>$this->timestamp,
+            'latitude'=>$lat,
+            'longitude'=>$lon
+        ];
+
+        $sun_info = date_sun_info($timestamp, $lat, $lon);        
+        $formatted_sun_info = array_map(function($time) { return date('Y-m-d H:i:s', $time); }, $sun_info);
+
+        $sun_info_all = array_merge($sun_info_all, $formatted_sun_info);
 
         if (is_null($timezone)) {
             date_default_timezone_set($this->timezone);
         }
+        
 
-        return $astronomical_data;
+        return $sun_info_all;
+    }
+
+    /**
+     * Retrieves the moon phase information.
+     *
+     * @param int|string $timestamp The timestamp or date string.
+     * @param string|null $timezone The timezone (default: current timezone).
+     * 
+     * @return array An array containing moon phase information.
+     */
+    public function getMoonPhase($timestamp, $timezone = null) {
+    
+        $unixdate = $this->is_date($timestamp) ? strtotime($timestamp) : $timestamp;
+        
+        // If time zone is specified, use it.
+        if($this->is_timezone($timezone)){
+            date_default_timezone_set($timezone);
+        }
+
+        // The duration in days of a lunar cycle
+        $lunardays = 29.53058770576;
+        // Seconds in lunar cycle
+        $lunarsecs = $lunardays * (24 * 60 *60);
+
+        // Current first new month start timestamp
+        $new2024 = strtotime("2024-01-11 11:39:00");
+
+        // Calculate seconds between date and new moon 2024
+        $totalsecs = $unixdate - $new2024;
+
+        // Calculate modulus to drop completed cycles
+        // Note: for real numbers use fmod() instead of % operator
+        $currentsecs = fmod($totalsecs, $lunarsecs);
+
+        // If negative number (date before new moon 2024) add $lunarsecs
+        if ( $currentsecs < 0 ) {
+            $currentsecs += $lunarsecs;
+        }
+
+        // Calculate the fraction of the moon cycle
+        $currentfrac = $currentsecs / $lunarsecs;
+
+        // Calculate days in current cycle (moon age)
+        $currentdays = $currentfrac * $lunardays;
+
+        // Array with start and end of each phase
+        // In this array 'new', 'first quarter', 'full' and
+        // 'last quarter' each get a duration of 2 days.
+        $phases = array
+            (
+                array("New Moon", 0, 1), // Yeni Ay 
+                array("Waxing Crescent", 1, 6.38264692644), // Hilal 
+                array("First Quarter", 6.38264692644, 8.38264692644), // İlk Dördün 
+                array("Waxing Gibbous", 8.38264692644, 13.76529385288), // Kambur Ay 
+                array("Full Moon", 13.76529385288, 15.76529385288), // Dolunay 
+                array("Waning Gibbous", 15.76529385288, 21.14794077932), // Solan Kambur Ay 
+                array("Last Quarter", 21.14794077932, 23.14794077932), // Son Dördün 
+                array("Waning Crescent", 23.14794077932, 28.53058770576), // Balzamik Ay 
+                array("New Moon", 28.53058770576, 29.53058770576), // Yeni Ay
+            );
+
+            // Find current phase in the array  
+            $thephase = null;
+            $phase_start = null;
+            $phase_end = null;
+
+            foreach ($phases as $phase) {
+                if ($currentdays >= $phase[1] && $currentdays <= $phase[2]) {
+                    $thephase = $phase[0];
+
+                    // Adjust phase dates based on current timestamp  
+                    $phase_start = intval($unixdate - ($currentsecs - ($phase[1] / $lunardays) * $lunarsecs));
+                    $phase_end = intval($unixdate - ($currentsecs - ($phase[2] / $lunardays) * $lunarsecs));
+
+                    break;
+                }
+            }
+
+
+            $result = [         
+                'timezone'=>$this->is_timezone($timezone) ? $timezone : $this->timezone,
+                'timestamp'=> date("Y-m-d H:i:s", $unixdate),
+                'lunar_cycle_constant'=> $lunardays,
+                'percentage_of_lunation'=> round($currentdays, 3),
+                'phase'=> $thephase,
+                'phase_start'=> date("Y-m-d H:i:s", $phase_start),
+                'phase_end'=> date("Y-m-d H:i:s", $phase_end),
+            ];
+        
+
+        // If time zone has been changed, revert to default.
+        if($this->is_timezone($timezone)){
+            date_default_timezone_set($this->timezone);
+        }
+
+        return $result;
     }
     
     /**
