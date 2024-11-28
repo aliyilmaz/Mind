@@ -4654,7 +4654,7 @@ class Mind
                 array("Waning Gibbous", 15.76529385288, 21.14794077932), // Solan Kambur Ay 
                 array("Last Quarter", 21.14794077932, 23.14794077932), // Son Dördün 
                 array("Waning Crescent", 23.14794077932, 28.53058770576), // Balzamik Ay 
-                array("New Moon", 28.53058770576, 29.53058770576), // Yeni Ay
+                array("Old Moon", 28.53058770576, 29.53058770576), // Eski Ay
             );
 
             // Find current phase in the array  
