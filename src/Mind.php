@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.4
+ * @version    Release: 6.0.5
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -3708,6 +3708,7 @@ class Mind
             header('Location: '.$url);
         }
         ob_end_flush();
+        exit();
     }
 
     /**
