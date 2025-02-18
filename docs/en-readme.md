@@ -3491,6 +3491,30 @@ if($this->is_base64($data)){
 }
 ```
 
+**or**
+
+```php
+
+// Test 1: Valid base64 (dGVzdA== -> "test")
+echo $this->is_base64('dGVzdA==') ? 'Valid base64' : 'Not valid';  // Valid base64
+echo "<br>";
+
+// Test 2: Invalid base64 (with the wrong character)
+echo $this->is_base64('dGVzdA==X') ? 'Valid base64' : 'Not valid';  // Not valid
+echo "<br>";
+
+// Test 3: Invalid base64 (empty string)
+echo $this->is_base64('') ? 'Valid base64' : 'Not valid';  // Not valid
+echo "<br>";
+
+// Test 4: Valid base64 (Another example: c3RhY2tvdmVyZmxvdw== -> "stackoverflow")
+echo $this->is_base64('c3RhY2tvdmVyZmxvdw==') ? 'Valid base64' : 'Not valid';  // Valid base64
+echo "<br>";
+
+// Test 5:Invalid base64 (random string)
+echo $this->is_base64('randomStringHere') ? 'Valid base64' : 'Not valid';  // Not valid
+echo "<br>";
+```
 ---
 
 ## is_ssl()

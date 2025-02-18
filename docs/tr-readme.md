@@ -3448,6 +3448,30 @@ if($this->is_base64($data)){
 }
 ```
 
+veya
+
+```php
+
+// Test 1: Geçerli Base64 (dGVzdA== -> "test")
+echo $this->is_base64('dGVzdA==') ? 'Geçerli Base64' : 'Geçerli değil';  // Geçerli Base64
+echo "<br>";
+
+// Test 2: Geçersiz Base64 (yanlış karakterle)
+echo $this->is_base64('dGVzdA==X') ? 'Geçerli Base64' : 'Geçerli değil';  // Geçerli değil
+echo "<br>";
+
+// Test 3: Geçersiz Base64 (boş dize)
+echo $this->is_base64('') ? 'Geçerli Base64' : 'Geçerli değil';  // Geçerli değil
+echo "<br>";
+
+// Test 4: Geçerli Base64 (başka bir örnek: c3RhY2tvdmVyZmxvdw== -> "stackoverflow")
+echo $this->is_base64('c3RhY2tvdmVyZmxvdw==') ? 'Geçerli Base64' : 'Geçerli değil';  // Geçerli Base64
+echo "<br>";
+
+// Test 5:Geçersiz Base64 (Rastgele Dize)
+echo $this->is_base64('randomStringHere') ? 'Geçerli Base64' : 'Geçerli değil';  // Geçerli değil
+echo "<br>";
+```
 ---
 
 ## is_ssl()

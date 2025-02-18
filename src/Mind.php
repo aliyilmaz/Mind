@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.5
+ * @version    Release: 6.0.6
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2472,15 +2472,52 @@ class Mind
     }
     
     /**
-     * Checks if a value is a Base64 encoded string.
+     * Checks if a string is a Base64 encoded string.
      *
-     * @param string $value
+     * @param string $string
      * @return bool
      */
-    public function is_base64($value) {
-        $decoded = base64_decode($value, true);
-        return base64_encode($decoded) === $value;
+    public function is_base64($string) {
+        // Empty string control
+        if (empty($string)) {
+            return false;
+        }
+    
+        // Character Control Apart from Base64 Character Set
+        if (!preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $string)) {
+            return false;
+        }
+    
+        // Check if the length is 4 times
+        if (strlen($string) % 4 !== 0) {
+            return false;
+        }
+    
+        // Check if Padding characters are in the right place
+        $padding = substr_count($string, '=');
+        if ($padding > 2 || ($padding > 0 && substr($string, -$padding) !== str_repeat('=', $padding))) {
+            return false;
+        }
+    
+        // Check the presence of the character of Padding
+        if (!strstr($string, '=')) {
+            return false;
+        }
+    
+        // Base64 Decode process
+        $decoded = base64_decode($string, true);
+        if ($decoded === false) {
+            return false;
+        }
+    
+        // Control whether the Encode form matches the original string
+        if (base64_encode($decoded) != $string) {
+            return false;
+        }
+    
+        return true;
     }
+    
 
     /**
 	 * Determines if SSL is used.	 
