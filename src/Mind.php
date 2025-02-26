@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.6
+ * @version    Release: 6.0.7
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -115,7 +115,12 @@ class Mind
 
         // Domain with a prefix and containing the project directory name
         $this->project_path = ($_SERVER['SERVER_NAME'].'/' != $this->base_url) ? $_SERVER['SERVER_NAME'].$this->base_url : $this->base_url;
-        $this->project_path = ($this->is_ssl())?'https://'.$this->project_path : 'http://'.$this->project_path;
+        $this->project_path = ($this->is_ssl())?'https://'.$this->project_path : 'http://'.$this->project_path;      
+        
+        // If the port is a compulsory address, the port is added.
+        if(!in_array($_SERVER['SERVER_PORT'], ['80', '443'])){
+            $this->project_path = rtrim($this->project_path, "/").':'.$_SERVER['SERVER_PORT'].'/';
+        }
 
         // Like example.com or test.example.com
         $this->project_domain = $this->normalizeDomain($this->project_path);
@@ -2493,16 +2498,11 @@ class Mind
             return false;
         }
     
-        // Check if Padding characters are in the right place
+        // Dolgu karakterlerinin doğru yerde olup olmadığını kontrol edin
         $padding = substr_count($string, '=');
         if ($padding > 2 || ($padding > 0 && substr($string, -$padding) !== str_repeat('=', $padding))) {
             return false;
-        }
-    
-        // Check the presence of the character of Padding
-        if (!strstr($string, '=')) {
-            return false;
-        }
+        }        
     
         // Base64 Decode process
         $decoded = base64_decode($string, true);
@@ -2513,12 +2513,37 @@ class Mind
         // Control whether the Encode form matches the original string
         if (base64_encode($decoded) != $string) {
             return false;
+        }        
+        if (preg_match('/^[a-zA-Z0-9\/\r\n+]*={0,2}$/', $decoded)) {            
+            return true;
+        } 
+        if($this->contains_invalid_chars($decoded)){
+            return false;
         }
-    
+        
         return true;
     }
     
+    /**
+     * Checks if the given string contains invalid (non-UTF-8) characters.
+     *
+     * This function uses the `mb_check_encoding` function to determine if the
+     * provided string is compatible with UTF-8 encoding. If the string is not valid UTF-8,
+     * it returns `true` indicating the presence of broken characters. Otherwise, it returns `false`.
+     *
+     * @param string $string The string to check for invalid characters.
+     * 
+     * @return bool Returns `true` if the string contains invalid UTF-8 characters, `false` otherwise.
+     */
+    public function contains_invalid_chars($string) {
+        // Check if the data is compatible with UTF-8
+        if (!mb_check_encoding($string, 'UTF-8')) {
+            return true; // There are broken characters
+        }
+        return false; // No broken character
+    }
 
+    
     /**
 	 * Determines if SSL is used.	 
 	 * @return bool True if SSL, otherwise false.
@@ -2563,6 +2588,18 @@ class Mind
         }
         return true;
     }
+
+    /**
+     * Checks if a given string is a valid hexadecimal string.
+     *
+     * @param string $hex The string to check.
+     * @return bool True if the string is a valid hexadecimal string, false otherwise.
+     */
+    public function is_hex($hex) {
+        return preg_match('/^[0-9a-fA-F]+$/', $hex);
+    }
+
+
 
     /**
      * Binary code verification
@@ -3745,7 +3782,9 @@ class Mind
             header('Location: '.$url);
         }
         ob_end_flush();
-        exit();
+        if(empty($element)){
+            exit();
+        }
     }
 
     /**
@@ -6077,6 +6116,37 @@ class Mind
 		} 
 		return $sbin; 
 	}
+
+    /**
+     * Converts a text string to its hexadecimal representation.
+     *
+     * @param string $text The text string to convert.
+     * @return string The hexadecimal representation of the text string.
+     */
+    public function textToHex($text) {
+        $utf8Text = mb_convert_encoding($text, 'UTF-8', 'auto');
+        $hex = '';
+        for ($i = 0; $i < strlen($utf8Text); $i++) {
+            $code = dechex(ord($utf8Text[$i]));
+            $hex .= str_pad($code, 2, '0', STR_PAD_LEFT);
+        }
+        return $hex;
+    }
+
+    /**
+     * Converts a hexadecimal string to its text representation.
+     *
+     * @param string $hex The hexadecimal string to convert.
+     * @return string The text representation of the hexadecimal string.
+     */
+    public function hexToText($hex) {
+        $text = '';
+        for ($i = 0; $i < strlen($hex); $i += 2) {
+            $code = hexdec(substr($hex, $i, 2));
+            $text .= chr($code);
+        }
+        return mb_convert_encoding($text, 'UTF-8', 'auto');
+    }
 
     /**
      * siyakat_encode

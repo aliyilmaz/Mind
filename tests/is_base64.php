@@ -36,3 +36,11 @@ echo "<br>";
 // Test 5:Invalid base64 (random string)
 echo $Mind->is_base64('randomStringHere') ? 'Valid base64' : 'Not valid';  // Not valid
 echo "<br>";
+
+// Test 6:Valid base64 (without padding)
+echo $Mind->is_base64('TnVsbGFt') ? 'Valid base64' : 'Not valid';  // Valid base64
+echo "<br>";
+
+// Test 7:Valid base64 (without padding)
+echo $Mind->is_base64('RmVuZXJiYWjDp2U=') ? 'Valid base64' : 'Not valid';  // Valid base64
+echo "<br>";

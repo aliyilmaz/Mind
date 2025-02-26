@@ -312,6 +312,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [is_ssl](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_ssl)
 -   [is_htmlspecialchars](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_htmlspecialchars)
 -   [is_morse](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_morse)
+-   [is_hex](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_hex)
 -   [is_binary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_binary)
 -   [is_timecode](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_timecode)
 -   [is_browser](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#is_browser)
@@ -397,6 +398,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [stringToBinary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#stringtobinary)
 -   [binaryToString](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#binarytostring)
 -   [hexToBinary](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#hexToBinary)
+-   [textToHex](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#textToHex)
+-   [hexToText](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#hexToText)
 -   [siyakat_encode](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#siyakat_encode)
 -   [siyakat_decode](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#siyakat_decode)
 -   [abort](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#abort)
@@ -3514,6 +3517,15 @@ echo "<br>";
 // Test 5:Invalid base64 (random string)
 echo $this->is_base64('randomStringHere') ? 'Valid base64' : 'Not valid';  // Not valid
 echo "<br>";
+
+// Test 6:Valid base64 (without padding)
+echo $this->is_base64('TnVsbGFt') ? 'Valid base64' : 'Not valid';  // Valid base64
+echo "<br>";
+
+// Test 7:Valid base64 (without padding)
+echo $this->is_base64('RmVuZXJiYWjDp2U=') ? 'Valid base64' : 'Not valid';  // Valid base64
+echo "<br>";
+
 ```
 ---
 
@@ -3589,7 +3601,20 @@ if(!$this->is_morse($data)){
     echo 'Mors code. ( '.$this->morse_decode($data).' )';
 }
 ```
+---
 
+## is_hex()
+
+It serves to check if the specified parameter is a Hex code.
+
+##### Example
+```php
+if($this->is_hex('46656e6572626168c3a7652074657374')){
+    echo 'This is a Hex code.';
+} else {
+    echo 'This is not a Hex code.';
+}
+```
 
 ---
 
@@ -5233,7 +5258,7 @@ In order for the `folder` setting to be valid on `nginx` servers, you must use [
 
 ## redirect()
 
-It is used to redirect to the specified address directly or after a certain period of time. If left blank, it redirects to the folder where the **Mind.php** file is located. It takes two parameters, the first parameter is the address to be redirected and must be specified as `string`, the second parameter is the information after how many seconds to redirect and must be specified as `integer`. The third parameter is the element name information to which the remaining time to the routing will be assigned. Since this parameter is sent to javascript's `querySelectorAll` method, it must be specified with reference to javascript's approach to accessing the element.
+It is used to redirect to the specified address directly or after a certain period of time, if left empty it redirects to the folder where the **Mind.php** file is located. It takes three parameters, the first parameter is the address to be redirected and should be specified as `string`, the second parameter is the information about the number of seconds after which it should be redirected and should be specified as `integer`. The third parameter is the element name information to which the remaining time for redirection will be assigned. Since this parameter is sent to javascript's `querySelectorAll` method, it should be specified by reference to javascript's approach to accessing the element. If the third parameter is not specified, `exit();` is applied after redirection.
 
 ##### Example
 
@@ -7865,7 +7890,31 @@ $data = bin2hex('Hello world');
 echo $this->hexToBinary($data);
 ```
 
+---
 
+## textToHex()
+
+This function serves to convert the string -type data to the Hex code.
+
+##### Example
+
+```php
+$str = 'Fenerbahçe test şğüçöıİÜĞÇÖŞ'; // 46656e6572626168c3a765207465737420c59fc49fc3bcc3a7c3b6c4b1c4b0c39cc49ec387c396c59e
+echo $this->textToHex($str);
+```
+---
+
+## hexToText()
+
+This function serves to convert the string type Hex data into text into text.
+
+##### Example
+
+```php
+$str = '46656e6572626168c3a765207465737420c59fc49fc3bcc3a7c3b6c4b1c4b0c39cc49ec387c396c59e'; // Fenerbahçe test şğüçöıİÜĞÇÖŞ
+echo $this->hexToText($str);
+
+```
 ---
 
 ## siyakat_encode()

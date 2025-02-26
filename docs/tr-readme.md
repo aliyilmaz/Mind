@@ -307,6 +307,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [is_ssl](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_ssl)
 -   [is_htmlspecialchars](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_htmlspecialchars)
 -   [is_morse](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_morse)
+-   [is_hex](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_hex)
 -   [is_binary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_binary)
 -   [is_timecode](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_timecode)
 -   [is_browser](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#is_browser)
@@ -392,6 +393,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [stringToBinary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#stringtobinary)
 -   [binaryToString](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#binarytostring)
 -   [hexToBinary](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#hexToBinary)
+-   [textToHex](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#textToHex)
+-   [hexToText](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#hexToText)
 -   [siyakat_encode](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#siyakat_encode)
 -   [siyakat_decode](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#siyakat_decode)
 -   [abort](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#abort)
@@ -3471,6 +3474,15 @@ echo "<br>";
 // Test 5:Geçersiz Base64 (Rastgele Dize)
 echo $this->is_base64('randomStringHere') ? 'Geçerli Base64' : 'Geçerli değil';  // Geçerli değil
 echo "<br>";
+
+// Test 6:Geçerli Base64 (dolgusuz)
+echo $this->is_base64('TnVsbGFt') ? 'Valid base64' : 'Not valid';  // Geçerli Base64
+echo "<br>";
+
+// Test 7:Geçerli Base64 (dolgu ile)
+echo $this->is_base64('RmVuZXJiYWjDp2U=') ? 'Valid base64' : 'Not valid';  // Geçerli Base64
+echo "<br>";
+
 ```
 ---
 
@@ -3547,6 +3559,20 @@ if(!$this->is_morse($data)){
 }
 ```
 
+
+---
+## is_hex()
+
+Belirtilen parametrenin bir Hex kodu olup olmadığını kontrol etmeye yarar.
+
+##### Örnek
+```php
+if($this->is_hex('46656e6572626168c3a7652074657374')){
+    echo 'Bu bir hex kodudur.';
+} else {
+    echo 'Bu bir hex kodu değildir.';
+}
+```
 
 ---
 
@@ -5204,7 +5230,7 @@ Her HTTP POST isteği yeni bir `token` parametresi oluşmasını sağlar. `allow
 
 ## redirect()
 
-Belirtilen adrese doğrudan veya belli bir süre sonra yönlendirme yapmak amacıyla kullanılır, boş bırakılırsa **Mind.php** dosyasının bulunduğu klasör'e yönlendirme yapar. İki parametre alır, ilk parametre yönlenecek adrestir ve `string` olarak belirtilmesi gerekir, ikinci parametre kaç saniye sonra yönlenmesi gerektiği bilgisidir ve `integer` olarak belirtilmesi gerekir. Üçüncü parametre ise yönlendirmeye kalan sürenin atanacağı element adı bilgisidir. Bu parametre javascript'in `querySelectorAll` metotuna gönderildiğinden, javascript'in element'e erişim yaklaşımı referans alınarak belirtilmelidir.
+Belirtilen adrese doğrudan veya belli bir süre sonra yönlendirme yapmak amacıyla kullanılır, boş bırakılırsa **Mind.php** dosyasının bulunduğu klasör'e yönlendirme yapar. Üç parametre alır, ilk parametre yönlenecek adrestir ve `string` olarak belirtilmesi gerekir, ikinci parametre kaç saniye sonra yönlenmesi gerektiği bilgisidir ve `integer` olarak belirtilmesi gerekir. Üçüncü parametre ise yönlendirmeye kalan sürenin atanacağı element adı bilgisidir. Bu parametre javascript'in `querySelectorAll` metotuna gönderildiğinden, javascript'in element'e erişim yaklaşımı referans alınarak belirtilmelidir. Eğer üçüncü parametre belirtilmezse yönlendirme sonrası `exit();` uygulanır.
 
 ##### Örnek
 
@@ -7831,6 +7857,32 @@ $data = bin2hex('Merhaba dünya');
 
 echo $this->hexToBinary($data);
 ```
+
+---
+## textToHex()
+
+Bu fonksiyon, kendisiyle paylaşılan string türündeki veriyi, Hex koduna dönüştürmeye yarar.
+
+##### Örnek
+
+```php
+$str = 'Fenerbahçe test şğüçöıİÜĞÇÖŞ'; // 46656e6572626168c3a765207465737420c59fc49fc3bcc3a7c3b6c4b1c4b0c39cc49ec387c396c59e
+echo $this->textToHex($str);
+```
+---
+
+## hexToText()
+
+Bu fonksiyon, kendisiyle paylaşılan string türündeki hex verisini, metin haline dönüştürmeye yarar.
+
+##### Örnek
+
+```php
+$str = '46656e6572626168c3a765207465737420c59fc49fc3bcc3a7c3b6c4b1c4b0c39cc49ec387c396c59e'; // Fenerbahçe test şğüçöıİÜĞÇÖŞ
+echo $this->hexToText($str);
+
+```
+---
 
 
 ---
