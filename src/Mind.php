@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.0.9
+ * @version    Release: 6.1.0
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4324,14 +4324,24 @@ class Mind
      * @param string $url
      * @return int
      */
-    function remoteFileSize( $url ) {
-        $filesize = -1;
-        if($this->is_http($url) OR $this->is_https($url)){
-            $headers = get_headers($url, 1);
-            $filesize = $headers['Content-Length'];
-        } 
-        return $filesize;
-      }
+    public function remoteFileSize($url) {
+        if ($this->is_http($url) || $this->is_https($url)) {
+
+            $headers = @get_headers($url, 1);
+
+            if (!$headers || !isset($headers['Content-Length'])) {
+                return false;
+            }
+
+            $length = $headers['Content-Length'];
+
+            return is_array($length) ? end($length) : $length;
+        }
+
+        return false;
+    }
+
+
 
     /**
      * Layer installer
