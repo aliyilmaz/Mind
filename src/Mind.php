@@ -86,7 +86,7 @@ class Mind
         if($dbStatus){
             $this->dbConnect($conf);
         }
-         
+    
         /* Interpreting Get, Post, and Files requests */
         $this->request();
 
@@ -140,7 +140,7 @@ class Mind
     /**
      * @param array|null $conf
      */
-    public function dbConnect($conf = array()){                   
+    public function dbConnect($conf = array()){
 
         if(isset($conf['db']['drive'])){ $this->db['drive'] = $conf['db']['drive'];}
         if(isset($conf['db']['host'])){ $this->db['host'] = $conf['db']['host'];}
@@ -184,10 +184,8 @@ class Mind
                 $this->abort('401', 'We have restricted your access due to intensity.');
             }
 
-            if(!empty($conf)) {
-                if(stristr($th->errorInfo[2], 'Access denied for user')){
-                    $this->abort('401', 'Unauthorized user information.');
-                }
+            if(stristr($th->errorInfo[2], 'Access denied for user')){
+                $this->abort('401', 'Unauthorized user information.');
             }
             
             if(
@@ -209,7 +207,6 @@ class Mind
      * @return bool
      */
     public function selectDB($dbName){
-        if(empty($this->db)) return;
         if($this->is_db($dbName)){
 
             switch ($this->db['drive']) {
@@ -234,7 +231,6 @@ class Mind
      * @return array
      */
     public function dbList(){
-        if(empty($this->db)) return;
 
         $dbnames = array();
 
@@ -271,7 +267,7 @@ class Mind
      * @return array
      */
     public function tableList($dbname=null){
-        if(empty($this->db)) return;
+
         $query = [];
         $tblNames = array();
 
@@ -317,7 +313,7 @@ class Mind
      * @return array
      */
     public function columnList($tblName){
-        if(empty($this->db)) return;
+
         $columns = array();
 
         switch ($this->db['drive']) {
@@ -358,7 +354,7 @@ class Mind
      * @return bool
      */
     public function dbCreate($dbname){
-        if(empty($this->db)) return;
+
         $dbnames = array();
         $dbnames = (is_array($dbname)) ? $dbname : [$dbname];
 
@@ -399,7 +395,7 @@ class Mind
      * @return bool
      */
     public function tableCreate($tblName, $scheme){
-        if(empty($this->db)) return;
+
         if(is_array($scheme) AND !$this->is_table($tblName)){
             // switch
             $engine = '';
@@ -437,7 +433,7 @@ class Mind
      * @return bool
      */
     public function columnCreate($tblName, $scheme){
-        if(empty($this->db)) return;
+
         if($this->is_table($tblName)){
 
             try{
@@ -467,7 +463,7 @@ class Mind
      * @return bool
      */
     public function dbDelete($dbname){
-        if(empty($this->db)) return;
+
         $dbnames = array();
 
         if(is_array($dbname)){
@@ -523,7 +519,7 @@ class Mind
      * @return bool
      */
     public function tableDelete($tblName){
-        if(empty($this->db)) return;
+
         $tblNames = array();
 
         if(is_array($tblName)){
@@ -565,7 +561,7 @@ class Mind
      * @return bool
      */
     public function columnDelete($tblName, $column = null){
-        if(empty($this->db)) return;
+
         $columnList = $this->columnList($tblName);
 
         $columns = array();
@@ -633,7 +629,7 @@ class Mind
      * @return bool
      * */
     public function dbClear($dbName){
-        if(empty($this->db)) return;
+
         $dbNames = array();
 
         if(is_array($dbName)){
@@ -663,7 +659,7 @@ class Mind
      * @return bool
      */
     public function tableClear($tblName){
-        if(empty($this->db)) return;
+
         $tblNames = array();
 
         if(is_array($tblName)){
@@ -708,7 +704,7 @@ class Mind
      * @return bool
      */
     public function columnClear($tblName, $column=null){
-        if(empty($this->db)) return;
+
         if(empty($column)){
             return false;
         }
@@ -750,7 +746,7 @@ class Mind
      * @return bool
      */
     public function insert($tblName, $values, $trigger=null){
-        if(empty($this->db)) return;
+                    
         if(!is_null($values)){
             if (is_numeric(array_keys($values)[0])) {
                 $values = array_values($values);
@@ -821,7 +817,7 @@ class Mind
      * @return bool
      */
     public function update($tblName, $values, $needle, $column=null){
-        if(empty($this->db)) return;
+
         if(empty($column)){
 
             $column = $this->increments($tblName);
@@ -874,7 +870,7 @@ class Mind
      * @return bool
      */
     public function delete($tblName, $needle, $column=null, $trigger=null, $force=null){
-        if(empty($this->db)) return;
+
         $status = false;
 
         // status
@@ -970,7 +966,7 @@ class Mind
      * @return array
      */
     public function getData($tblName, $options=null){
-        if(empty($this->db)) return;
+
         $sql = '';
         $andSql = '';
         $orSql = '';
@@ -1311,7 +1307,7 @@ class Mind
      * @return array
      */
     public function samantha($tblName, $map, $column=null, $ignored=null)
-    {        
+    {
         $output = array();
         $columns = array();
 
@@ -1558,7 +1554,7 @@ class Mind
      * @return string
      * */
     public function increments($tblName){
-        if(empty($this->db)) return;
+
         $columns = '';
         
         try{
@@ -1595,7 +1591,7 @@ class Mind
      * @return array
      */
     public function tableInterpriter($tblName, $column = null){
-        if(empty($this->db)) return;
+
         $result  = array();
         $columns = array();
         $columns = (!is_null($column) AND is_array($column)) ? $column : $columns; // array
@@ -1694,10 +1690,12 @@ class Mind
      * @param string $directory
      * @return json|export
      */
-    public function backup($dbnames, $directory='')
+    public function backup($dbnames, $directory='', $drive='')
     {
-        if(empty($this->db)) return;
         $result = array();
+
+        $directory = (empty($directory)) ? '' : $directory;
+        $drive = (empty($drive)) ? $this->db['drive'] : $drive;
 
         if(is_string($dbnames)){
             $dbnames = array($dbnames);
@@ -1722,6 +1720,10 @@ class Mind
                     $result[$dbname][$table]['config'] = $increments;
                     $result[$dbname][$table]['schema'] = $this->tableInterpriter($table);
                     $result[$dbname][$table]['data'] = $this->getData($table);
+                    if($drive == 'sqlite'){
+                        $newResult[$dbname.'.sqlite'] = $result[$dbname];
+                        $result = $newResult;
+                    }
                 }
             }
 
@@ -1730,11 +1732,10 @@ class Mind
         }
         
         $data = $this->json_encode($result);
-        $filename = $this->db['drive'].'_backup_'.$this->permalink($this->timestamp, array('delimiter'=>'_')).'.json';
+        $filename = $drive.'_backup_'.$this->permalink($this->timestamp, array('delimiter'=>'_')).'.json';
         if(!empty($directory)){
-            if(is_dir($directory)){
                 $this->write($data, $directory.'/'.$filename);
-            } 
+                return $directory.'/'.$filename;
         } else {
            $this->saveAs($data, $filename);
         }
@@ -1749,7 +1750,7 @@ class Mind
      * @return array
      */
     public function restore($paths){
-        if(empty($this->db)) return;
+
         $result = array();
         
         if(is_string($paths)){
@@ -1974,7 +1975,7 @@ class Mind
      * @return bool
      * */
     public function is_db($dbname){
-        if(empty($this->db)) return;
+
         switch ($this->db['drive']) {
             case 'mysql':
                 $sql     = 'SHOW DATABASES';
@@ -2012,7 +2013,7 @@ class Mind
      * @return bool
      */
     public function is_table($tblName){
-        if(empty($this->db)) return;
+
         $sql = '';
 
         switch ($this->db['drive']) {
@@ -2040,7 +2041,7 @@ class Mind
      * @return bool
      * */
     public function is_column($tblName, $column){
-        if(empty($this->db)) return;
+
         $columns = $this->columnList($tblName);
 
         if(in_array($column, $columns)){
