@@ -2363,7 +2363,7 @@ Array
 
 ## backup()
 
-Bir veya daha fazla veritabanını yedeklemek için kullanılır. İki parametre alır, ilki veritabanı isimlerini temsil eder ve belirtilmesi zorunludur, bu isimler `string` ve `array` biçiminde gönderilebilir, ikinci parametre ise yedeğin konumlanması istenen dizin yolunu temsil eder ve zorunlu değildir, bu yol `string` olarak belirtilmelidir. 
+Bir veya daha fazla veritabanını yedeklemek için kullanılır. Üç parametre alır, ilki veritabanı isimlerini temsil eder ve belirtilmesi zorunludur, bu isimler `string` ve `array` biçiminde gönderilebilir. İkinci parametre yedeğin konumlanması istenen dizin yolunu temsil eder ve zorunlu değildir, bu yol `string` olarak belirtilmelidir. Üçüncü parametre ise veritabanı türünü temsil eder ve zorunlu değildir, bu parametre `string` olarak ve desteklenen veritabanı türleri (mysql,sqlite,sqlsrv) arasından olmak şartıyla belirtilmelidir. 
 
 Yedek `JSON` yapısındadır, tarayıcı üzerinden bilgisayara kaydedilmek istenirse, ikinci parametre gönderilmez.
 
@@ -2389,6 +2389,12 @@ veya
 
 ```php
 $this->backup(array('mydb', 'trek'), './');
+```
+
+veya 
+
+```php
+$this->backup(array('mydb', 'trek'), './', 'sqlite');
 ```
 
 ---

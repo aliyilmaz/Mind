@@ -2407,7 +2407,7 @@ Array
 
 ## backup()
 
-Used to back up one or more databases. It takes two parameters, the first represents the database names and must be specified, these names can be sent in `string` and `array` format, the second parameter represents the directory path where the backup is to be located and is not mandatory, this path must be specified as `string`.
+It is used to back up one or more databases. It accepts three parameters. The first parameter represents the database name(s) and is required; these names can be provided in `string` or `array` format. The second parameter represents the directory path where the backup should be stored and is optional; this path must be specified as a `string`. The third parameter represents the database type and is also optional; it must be specified as a `string` and must be one of the supported database types (mysql,sqlite,sqlsrv).
 
 The backup is in `JSON` structure, if you want to save it to the computer via the browser, the second parameter is not sent.
 ##### Example
@@ -2432,6 +2432,11 @@ $this->backup('mydb', 'restore/');
 
 ```php
 $this->backup(array('mydb', 'trek'), './');
+```
+**or** 
+
+```php
+$this->backup(array('mydb', 'trek'), './', 'sqlite');
 ```
 
 ---
