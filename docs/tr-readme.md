@@ -277,6 +277,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [restore](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#restore)
 -   [pagination](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#pagination)
 -   [translate](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#translate)
+-   [getLocalizedCategories](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#getLocalizedCategories)
 
 ##### Doğrulayıcı
 
@@ -372,6 +373,8 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#addressGenerator)
 -   [committe](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#committe)
 -   [normalizeDomain](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#normalizeDomain)
+-   [buildCategoryBreadcrumb](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#buildCategoryBreadcrumb)
+-   [categoryParentOptions](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#categoryParentOptions)
 
 ##### Sistem
 
@@ -2621,6 +2624,35 @@ $conf = array(
 );
 
 $Mind = new Mind($conf);
+```
+
+---
+
+## getLocalizedCategories()
+
+Bu metot, çoklu dil içeren kategori kayıtlarını dil önceliğine göre tekilleştirir. Çalışabilmesi için çoklu dil içeren ham kategori listesini temsil eden `$categories` parametresi zorunludur. `$userLang` parametresi isteğe bağlıdır. Eğer null gönderilirse varsayılan olarak `EN` kabul edilir. Aynı `_token` değerine sahip birden fazla kayıt varsa seçim şu önceliğe göre yapılır:
+
++ Kullanıcının aktif dili
++ İngilizce (`EN`)
++ Mevcut herhangi bir dil kaydı
+
+Her kategori için yalnızca tek bir kayıt döndürülür. Metot `_token` anahtarlı lokalize edilmiş kategori dizisini `array` olarak döndürür.
+
+**Kullanım amacı:**
+
++ Listeleme işlemleri
++ Dropdown üretimi
++ Hiyerarşi oluşturma
++ Dil bağımsız kategori map üretimi
+
+**Kullanım Örneği**
+```php
+$categories = $this->samantha('categories', null);
+$localized = $this->getLocalizedCategories(
+    $categories,
+    $_SESSION['user']['lang'] ?? null
+);
+$this->print_pre($localized);
 ```
 
 ---
@@ -6849,6 +6881,61 @@ Belirtilen url'nin domain adresini elde etmek için kullanılır, bu metot `$thi
 // echo $this->normalizeDomain('http://127.0.0.1/test1/test2'); // 127.0.0.1
 // echo $this->normalizeDomain('https://127.0.0.1/test1/test2'); // 127.0.0.1
 echo $this->normalizeDomain('127.0.0.1/test1/test2'); // 127.0.0.1
+```
+
+---
+
+## buildCategoryBreadcrumb()
+
+Bu metot, verilen bir kategori token’ına ait hiyerarşik yolu (breadcrumb) üretir. Metot çalışabilmesi için token anahtarlı kategori dizisini temsil eden `$categories` parametresini ve breadcrumb oluşturulacak kategorinin `$token` değerini zorunlu olarak alır.
+
+Breadcrumb parçaları arasındaki ayraç ise `$separator` parametresi ile belirlenebilir. Bu parametre zorunlu değildir ve varsayılan olarak " `/` " kullanılır.
+
+Metot, kategoriye ait üst yapıyı `parent_token` ilişkisi üzerinden takip eder ve en üst kategoriden başlayacak şekilde sıralanmış bir `string` döndürür.
+
+Dönüş tipi `string`’tir.
+
+**Kullanım Örneği**
+```php
+$categories = $this->samantha('categories', null);
+$token = ' token ';
+echo $this->buildCategoryBreadcrumb($categories, $token);
+echo $this->buildCategoryBreadcrumb($categories, $token, ' > ');
+```
+
+---
+
+## categoryParentOptions()
+
+Bu metot, kategori hiyerarşisini kullanarak parent seçimleri için HTML ``<option>`` çıktısı üretir.
+
+Metot çalışabilmesi için çoklu dil içeren ham kategori kayıtlarını temsil eden ``$categories`` parametresi zorunludur.
+``$userLang`` parametresi isteğe bağlıdır ve ``null`` olması durumunda varsayılan olarak ``EN`` kullanılır.
+
+``$currentToken`` parametresi isteğe bağlıdır ve düzenleme modunda kullanılır. Bu değer gönderildiğinde, ilgili kategori kendisine veya alt kategorilerine parent olarak atanamaz.
+
+``$selectedParent`` parametresi ise mevcut seçili parent değerini belirtmek için kullanılır ve isteğe bağlıdır.
+
+Metot, hiyerarşiyi sınırsız derinlikte işler ve çıktıyı echo yerine ``string`` olarak döndürür.
+
+Dönüş tipi ``string``’tir.
+
+**Kullanım Örneği**
+```php
+
+$categories   = $this->samantha('categories', null);
+$currentToken = 'token';       // Düzenlenen kategori token'ı
+$selectedParent = null;        // Eğer parent seçili değilse null
+
+$options = $this->categoryParentOptions(
+    $categories,
+    $_SESSION['user']['lang'] ?? null,
+    $currentToken,
+    $selectedParent
+);
+
+echo $options;
+echo $options;
 ```
 
 ---

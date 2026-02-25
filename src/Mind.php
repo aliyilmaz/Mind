@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.1.0
+ * @version    Release: 6.1.1
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -1646,7 +1646,7 @@ class Mind
                 }
 
                 if(!in_array($row['Field'], $columns)){
-                    $row['Length'] = (isset($row['Length'])) ? $row['Length'] : '';
+                    $row['Length'] = (isset($row['Length'])) ? $row['Length'] : '11';
                     switch ($row['Type']) {
                         case 'int':
                             if($row['Extra'] == 'auto_increment'){
@@ -1970,6 +1970,40 @@ class Mind
             $this->lang['haystack']=>$needle
         );
         return $this->amelia($this->lang['table'], $params, $this->lang['return']);
+    }
+
+    /**
+     * Groups categories by _token and applies language fallback.
+     *
+     * Priority:
+     * 1) Requested language
+     * 2) EN
+     * 3) First available language
+     *
+     * @param array $categories Raw category rows
+     * @param string|null $lang Requested language code (e.g. 'TR', 'EN')
+     *
+     * @return array<string, array>
+     */
+    public function getLocalizedCategories($categories, $lang = null)
+    {
+        $userLang = $lang ?? 'EN';
+        $unique   = [];
+
+        foreach ($categories as $item) {
+
+            $token = $item['_token'];
+
+            if (
+                !isset($unique[$token]) ||
+                $item['lang'] === $userLang ||
+                ($unique[$token]['lang'] !== $userLang && $item['lang'] === 'EN')
+            ) {
+                $unique[$token] = $item;
+            }
+        }
+
+        return $unique;
     }
 
     /**
@@ -5336,6 +5370,140 @@ class Mind
         $domain = (substr($urlParts['host'], 0, 4) === 'www.') ? substr($urlParts['host'], 4) : $urlParts['host'];
 
         return $domain;
+    }
+
+    
+    /**
+     * Builds breadcrumb path string for a given category token.
+     *
+     * @param array<string, array<string, mixed>> $categories Indexed categories by token
+     * @param string                              $token      Category token
+     * @param string                              $separator  Breadcrumb separator (default: ' / ')
+     *
+     * @return string Category breadcrumb string (e.g. "Parent / Child / Sub")
+     */
+    public function buildCategoryBreadcrumb($categories, $token, $separator = ' / '){
+
+        $path = [];
+
+        while ($token && isset($categories[$token])) {
+
+            $category = $categories[$token];
+            $path[] = $category['name'];
+
+            $token = $category['parent_token'] ?? null;
+        }
+
+        return implode($separator, array_reverse($path));
+    }
+
+    /**
+     * Generates hierarchical <option> elements for category parent selection.
+     *
+     * Features:
+     * - Language fallback priority: userLang > EN > first available
+     * - Groups categories by _token (unique per logical category)
+     * - Prevents assigning category to itself or its descendants
+     * - Supports unlimited depth hierarchy
+     *
+     * @param array<int, array<string, mixed>> $categories     Raw category rows (multi-language)
+     * @param string|null                      $userLang       Active language code (e.g. 'TR', 'EN')
+     * @param string|null                      $currentToken   Token of category being edited (self-blocking)
+     * @param string|null                      $selectedParent Currently selected parent token
+     *
+     * @return string Generated HTML <option> elements
+     */
+    public function categoryParentOptions($categories, $userLang, $currentToken = null, $selectedParent = null) {
+
+        $userLang = $userLang ?? 'EN';
+
+        /*
+        |------------------------------------------
+        | 1) Localize + unique by _token
+        |------------------------------------------
+        */
+        $map = [];
+
+        foreach ($categories as $item) {
+
+            $token = $item['_token'];
+
+            if (
+                !isset($map[$token]) ||
+                $item['lang'] === $userLang ||
+                ($map[$token]['lang'] !== $userLang && $item['lang'] === 'EN')
+            ) {
+                $map[$token] = $item;
+            }
+        }
+
+        /*
+        |------------------------------------------
+        | 2) Parent index (O(n) tree preparation)
+        |------------------------------------------
+        */
+        $childrenMap = [];
+
+        foreach ($map as $item) {
+            $parent = $item['parent_token'] ?? null;
+            $childrenMap[$parent][] = $item;
+        }
+
+        /*
+        |------------------------------------------
+        | 3) Block self + descendants
+        |------------------------------------------
+        */
+        $blocked = [];
+
+        if ($currentToken) {
+
+            $stack = [$currentToken];
+
+            while ($stack) {
+                $token = array_pop($stack);
+                $blocked[] = $token;
+
+                if (!empty($childrenMap[$token])) {
+                    foreach ($childrenMap[$token] as $child) {
+                        $stack[] = $child['_token'];
+                    }
+                }
+            }
+        }
+
+        /*
+        |------------------------------------------
+        | 4) Recursive render (return-based)
+        |------------------------------------------
+        */
+        $render = function ($parent, $level) use (&$render, $childrenMap, $selectedParent, $blocked): string {
+
+            $html = '';
+
+            if (empty($childrenMap[$parent])) {
+                return $html;
+            }
+
+            foreach ($childrenMap[$parent] as $node) {
+
+                if (in_array($node['_token'], $blocked, true)) {
+                    continue;
+                }
+
+                $selected = $selectedParent === $node['_token'] ? ' selected' : '';
+                $indent   = str_repeat('— ', $level);
+                $name     = htmlspecialchars($node['name'], ENT_QUOTES, 'UTF-8');
+
+                $html .= "<option value=\"{$node['_token']}\"{$selected}>{$indent}{$name}</option>";
+
+                $html .= $render($node['_token'], $level + 1);
+            }
+
+            return $html;
+        };
+
+        return $render(null, 0);
     }
 
     /**

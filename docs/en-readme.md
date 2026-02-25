@@ -282,6 +282,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [restore](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#restore)
 -   [pagination](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#pagination)
 -   [translate](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#translate)
+-   [getLocalizedCategories](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#getLocalizedCategories)
 
 ##### Confirmatory
 
@@ -377,6 +378,8 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [addressGenerator](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#addressGenerator)
 -   [committe](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#committe)
 -   [normalizeDomain](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#normalizeDomain)
+-   [buildCategoryBreadcrumb](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#buildCategoryBreadcrumb)
+-   [categoryParentOptions](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#categoryParentOptions)
 
 ##### System
 
@@ -2661,6 +2664,35 @@ $conf = array(
 );
 
 $Mind = new Mind($conf);
+```
+
+---
+
+## getLocalizedCategories()
+
+This method deduplicates category records containing multiple languages ​​based on language priority. For it to work, the `$categories` parameter, representing the raw list of categories containing multiple languages, is mandatory. The `$userLang` parameter is optional. If null is returned, `EN` is accepted by default. If there are multiple records with the same `_token` value, the selection is made according to the following priority:
+
++ User's active language
++ English (`EN`)
++ Any existing language record
+
+Only one record is returned for each category. The method returns a localized category array with the key `_token`.
+
+**Purpose of Use:**
+
++ Listing operations
++ Dropdown generation
++ Hierarchy creation
++ Language-independent category map generation
+
+**Use Case**
+```php
+$categories = $this->samantha('categories', null);
+$localized = $this->getLocalizedCategories(
+    $categories,
+    $_SESSION['user']['lang'] ?? null
+);
+$this->print_pre($localized);
 ```
 
 ---
@@ -6885,6 +6917,57 @@ Used to get domain address of specified url, this method supports domain variati
 // echo $this->normalizeDomain('http://127.0.0.1/test1/test2'); // 127.0.0.1
 // echo $this->normalizeDomain('https://127.0.0.1/test1/test2'); // 127.0.0.1
 echo $this->normalizeDomain('127.0.0.1/test1/test2'); // 127.0.0.1
+```
+
+---
+
+## buildCategoryBreadcrumb()
+
+This method generates a hierarchical path (breadcrumb) for a given category token. To function, the method requires the `$categories` parameter, representing the token-keyed category string, and the `$token` value of the category for which the breadcrumb is to be created.
+
+The separator between breadcrumb segments can be specified using the `$separator` parameter. This parameter is not mandatory and defaults to "`/`".
+
+The method traces the parent structure of the category via the `parent_token` relationship and returns a `string` sorted starting from the top-level category.
+
+The return type is `string`.
+
+**Use Case**
+```php
+echo $this->buildCategoryBreadcrumb($categories, $token);
+echo $this->buildCategoryBreadcrumb($categories, $token, ' > ');
+```
+
+---
+
+## categoryParentOptions()
+
+This method uses the category hierarchy to generate HTML output for parent selections: ``<option>``.
+
+The ``$categories`` parameter, representing raw category records containing multiple languages, is mandatory for the method to work.
+The ``$userLang`` parameter is optional, and if it is `null`, ``EN`` is used by default.
+
+The ``$currentToken`` parameter is optional and used in edit mode. When this value is sent, the relevant category cannot be assigned as a parent to itself or its subcategories.
+
+The ``$selectedParent`` parameter is used to specify the currently selected parent value and is optional.
+
+The method processes the hierarchy to unlimited depth and returns the output as a ``string`` instead of an echo.
+
+The return type is ``string``.
+
+**Use Case**
+```php
+$categories   = $this->samantha('categories', null);
+$currentToken = 'token';       // Edited category token
+$selectedParent = null;        // Null if parent is not selected
+
+$options = $this->categoryParentOptions(
+    $categories,
+    $_SESSION['user']['lang'] ?? null,
+    $currentToken,
+    $selectedParent
+);
+
+echo $options;
 ```
 
 ---
