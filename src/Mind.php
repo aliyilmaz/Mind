@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.1.1
+ * @version    Release: 6.1.2
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -5493,7 +5493,7 @@ class Mind
 
                 $selected = $selectedParent === $node['_token'] ? ' selected' : '';
                 $indent   = str_repeat('— ', $level);
-                $name     = htmlspecialchars($node['name'], ENT_QUOTES, 'UTF-8');
+                $name     = htmlspecialchars(html_entity_decode($node['name'], ENT_QUOTES, 'UTF-8'), ENT_QUOTES,'UTF-8');
 
                 $html .= "<option value=\"{$node['_token']}\"{$selected}>{$indent}{$name}</option>";
 
