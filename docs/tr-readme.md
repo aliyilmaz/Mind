@@ -2691,15 +2691,25 @@ if($this->is_table('users')){
 
 ## is_column()
 
-Bu fonksiyon veritabanı tablosunda belirtilen sütunun varlığını sorgulamak amacıyla kullanır, `users` tablo adını, `username` sütun adını temsil etmektedir. Sütun ismi `string` olarak gönderilebilir. Eğer söz konusu sütun varsa `true` değeri döndürülür, yoksa `false` değeri döndürülür.
+Bu fonksiyon veritabanı tablosunda belirtilen sütunun varlığını sorgulamak amacıyla kullanır, `users` tablo adını, `username` sütun adını temsil etmektedir. Sütun isimleri `string` veya `array` olarak gönderilebilir. Eğer söz konusu sütun varsa `true` değeri döndürülür, yoksa `false` değeri döndürülür.
 
 ##### Örnek
 
 ```php
 if($this->is_column('users', 'username')){
-    echo 'Tablo var';
+    echo 'Sütun var';
 } else {
-    echo 'Tablo yok';
+    echo 'Sütun yok';
+}
+```
+
+veya 
+
+```php
+if($this->is_column('users', ['username','password'])){
+    echo 'Sütunlar var';
+} else {
+    echo 'Sütunlar yok';
 }
 ```
 

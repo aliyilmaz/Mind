@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.1.2
+ * @version    Release: 6.1.3
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2075,18 +2075,24 @@ class Mind
      * Column verification.
      *
      * @param string $tblName
-     * @param string $column
+     * @param string|array $column
      * @return bool
      * */
     public function is_column($tblName, $column){
-        if(empty($this->db)) return;
+        if (empty($this->db)) return false;
+
         $columns = $this->columnList($tblName);
 
-        if(in_array($column, $columns)){
+        if (is_array($column)) {
+            foreach ($column as $col) {
+                if (!in_array($col, $columns)) {
+                    return false;
+                }
+            }
             return true;
-        } else {
-            return false;
-        }        
+        }
+
+        return in_array($column, $columns);
     }
 
     /**

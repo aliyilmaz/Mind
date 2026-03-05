@@ -2731,15 +2731,25 @@ if($this->is_table('users')){
 
 ## is_column()
 
-This function is used to query the existence of the specified column in the database table, `users` represents the table name, `username` represents the column name. Column name can be sent as `string`. If the column in question exists, the value `true` is returned, otherwise `false` is returned.
+This function is used to query the existence of the specified column in the database table, where `users` represents the table name and `username` represents the column name. Column names can be sent as `string` or `array`. If the column in question exists, the value `true` is returned, otherwise the value `false` is returned.
 
 ##### Example
 
 ```php
 if($this->is_column('users', 'username')){
-    echo 'There is a table';
+    echo 'There is a column';
 } else {
-    echo 'No table';
+    echo 'No column';
+}
+```
+
+or  
+
+```php
+if($this->is_column('users', ['username','password'])){
+    echo 'There are columns';
+} else {
+    echo 'No columns';
 }
 ```
 
