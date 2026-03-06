@@ -375,6 +375,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [normalizeDomain](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#normalizeDomain)
 -   [buildCategoryBreadcrumb](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#buildCategoryBreadcrumb)
 -   [categoryParentOptions](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#categoryParentOptions)
+-   [buildThreads](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#buildThreads)
 
 ##### Sistem
 
@@ -6945,9 +6946,41 @@ $options = $this->categoryParentOptions(
 );
 
 echo $options;
-echo $options;
 ```
 
+---
+
+## buildThreads()
+
+Düz bir yorum veya veri listesini, ebeveyn-çocuk ilişkisine göre ağaç (thread) yapısına dönüştürmek için kullanılır. İşlem başarılı olduğunda, her öğe kendi alt öğelerini children (veya belirtilen anahtar) içinde taşır. Beş parametre alır:
+
+**İlk parametre**
+Dönüştürülecek yorum veya veri listesini temsil eder, array türünde olmalıdır.
+
+**İkinci parametre**
+Ebeveyn ilişkisini belirten sütun adını temsil eder (ör: comment_id).
+
+**Üçüncü parametre**
+Öğe kimliğini temsil eden sütun adını belirtir, varsayılan id’dir.
+
+**Dördüncü parametre**
+Başlanacak üst ebeveyn ID’sini belirtir, kök öğeler için null gönderilir.
+
+**Beşinci parametre**
+Alt öğelerin eklenmesini sağlayacak anahtar adını belirtir, varsayılan children’dır.
+
+```php
+$comments = [
+    ['id'=>1,'comment_id'=>null,'text'=>'İlk yorum'],
+    ['id'=>2,'comment_id'=>1,'text'=>'İlk yoruma cevap'],
+    ['id'=>3,'comment_id'=>1,'text'=>'Başka cevap'],
+    ['id'=>4,'comment_id'=>2,'text'=>'Cevaba cevap'],
+];
+
+$threads = $this->buildThreads($comments);
+
+$this->print_pre($threads);
+```
 ---
 
 ## getOS()

@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.1.3
+ * @version    Release: 6.1.4
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -5510,6 +5510,44 @@ class Mind
         };
 
         return $render(null, 0);
+    }
+
+    /**
+     * It converts a plain comment list into a thread (tree) structure.
+     *
+     * @param array       $items         Comment or data list
+     * @param string      $parentColumn  Parent relationship column (ex: comment_id)
+     * @param string      $idColumn      Unique ID column (default: id)
+     * @param mixed|null  $parentId      Parent ID (null for root)
+     * @param string      $childrenKey   Key to add children to (default: children)
+     *
+     * @return array
+     */
+    public function buildThreads($items, $parentColumn = 'comment_id', $idColumn = 'id', $parentId = null, $childrenKey = 'children'){
+
+        $branch = [];
+
+        foreach ($items as $item) {
+
+            $parent = empty($item[$parentColumn]) ? null : $item[$parentColumn];
+
+            if ($parent == $parentId) {
+
+                $children = $this->buildThreads(
+                    $items,
+                    $parentColumn,
+                    $idColumn,
+                    $item[$idColumn],
+                    $childrenKey
+                );
+
+                $item[$childrenKey] = $children ?: [];
+
+                $branch[] = $item;
+            }
+        }
+
+        return $branch;
     }
 
     /**

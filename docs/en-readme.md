@@ -380,6 +380,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [normalizeDomain](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#normalizeDomain)
 -   [buildCategoryBreadcrumb](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#buildCategoryBreadcrumb)
 -   [categoryParentOptions](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#categoryParentOptions)
+-   [buildThreads](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#buildThreads)
 
 ##### System
 
@@ -6978,6 +6979,41 @@ $options = $this->categoryParentOptions(
 );
 
 echo $options;
+```
+
+---
+
+## buildThreads()
+
+
+It is used to convert a plain comment or data list into a tree (thread) structure according to the parent-child relationship. When the operation is successful, each element carries its children within children (or the specified key). It takes five parameters:
+
+**First parameter**
+Represents the comment or list of data to be converted, must be of array type.
+
+**Second parameter**
+Represents the column name that specifies the parent relationship (e.g. comment_id).
+
+**Third parameter**
+Specifies the column name that represents the item ID, default is id.
+
+**Fourth parameter**
+Specifies the parent ID to start with, null is sent for root elements.
+
+**Fifth parameter**
+Specifies the key name that will allow children to be added, the default is children.
+
+```php
+$comments = [
+    ['id'=>1,'comment_id'=>null,'text'=>'First comment'],
+    ['id'=>2,'comment_id'=>1,'text'=>'Reply to first comment'],
+    ['id'=>3,'comment_id'=>1,'text'=>'another answer'],
+    ['id'=>4,'comment_id'=>2,'text'=>'Reply to reply'],
+];
+
+$threads = $this->buildThreads($comments);
+
+$this->print_pre($threads);
 ```
 
 ---
