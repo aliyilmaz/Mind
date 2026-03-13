@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.1.4
+ * @version    Release: 6.1.5
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -2967,6 +2967,10 @@ class Mind
                         list($name, $date1) = explode(':', $left);
                         $extra = $date1.' '.$right;
                     }
+
+                    if(count($ruleData) == 4 && strstr($name, 'date:')){
+                        $name = $ruleData[0];
+                    }
                 }
 
                 $data[$column] = (isset($data[$column])) ? $data[$column] : '';
@@ -3029,9 +3033,14 @@ class Mind
                         if(empty($extra)){
                             $extra = 'Y-m-d';
                         }
+                        if(count($ruleData)>1){      
+                            $extra = array_slice($ruleData, 1, 4);                      
+                            $extra = implode(':', $extra);
+                        }
                         if(!$this->is_date($data[$column], $extra)){
                             $this->errors[$column][$name] = $message[$column][$name];
                         }
+                        
                     break;
                     case 'json':
                         if(!$this->is_json($data[$column])){

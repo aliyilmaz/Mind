@@ -2811,22 +2811,13 @@ This function is used to check whether the date format shared with it is genuine
 ##### Example
 
 ```php
-$date = '01.02.1987';
-$format = 'd.m.Y';
-if($this->is_date($date, $format)){
-    echo 'This date is a date of birth';
-} else {
-    echo 'This date is not a date of birth.';
-}
-```
+$time = '09:00'; // 09:00, 2026-01-03, 2026-01-03 14:22, 2026-01-03 14:22:22
+$format = 'H:i'; // H:i, Y-m-d, Y-m-d H:i, Y-m-d H:i:s
 
-or 
-
-```php
-if($this->is_date('01.02.1987', 'd.m.Y')){
-    echo 'This date is a date of birth';
+if($this->is_date($time, $format)){
+    echo 'Valid';
 } else {
-    echo 'This date is not a date of birth.';
+    echo 'Invalid';
 }
 ```
 
@@ -4140,7 +4131,7 @@ $data = array(
     'quentity'          =>  '4',
     'numeric_str'       =>  12,
     'birthday'          =>  '1987-02-14',
-    'register_date'     =>  '2020-02-18 14:34:22',
+    'register_date'     =>  '2020-02-18 14:34:22',  // 09:00, 2026-01-03, 2026-01-03 14:22, 2026-01-03 14:22:22
     'status'            =>  1,
     'ibanNumber'        =>  'SE35 5000 0000 0549 1000 0003',
     'ipv4Address'       =>  '127.0.0.1',
@@ -4189,7 +4180,7 @@ $rule = array(
     'quentity'          =>  'min-num:2|max-num:4',
     'numeric_str'       =>  'numeric',
     'birthday'          =>  'min-age:33|max-age:40',
-    'register_date'     =>  'date:Y-m-d H:i:s',
+    'register_date'     =>  'date:Y-m-d H:i:s', // date:H:i, date:Y-m-d, date:Y-m-d H:i, date:Y-m-d H:i:s 
     'status'            =>  'bool:true',
     'ibanNumber'        =>  'iban',
     'ipv4Address'       =>  'ipv4',
