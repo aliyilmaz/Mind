@@ -345,6 +345,7 @@ It is the variable that is kept in error messages, and the `public` feature is d
 -   [timeForPeople](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timeForPeople)
 -   [timezones](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#timezones)
 -   [bots](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#bots)
+-   [resolveLocale](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#resolveLocale)
 -   [languages](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#languages-1)
 -   [currencies](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#currencies)
 -   [morsealphabet](https://github.com/aliyilmaz/Mind/blob/main/docs/en-readme.md#morsealphabet)
@@ -5682,6 +5683,34 @@ This function serves to return the common 72 Bot as a series.
 
 ```php
 $this->print_pre($this->bots());
+```
+
+---
+
+## resolveLocale()
+
+Converts two-letter language codes sent as `string` data type in ISO 639-1 format into full locale identifiers compliant with BCP 47 standards. Each language has predefined default region codes (e.g., "TR" for Turkish, "US" for English, "PT" for Portuguese). If a custom region code of type `string|null` is provided as the second parameter, this value overrides the default region. Additionally, the function recognizes inputs that already contain region information (e.g., "tr-TR", "en_US") and normalizes them to the correct BCP 47 format.
+
+**Important:** The function validates both language and region codes, as well as their compatibility with each other. It returns `null` in cases of an invalid language code, an invalid region code, or a mismatch between language and region (e.g., `tr-US`). This prevents meaningless or invalid locale combinations.
+
+##### Example
+
+```php
+// Valid usage
+echo $this->resolveLocale('tr');        // "tr-TR"
+echo $this->resolveLocale('en');        // "en-US"
+echo $this->resolveLocale('en', 'GB');  // "en-GB"
+echo $this->resolveLocale('pt', 'BR');  // "pt-BR"
+echo $this->resolveLocale('zh', 'TW');  // "zh-TW"
+echo $this->resolveLocale('tr-TR');     // "tr-TR"
+echo $this->resolveLocale('en_US');     // "en-US"
+
+// Invalid usage (returns null)
+echo $this->resolveLocale('xx');        // null (invalid language)
+echo $this->resolveLocale('tr', 'US');  // null (language-region mismatch)
+echo $this->resolveLocale('en', 'RR');  // null (invalid region)
+echo $this->resolveLocale('en-RR');     // null (invalid region)
+echo $this->resolveLocale('xx-US');     // null (invalid language)
 ```
 
 ---

@@ -340,6 +340,7 @@ Hata mesajlarının tutulduğu değişkendir, dışarıdan erişime izin vermek 
 -   [timeForPeople](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timeForPeople)
 -   [timezones](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#timezones)
 -   [bots](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#bots)
+-   [resolveLocale](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#resolveLocale)
 -   [languages](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#languages-1)
 -   [currencies](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#currencies)
 -   [morsealphabet](https://github.com/aliyilmaz/Mind/blob/main/docs/tr-readme.md#morsealphabet)
@@ -5656,6 +5657,35 @@ Bu fonksiyon, Yaygın 72 bot'un ismini dizi olarak geri döndürmeye yarar.
 
 ```php
 $this->print_pre($this->bots());
+```
+
+---
+
+## resolveLocale()
+
+ISO 639-1 formatında `string` veri türünde gönderilen iki harfli dil kodlarını BCP 47 standartlarına uygun tam yerel ayar tanımlayıcılarına dönüştürür. Her dil için önceden tanımlanmış varsayılan bölge kodları bulunur (Türkçe için "TR", İngilizce için "US", Portekizce için "PT" gibi). İkinci parametre ile `string|null` veri türünde özel bir bölge kodu gönderilirse, bu değer varsayılan bölgeyi ezer. Ayrıca fonksiyon, zaten bölge bilgisi içeren girdileri tanıyarak bunları doğru BCP 47 formatına normalleştirir.
+
+**Önemli:** Fonksiyon, dil ve bölge kodlarının geçerliliğini ve birbiriyle uyumunu kontrol eder. Geçersiz bir dil kodu, geçersiz bir bölge kodu veya dil ile bölge arasında uyumsuzluk (örneğin `tr-US`) durumunda `null` döndürür. Bu sayede anlamsız veya geçersiz yerel ayar kombinasyonlarının önüne geçilir.
+
+
+##### Örnek
+
+```php
+// Geçerli kullanımlar
+echo $this->resolveLocale('tr');        // "tr-TR"
+echo $this->resolveLocale('en');        // "en-US"
+echo $this->resolveLocale('en', 'GB');  // "en-GB"
+echo $this->resolveLocale('pt', 'BR');  // "pt-BR"
+echo $this->resolveLocale('zh', 'TW');  // "zh-TW"
+echo $this->resolveLocale('tr-TR');     // "tr-TR"
+echo $this->resolveLocale('en_US');     // "en-US"
+
+// Geçersiz kullanımlar (null döner)
+echo $this->resolveLocale('xx');        // null (geçersiz dil)
+echo $this->resolveLocale('tr', 'US');  // null (dil-bölge uyumsuz)
+echo $this->resolveLocale('en', 'RR');  // null (geçersiz bölge)
+echo $this->resolveLocale('en-RR');     // null (geçersiz bölge)
+echo $this->resolveLocale('xx-US');     // null (geçersiz dil)
 ```
 
 ---

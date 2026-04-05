@@ -3,7 +3,7 @@
 /**
  *
  * @package    Mind
- * @version    Release: 6.1.5
+ * @version    Release: 6.1.6
  * @license    GPL3
  * @author     Ali YILMAZ <aliyilmaz.work@gmail.com>
  * @category   Php Framework, Design pattern builder for PHP.
@@ -4096,6 +4096,125 @@ class Mind
         return ['Alexabot','AhrefsBot','Applebot','ArchiveBot','Baiduspider','Barkrowler','BLEXBot','Bingbot','BUbiNG','CCBot','Charlotte','Cliqzbot','cortex','Crawler','Discordbot','DotBot','DuckDuckBot','Embedly','ExB Language Crawler','Exabot','facebookexternalhit','Facebot','FatBot','FlipboardProxy','Flamingo_Search','Genieo','Googlebot','Google-InspectionTool', 'ia_archiver','Infohelfer','Instagram Bot','LinkedInBot','Linguee Bot','LivelapBot','LoadImpactPageAnalyzer','MagpieRSS','Mail.RU_Bot','MetaJobBot','MetaURI','MJ12bot','MojeekBot','MSRBOT','Netvibes','OpenHoseBot','OutclicksBot','Phantom','PhantomJS','Pinterest','Pinterestbot','Python-urllib','QQBrowser','Qseero','Qwantify','Redditbot','RubedoBot','SafeBrowsing','SafeDNSBot','Screaming Frog','SemrushBot','Sogou','Soso','spbot','SurveyBot','TelegramBot','Tumblrbot','Twitterbot','UnwindFetchor','VimeoBot','VoilàBot','WBSearchBot','Weibo','WhatsApp','WordPress','YandexBot','YouTubeBot'];
         
     }
+
+    /**
+     * Converts ISO 639-1 language code to BCP 47 format.
+     * Returns null for invalid language, invalid region or incompatible language-region combinations.
+     *
+     * @param string      $code   ISO 639-1 language code ("tr", "en") or locale code ("tr-TR", "en_US")
+     * @param string|null $region ISO 3166-1 region code ("TR", "GB", "BR") - optional
+     *
+     * @return string|null Locale string in BCP 47 format or null if invalid
+     */
+    public function resolveLocale($code, $region = null) {
+        static $map = [
+            'af' => 'af-ZA', 'ak' => 'ak-GH', 'sq' => 'sq-AL',
+            'am' => 'am-ET', 'ar' => 'ar-SA', 'hy' => 'hy-AM',
+            'az' => 'az-AZ', 'eu' => 'eu-ES', 'be' => 'be-BY',
+            'bn' => 'bn-BD', 'bs' => 'bs-BA', 'bg' => 'bg-BG',
+            'my' => 'my-MM', 'ca' => 'ca-ES', 'zh' => 'zh-CN',
+            'hr' => 'hr-HR', 'cs' => 'cs-CZ', 'da' => 'da-DK',
+            'nl' => 'nl-NL', 'en' => 'en-US', 'et' => 'et-EE',
+            'fi' => 'fi-FI', 'fr' => 'fr-FR', 'gl' => 'gl-ES',
+            'ka' => 'ka-GE', 'de' => 'de-DE', 'el' => 'el-GR',
+            'gu' => 'gu-IN', 'he' => 'he-IL', 'hi' => 'hi-IN',
+            'hu' => 'hu-HU', 'is' => 'is-IS', 'ig' => 'ig-NG',
+            'id' => 'id-ID', 'ga' => 'ga-IE', 'it' => 'it-IT',
+            'ja' => 'ja-JP', 'kn' => 'kn-IN', 'kk' => 'kk-KZ',
+            'km' => 'km-KH', 'ko' => 'ko-KR', 'ky' => 'ky-KG',
+            'lo' => 'lo-LA', 'lv' => 'lv-LV', 'lt' => 'lt-LT',
+            'lb' => 'lb-LU', 'mk' => 'mk-MK', 'ms' => 'ms-MY',
+            'ml' => 'ml-IN', 'mt' => 'mt-MT', 'mr' => 'mr-IN',
+            'mn' => 'mn-MN', 'ne' => 'ne-NP', 'nb' => 'nb-NO',
+            'nn' => 'nn-NO', 'or' => 'or-IN', 'ps' => 'ps-AF',
+            'fa' => 'fa-IR', 'pl' => 'pl-PL', 'pt' => 'pt-PT',
+            'pa' => 'pa-IN', 'ro' => 'ro-RO', 'ru' => 'ru-RU',
+            'sr' => 'sr-RS', 'si' => 'si-LK', 'sk' => 'sk-SK',
+            'sl' => 'sl-SI', 'so' => 'so-SO', 'es' => 'es-ES',
+            'sw' => 'sw-KE', 'sv' => 'sv-SE', 'tl' => 'tl-PH',
+            'tg' => 'tg-TJ', 'ta' => 'ta-IN', 'te' => 'te-IN',
+            'th' => 'th-TH', 'ti' => 'ti-ET', 'tr' => 'tr-TR',
+            'tk' => 'tk-TM', 'uk' => 'uk-UA', 'ur' => 'ur-PK',
+            'ug' => 'ug-CN', 'uz' => 'uz-UZ', 'vi' => 'vi-VN',
+            'cy' => 'cy-GB', 'xh' => 'xh-ZA', 'yi' => 'yi-UA',
+            'yo' => 'yo-NG', 'zu' => 'zu-ZA',
+        ];
+
+        // Current language-region compatibility table
+        static $validLanguageRegionPairs = [
+            'af' => ['ZA'], 'ak' => ['GH'], 'sq' => ['AL'], 'am' => ['ET'],
+            'ar' => ['SA', 'EG', 'AE', 'IQ', 'JO', 'KW', 'LB', 'LY', 'MA', 'OM', 'QA', 'SY', 'TN', 'YE', 'DZ', 'BH', 'SD'],
+            'hy' => ['AM'], 'az' => ['AZ'], 'eu' => ['ES'], 'be' => ['BY'],
+            'bn' => ['BD', 'IN'], 'bs' => ['BA'], 'bg' => ['BG'], 'my' => ['MM'],
+            'ca' => ['ES'], 'zh' => ['CN', 'TW', 'HK', 'SG'], 'hr' => ['HR'], 'cs' => ['CZ'],
+            'da' => ['DK'], 'nl' => ['NL', 'BE'], 'en' => ['US', 'GB', 'AU', 'CA', 'NZ', 'IE', 'ZA', 'IN', 'SG', 'PH', 'JM', 'BW', 'GH', 'KE', 'NG', 'TZ', 'UG'],
+            'et' => ['EE'], 'fi' => ['FI'], 'fr' => ['FR', 'CA', 'BE', 'CH', 'LU', 'MC', 'CD', 'CI', 'CM', 'HT', 'MG', 'ML', 'NE', 'RW', 'SN', 'TG'],
+            'gl' => ['ES'], 'ka' => ['GE'], 'de' => ['DE', 'AT', 'CH', 'LI', 'LU', 'BE'], 'el' => ['GR', 'CY'],
+            'gu' => ['IN'], 'he' => ['IL'], 'hi' => ['IN'], 'hu' => ['HU'],
+            'is' => ['IS'], 'ig' => ['NG'], 'id' => ['ID'], 'ga' => ['IE'],
+            'it' => ['IT', 'CH', 'SM', 'VA'], 'ja' => ['JP'], 'kn' => ['IN'], 'kk' => ['KZ'],
+            'km' => ['KH'], 'ko' => ['KR'], 'ky' => ['KG'], 'lo' => ['LA'],
+            'lv' => ['LV'], 'lt' => ['LT'], 'lb' => ['LU'], 'mk' => ['MK'],
+            'ms' => ['MY', 'BN', 'SG'], 'ml' => ['IN'], 'mt' => ['MT'], 'mr' => ['IN'],
+            'mn' => ['MN'], 'ne' => ['NP'], 'nb' => ['NO'], 'nn' => ['NO'],
+            'or' => ['IN'], 'ps' => ['AF'], 'fa' => ['IR'], 'pl' => ['PL'],
+            'pt' => ['PT', 'BR', 'AO', 'MZ', 'GW', 'TL', 'CV', 'ST'], 'pa' => ['IN', 'PK'],
+            'ro' => ['RO', 'MD'], 'ru' => ['RU', 'BY', 'KZ', 'KG', 'MD', 'TJ', 'TM', 'UA', 'UZ'],
+            'sr' => ['RS', 'BA', 'ME'], 'si' => ['LK'], 'sk' => ['SK'], 'sl' => ['SI'],
+            'so' => ['SO', 'DJ', 'ET', 'KE'], 'es' => ['ES', 'MX', 'AR', 'CO', 'PE', 'VE', 'CL', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'UY', 'CR', 'PA', 'NI', 'PR', 'GQ'],
+            'sw' => ['KE', 'TZ', 'UG', 'CD', 'RW'], 'sv' => ['SE', 'FI'], 'tl' => ['PH'],
+            'tg' => ['TJ'], 'ta' => ['IN', 'LK', 'SG', 'MY'], 'te' => ['IN'],
+            'th' => ['TH'], 'ti' => ['ET', 'ER'], 'tr' => ['TR', 'CY'], 'tk' => ['TM'],
+            'uk' => ['UA'], 'ur' => ['PK', 'IN'], 'ug' => ['CN'], 'uz' => ['UZ'],
+            'vi' => ['VN'], 'cy' => ['GB'], 'xh' => ['ZA'], 'yi' => ['UA'],
+            'yo' => ['NG'], 'zu' => ['ZA'],
+        ];
+
+        $normalized = strtolower(trim($code));
+
+        // Language code validity check
+        $isValidLanguage = preg_match('/^[a-z]{2}$/i', $normalized) && 
+                        (isset($map[$normalized]) || array_key_exists($normalized, $map));
+
+        // If it already contains a region (tr-TR or tr_TR)
+        if (preg_match('/^([a-z]{2})[-_]([a-z]{2,})$/i', $normalized, $m)) {
+            $lang = strtolower($m[1]);
+            $reg = strtoupper($m[2]);
+            
+            $isValidLanguage = preg_match('/^[a-z]{2}$/i', $lang) && 
+                            (isset($map[$lang]) || array_key_exists($lang, $map));
+            
+            // Language-region compatibility check
+            if ($isValidLanguage && isset($validLanguageRegionPairs[$lang])) {
+                if (in_array($reg, $validLanguageRegionPairs[$lang])) {
+                    return $lang . '-' . $reg;
+                }
+            }
+            return null;
+        }
+
+        // If a special zone is given
+        if ($region !== null) {
+            $region = strtoupper(trim($region));
+            
+            // Language-region compatibility check
+            if ($isValidLanguage && isset($validLanguageRegionPairs[$normalized])) {
+                if (in_array($region, $validLanguageRegionPairs[$normalized])) {
+                    return $normalized . '-' . $region;
+                }
+            }
+            return null;
+        }
+
+        // Default mapping (if language is valid)
+        if ($isValidLanguage) {
+            return $map[$normalized] ?? $normalized;
+        }
+
+        // invalid language
+        return null;
+    }
+
 
     /**
      * Languages
